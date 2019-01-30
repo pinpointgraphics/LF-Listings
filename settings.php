@@ -23,7 +23,7 @@ function LF_main_menu_view_creator()
 	echo '<h1 class="wp-heading-inline">'.get_admin_page_title().'</h1>';
 	?>
 	<p>
-		<b>Paste anyone bellow shortcode to display property listing:</b>
+		<b>Use the following shortcode tags to create pre-selected property listings pages.</b>
 	</p>
 	<p>[LF-Listings]</p>
 	<p>
