@@ -26,7 +26,7 @@
 textarea.LF-form-control{
     height: initial !important;
 }
-.LF-row {
+/*.LF-row {
     margin-right: -15px;
     margin-left: -15px
 }
@@ -34,7 +34,7 @@ textarea.LF-form-control{
 .LF-row:before {
     display: table;
     content: "";
-}
+}*/
 .LF-row:after {
     clear: both
 }

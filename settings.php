@@ -254,7 +254,7 @@ add_action('admin_enqueue_scripts', 'LF_admin_css');
  */
 function LF_admin_css()
 {
-	if($_GET['page']=='LF-setting' || $_GET['page']=='LF-listings'){
+	if(isset($_GET['page']) && ($_GET['page']=='LF-setting' || $_GET['page']=='LF-listings')){
 		wp_register_style('LF_stylesheet',plugins_url('assets/css/style.css',__FILE__));
 		wp_enqueue_style('LF_stylesheet');
 		wp_register_style('LF_adminstyle',plugins_url('assets/css/admin-style.css',__FILE__));

@@ -54,7 +54,15 @@ function LF_get_settings($meta_key)
 
 	$result = $wpdb->get_row( "SELECT * FROM $table_name WHERE meta_key = '".$meta_key."'" );
 
-	return $result->meta_value;
+	if($result)
+	{
+		return $result->meta_value;
+	}
+	else
+	{
+		return false;
+	}
+
 }
 
 /**
