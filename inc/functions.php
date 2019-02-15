@@ -1,9 +1,9 @@
 <?php
 
 /**
- * this function adds key value pair to database.
- * like username = lflister
- */
+* this function adds key value pair to database.
+* like username = lflister
+*/
 function LF_add_settings($meta_key,$meta_value)
 {
 	global $wpdb;
@@ -33,8 +33,8 @@ function LF_add_settings($meta_key,$meta_value)
 }
 
 /**
- * this function updates the existing key value pair in db.
- */
+* this function updates the existing key value pair in db.
+*/
 function LF_update_settings($meta_key,$meta_value)
 {
 	global $wpdb;
@@ -44,8 +44,8 @@ function LF_update_settings($meta_key,$meta_value)
 }
 
 /**
- * this function gets the value of the perticular key
- */
+* this function gets the value of the perticular key
+*/
 function LF_get_settings($meta_key)
 {
 	global $wpdb;
@@ -66,9 +66,9 @@ function LF_get_settings($meta_key)
 }
 
 /**
- * this function gets the token from the listing provider.
- * so that we can get the listings information.
- */
+* this function gets the token from the listing provider.
+* so that we can get the listings information.
+*/
 function getToken()
 {
 	$url = API_URL.'/tokens';
@@ -85,8 +85,8 @@ function getToken()
 }
 
 /**
- * this function get the list of cities for given agent id.
- */
+* this function get the list of cities for given agent id.
+*/
 function getCities()
 {
 	$url = API_URL.'/accounts/'.LF_get_settings('agent_id').'?fields=cities';
@@ -104,141 +104,143 @@ function getCities()
 }
 
 /**
- * this function get the listings as per the search parameters.
- */
-function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bedroom='',$bathroom='',$property_Type='residential',$priceFrom='',$priceTo='',$waterFront='',$sort,$offices='',$agents='',$openhouse='',$slug)
+* this function get the listings as per the search parameters.
+*/
+function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bedroom='',$bathroom='',$property_Type='residential',$priceFrom='',$priceTo='',$waterFront='',$sort,$offices='',$agents='',$openhouse='',$slug,$search='',$style='',$ids='')
 {
-	if(LF_get_settings('LF_show_search')=='yes'):
-		?>
-		<div class="LF-row">
-			<form method="post" name="search">
-				<div class="LF-col-md-6">
-					<div class="LF-form-group">
-						<input type="text" name="LF_main_search" id="LF_main_search" class="LF-form-control" placeholder="Search by Location, City, Postal Code or ID#" value="<?php echo !empty($mainSearch)?$mainSearch:'';?>">
+	if(empty($search) OR $search=='yes' OR $search=='only'):
+		if(LF_get_settings('LF_show_search')=='yes'):
+			?>
+			<div class="LF-row">
+				<form method="post" name="search">
+					<div class="LF-col-md-6">
+						<div class="LF-form-group">
+							<input type="text" name="LF_main_search" id="LF_main_search" class="LF-form-control" placeholder="Search by Location, City, Postal Code or ID#" value="<?php echo !empty($mainSearch)?$mainSearch:'';?>">
+						</div>
 					</div>
-				</div>
-				<div class="LF-col-md-6">
-					<?php
-					$LF_Municipalities = explode(',',LF_get_settings('LF_Municipalities'));
-					?>
-					<div class="LF-form-group">
-						<select name="LF_municipalities" id="LF_municipalities" class="LF-form-control">
-							<option value="0">All Municipalities</option>
-							<?php
-							foreach($LF_Municipalities as $LF_Municipalitie):
-								if($LF_Municipalitie == $municipalities){
-									$select = 'selected';
-								}
-								else{
-									$select = '';
-								}
-								echo '<option value="'.$LF_Municipalitie.'"'.$select.'>'.$LF_Municipalitie.'</option>';
-							endforeach;
-							?>
-						</select>
+					<div class="LF-col-md-6">
+						<?php
+						$LF_Municipalities = explode(',',LF_get_settings('LF_Municipalities'));
+						?>
+						<div class="LF-form-group">
+							<select name="LF_municipalities" id="LF_municipalities" class="LF-form-control">
+								<option value="0">All Municipalities</option>
+								<?php
+								foreach($LF_Municipalities as $LF_Municipalitie):
+									if($LF_Municipalitie == $municipalities){
+										$select = 'selected';
+									}
+									else{
+										$select = '';
+									}
+									echo '<option value="'.$LF_Municipalitie.'"'.$select.'>'.$LF_Municipalitie.'</option>';
+								endforeach;
+								?>
+							</select>
+						</div>
 					</div>
-				</div>
-				<div class="LF-col-md-4">
-					<div class="LF-form-group">
-						<select name="LF_sale" id="LF_sale" class="LF-form-control">
-							<option value="0">For Sale or Rent</option>
-							<option value="sale" <?php if($sale=='sale'){ echo 'selected';}?>>Sale</option>
-							<option value="rent" <?php if($sale=='rent'){ echo 'selected';}?>>Rent</option>
-						</select>
+					<div class="LF-col-md-4">
+						<div class="LF-form-group">
+							<select name="LF_sale" id="LF_sale" class="LF-form-control">
+								<option value="0">For Sale or Rent</option>
+								<option value="sale" <?php if($sale=='sale'){ echo 'selected';}?>>Sale</option>
+								<option value="rent" <?php if($sale=='rent'){ echo 'selected';}?>>Rent</option>
+							</select>
+						</div>
 					</div>
-				</div>
-				<div class="LF-col-md-4">
-					<div class="LF-form-group">
-						<select name="LF_bedroom" id="LF_bedroom" class="LF-form-control">
-							<option value="0">Any</option>
-							<option value="1" <?php if($bedroom=='1'){ echo 'selected';}?>>1</option>
-							<option value="2" <?php if($bedroom=='2'){ echo 'selected';}?>>2</option>
-							<option value="3" <?php if($bedroom=='3'){ echo 'selected';}?>>3</option>
-							<option value="4" <?php if($bedroom=='4'){ echo 'selected';}?>>4</option>
-							<option value="5" <?php if($bedroom=='5'){ echo 'selected';}?>>5+</option>
-						</select>
+					<div class="LF-col-md-4">
+						<div class="LF-form-group">
+							<select name="LF_bedroom" id="LF_bedroom" class="LF-form-control">
+								<option value="0">Any</option>
+								<option value="1" <?php if($bedroom=='1'){ echo 'selected';}?>>1</option>
+								<option value="2" <?php if($bedroom=='2'){ echo 'selected';}?>>2</option>
+								<option value="3" <?php if($bedroom=='3'){ echo 'selected';}?>>3</option>
+								<option value="4" <?php if($bedroom=='4'){ echo 'selected';}?>>4</option>
+								<option value="5" <?php if($bedroom=='5'){ echo 'selected';}?>>5+</option>
+							</select>
+						</div>
 					</div>
-				</div>
-				<div class="LF-col-md-4">
-					<div class="LF-form-group">
-						<select name="LF_bathroom" id="LF_bathroom" class="LF-form-control">
-							<option value="0">Any</option>
-							<option value="1" <?php if($bathroom=='1'){ echo 'selected';}?>>1</option>
-							<option value="2" <?php if($bathroom=='2'){ echo 'selected';}?>>2</option>
-							<option value="3" <?php if($bathroom=='3'){ echo 'selected';}?>>3</option>
-							<option value="4" <?php if($bathroom=='4'){ echo 'selected';}?>>4</option>
-							<option value="5" <?php if($bathroom=='5'){ echo 'selected';}?>>5+</option>
-						</select>
+					<div class="LF-col-md-4">
+						<div class="LF-form-group">
+							<select name="LF_bathroom" id="LF_bathroom" class="LF-form-control">
+								<option value="0">Any</option>
+								<option value="1" <?php if($bathroom=='1'){ echo 'selected';}?>>1</option>
+								<option value="2" <?php if($bathroom=='2'){ echo 'selected';}?>>2</option>
+								<option value="3" <?php if($bathroom=='3'){ echo 'selected';}?>>3</option>
+								<option value="4" <?php if($bathroom=='4'){ echo 'selected';}?>>4</option>
+								<option value="5" <?php if($bathroom=='5'){ echo 'selected';}?>>5+</option>
+							</select>
+						</div>
 					</div>
-				</div>
-				<div class="LF-col-md-4">
-					<div class="LF-form-group">
-						<select name="LF_property_search" id="LF_property_search" class="LF-form-control">
-							<option value="any" selected="">All Property Types</option>
-							<option value="residential" <?php if($property_Type=='residential'){ echo 'selected';}?>>Residential</option>
-							<option value="commercial" <?php if($property_Type=='commercial'){ echo 'selected';}?>>Commercial</option>
-							<option value="condo" <?php if($property_Type=='condo'){ echo 'selected';}?>>Condo/Strata</option>
-							<option value="recreational" <?php if($property_Type=='recreational'){ echo 'selected';}?>>Recreational</option>
-							<option value="agriculture" <?php if($property_Type=='agriculture'){ echo 'selected';}?>>Agriculture</option>
-							<option value="land" <?php if($property_Type=='land'){ echo 'selected';}?>>Vacant Land</option>
-						</select>
+					<div class="LF-col-md-4">
+						<div class="LF-form-group">
+							<select name="LF_property_search" id="LF_property_search" class="LF-form-control">
+								<option value="any" selected="">All Property Types</option>
+								<option value="residential" <?php if($property_Type=='residential'){ echo 'selected';}?>>Residential</option>
+								<option value="commercial" <?php if($property_Type=='commercial'){ echo 'selected';}?>>Commercial</option>
+								<option value="condo" <?php if($property_Type=='condo'){ echo 'selected';}?>>Condo/Strata</option>
+								<option value="recreational" <?php if($property_Type=='recreational'){ echo 'selected';}?>>Recreational</option>
+								<option value="agriculture" <?php if($property_Type=='agriculture'){ echo 'selected';}?>>Agriculture</option>
+								<option value="land" <?php if($property_Type=='land'){ echo 'selected';}?>>Vacant Land</option>
+							</select>
+						</div>
 					</div>
-				</div>
-				<div class="LF-col-md-4">
-					<div class="LF-form-group">
-						<select id="LF_pricefrom_search" name="LF_pricefrom_search" class="LF-form-control">
-							<option value="">Price From</option>
-							<option value="0" <?php if($priceFrom=='0'){ echo 'selected';}?>>0</option>
-							<option value="25000" <?php if($priceFrom=='25000'){ echo 'selected';}?>>25,000</option>
-							<option value="50000" <?php if($priceFrom=='50000'){ echo 'selected';}?>>50,000</option>
-							<option value="75000" <?php if($priceFrom=='75000'){ echo 'selected';}?>>75,000</option>
-							<option value="100000" <?php if($priceFrom=='100000'){ echo 'selected';}?>>100,000</option>
-							<option value="150000" <?php if($priceFrom=='150000'){ echo 'selected';}?>>150,000</option>
-							<option value="200000" <?php if($priceFrom=='200000'){ echo 'selected';}?>>200,000</option>
-							<option value="250000" <?php if($priceFrom=='250000'){ echo 'selected';}?>>250,000</option>
-							<option value="350000" <?php if($priceFrom=='350000'){ echo 'selected';}?>>350,000</option>
-							<option value="500000" <?php if($priceFrom=='500000'){ echo 'selected';}?>>500,000</option>
-							<option value="1000000" <?php if($priceFrom=='1000000'){ echo 'selected';}?>>1,000,000</option>
-							<option value="5000000" <?php if($priceFrom=='5000000'){ echo 'selected';}?>>5,000,000</option>
-							<option value="10000000" <?php if($priceFrom=='10000000'){ echo 'selected';}?>>10,000,000</option>
-						</select>
+					<div class="LF-col-md-4">
+						<div class="LF-form-group">
+							<select id="LF_pricefrom_search" name="LF_pricefrom_search" class="LF-form-control">
+								<option value="">Price From</option>
+								<option value="0" <?php if($priceFrom=='0'){ echo 'selected';}?>>0</option>
+								<option value="25000" <?php if($priceFrom=='25000'){ echo 'selected';}?>>25,000</option>
+								<option value="50000" <?php if($priceFrom=='50000'){ echo 'selected';}?>>50,000</option>
+								<option value="75000" <?php if($priceFrom=='75000'){ echo 'selected';}?>>75,000</option>
+								<option value="100000" <?php if($priceFrom=='100000'){ echo 'selected';}?>>100,000</option>
+								<option value="150000" <?php if($priceFrom=='150000'){ echo 'selected';}?>>150,000</option>
+								<option value="200000" <?php if($priceFrom=='200000'){ echo 'selected';}?>>200,000</option>
+								<option value="250000" <?php if($priceFrom=='250000'){ echo 'selected';}?>>250,000</option>
+								<option value="350000" <?php if($priceFrom=='350000'){ echo 'selected';}?>>350,000</option>
+								<option value="500000" <?php if($priceFrom=='500000'){ echo 'selected';}?>>500,000</option>
+								<option value="1000000" <?php if($priceFrom=='1000000'){ echo 'selected';}?>>1,000,000</option>
+								<option value="5000000" <?php if($priceFrom=='5000000'){ echo 'selected';}?>>5,000,000</option>
+								<option value="10000000" <?php if($priceFrom=='10000000'){ echo 'selected';}?>>10,000,000</option>
+							</select>
+						</div>
 					</div>
-				</div>
-				<div class="LF-col-md-4">
-					<div class="LF-form-group">
-						<select id="LF_priceto_search" name="LF_priceto_search" class="LF-form-control">
-							<option value="">Price To</option>
-							<option value="0" <?php if($priceTo=='0'){ echo 'selected';}?>>0</option>
-							<option value="25000" <?php if($priceTo=='25000'){ echo 'selected';}?>>25,000</option>
-							<option value="50000" <?php if($priceTo=='50000'){ echo 'selected';}?>>50,000</option>
-							<option value="75000" <?php if($priceTo=='75000'){ echo 'selected';}?>>75,000</option>
-							<option value="100000" <?php if($priceTo=='100000'){ echo 'selected';}?>>100,000</option>
-							<option value="150000" <?php if($priceTo=='150000'){ echo 'selected';}?>>150,000</option>
-							<option value="200000" <?php if($priceTo=='200000'){ echo 'selected';}?>>200,000</option>
-							<option value="250000" <?php if($priceTo=='250000'){ echo 'selected';}?>>250,000</option>
-							<option value="350000" <?php if($priceTo=='350000'){ echo 'selected';}?>>350,000</option>
-							<option value="500000" <?php if($priceTo=='500000'){ echo 'selected';}?>>500,000</option>
-							<option value="1000000" <?php if($priceTo=='1000000'){ echo 'selected';}?>>1,000,000</option>
-							<option value="5000000" <?php if($priceTo=='5000000'){ echo 'selected';}?>>5,000,000</option>
-							<option value="10000000" <?php if($priceTo=='10000000'){ echo 'selected';}?>>10,000,000</option>
-						</select>
+					<div class="LF-col-md-4">
+						<div class="LF-form-group">
+							<select id="LF_priceto_search" name="LF_priceto_search" class="LF-form-control">
+								<option value="">Price To</option>
+								<option value="0" <?php if($priceTo=='0'){ echo 'selected';}?>>0</option>
+								<option value="25000" <?php if($priceTo=='25000'){ echo 'selected';}?>>25,000</option>
+								<option value="50000" <?php if($priceTo=='50000'){ echo 'selected';}?>>50,000</option>
+								<option value="75000" <?php if($priceTo=='75000'){ echo 'selected';}?>>75,000</option>
+								<option value="100000" <?php if($priceTo=='100000'){ echo 'selected';}?>>100,000</option>
+								<option value="150000" <?php if($priceTo=='150000'){ echo 'selected';}?>>150,000</option>
+								<option value="200000" <?php if($priceTo=='200000'){ echo 'selected';}?>>200,000</option>
+								<option value="250000" <?php if($priceTo=='250000'){ echo 'selected';}?>>250,000</option>
+								<option value="350000" <?php if($priceTo=='350000'){ echo 'selected';}?>>350,000</option>
+								<option value="500000" <?php if($priceTo=='500000'){ echo 'selected';}?>>500,000</option>
+								<option value="1000000" <?php if($priceTo=='1000000'){ echo 'selected';}?>>1,000,000</option>
+								<option value="5000000" <?php if($priceTo=='5000000'){ echo 'selected';}?>>5,000,000</option>
+								<option value="10000000" <?php if($priceTo=='10000000'){ echo 'selected';}?>>10,000,000</option>
+							</select>
+						</div>
 					</div>
-				</div>
-				<div class="LF-col-md-12">
-					<div class="LF-form-group">
-						<label id="waterfront-search" for="waterfront">
-							<input id="waterfront" name="waterfront" <?php if(isset($waterFront) and $waterFront=='y'){ echo 'checked';}?> value="y" type="checkbox">Show waterfront properties only
-						</label>
+					<div class="LF-col-md-12">
+						<div class="LF-form-group">
+							<label id="waterfront-search" for="waterfront">
+								<input id="waterfront" name="waterfront" <?php if(isset($waterFront) and $waterFront=='y'){ echo 'checked';}?> value="y" type="checkbox">Show waterfront properties only
+							</label>
+						</div>
+						<div class="LF-form-group">
+							<button class="LF-btn LF-btn-search" type="button">Search</button>
+							<button class="LF-btn LF-btn-reset" type="button" onclick="resetSearch()">Reset</button>
+						</div>
 					</div>
-					<div class="LF-form-group">
-						<button class="LF-btn LF-btn-search" type="button">Search</button>
-						<button class="LF-btn LF-btn-reset" type="button" onclick="resetSearch()">Reset</button>
-					</div>
-				</div>
-			</form>
-		</div>
-		<?php
-	endif;
+				</form>
+			</div>
+			<?php
+		endif; //end check search enable/disable from admin
+	endif; //end search tag in shortcode
 	if(!empty($page)){
 		$page = '&page='.$page;
 	}
@@ -324,6 +326,14 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 	else{
 		$openhouse = '';
 	}
+	if(!empty($ids))
+	{
+		$ids = '&search='.$ids;
+	}
+	else
+	{
+		$ids = '';
+	}
 
 	$token = getToken();
 	$agent_id = LF_get_settings('agent_id');
@@ -332,7 +342,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 
 	$curl = curl_init();
 	curl_setopt_array($curl, array(
-		CURLOPT_URL => API_URL."/properties?token=".$token."&agent_id=".$agent_id."&office_id=".$office_id."&paginate=".$paginate."&sort=".$sort.$page.$mainSearch.$sale.$bedroom.$bathroom.$propertyType.$priceFrom.$priceTo.$waterFront.$municipality.$offices.$agent,
+		CURLOPT_URL => API_URL."/properties?token=".$token."&agent_id=".$agent_id."&office_id=".$office_id."&paginate=".$paginate."&sort=".$sort.$page.$mainSearch.$sale.$bedroom.$bathroom.$propertyType.$priceFrom.$priceTo.$waterFront.$municipality.$offices.$agent.$ids,
 		CURLOPT_RETURNTRANSFER => true,
 		CURLOPT_ENCODING => "",
 		CURLOPT_MAXREDIRS => 10,
@@ -371,8 +381,15 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 
 			<input type="hidden" name="defaultopenhouse" id="defaultopenhouse" value="<?php echo !empty($openhouse)?$openhouse:'';?>">
 
+			<input type="hidden" name="search" id="search" value="<?php echo !empty($search)?$search:'';?>">
+
+			<input type="hidden" name="style" id="style" value="<?php echo !empty($style)?$style:'';?>">
+
+			<!-- <input type="hidden" name="ids" id="ids" value="<?php echo !empty($ids)?$ids:'';?>"> -->
+
 			<?php
-			if($result->error==false):
+			// if(empty($search) or $search!="only" or $search=="no" or $search == 'yes'){
+			if($result->error==false){
 				$current_page = $result->results->current_page;
 				$last = ceil($result->results->total / $result->results->per_page);
 				$links = 5;
@@ -423,7 +440,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 				}
 
 				echo '<div class="LF-col-md-7">'.$html.'</div>';
-				if(LF_get_settings('LF_show_priceOrder')=='yes'):
+				if(LF_get_settings('LF_show_priceOrder')=='yes'){
 					echo '<div class="LF-col-md-5">
 					<div class="LF-sortblock">
 					<label>Order by price: </lable>
@@ -431,7 +448,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					High <input type="radio" class="LF-sort" name="LF-sort" value="DESC" '.$descchecked.'>
 					</div>
 					</div>';
-				endif;
+				}
 				echo '<div class="clear"></div>';
 
 				//get column from admin setting
@@ -455,6 +472,10 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					default:
 					$col=3;
 					break;
+				}
+				$style = 'horizontal';
+				if(!empty($style) and $style == 'horizontal'){
+					echo '<div class="horizantal-slide">';
 				}
 				foreach($result->results->data as $propertyList):
 					if($col==0):
@@ -511,6 +532,9 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 						<?php
 					endif;
 				endforeach;
+				if(!empty($style) and $style == 'horizontal'){
+					echo '</div>';
+				}
 				echo '<div class="clear"></div>';
 				echo '<div class="LF-col-md-7">'.$html.'</div>';
 				if(LF_get_settings('LF_show_priceOrder')=='yes'):
@@ -522,10 +546,11 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					</div>
 					</div>';
 				endif;
-			else:
-
+			}
+			else{
 				echo '<div class="LF-col-md-12"><p>Sorry, your search did not return any results. Please try again with different search parameters.</p></div>';
-			endif;
+			}
+			// }
 			?>
 		</div>
 		<div class="LF-disclaimer"><?php echo LF_get_settings('LF_detail_footer');?></div>
@@ -534,8 +559,8 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 }
 
 /**
- * this function gives detail of perticular db.
- */
+* this function gives detail of perticular db.
+*/
 function getLFListingsDetails($listkey){
 	$token = getToken();
 
@@ -565,8 +590,8 @@ function getLFListingsDetails($listkey){
 }
 
 /**
- * this function returns the image url with perticular height and width.
- */
+* this function returns the image url with perticular height and width.
+*/
 function getLFImageProxy($url){
 	$curl = curl_init();
 	$imageWidth = LF_get_settings('LF_imageWidth');

@@ -26,7 +26,7 @@
 textarea.LF-form-control{
     height: initial !important;
 }
-/*.LF-row {
+.LF-row {
     margin-right: -15px;
     margin-left: -15px
 }
@@ -34,7 +34,7 @@ textarea.LF-form-control{
 .LF-row:before {
     display: table;
     content: "";
-}*/
+}
 .LF-row:after {
     clear: both
 }
@@ -920,6 +920,9 @@ a{
     width: 100%;
     border-bottom: none !important;
 }
+.slick-prev:before, .slick-next:before{
+    color: #000;
+}
 .LF-details .LF-price{
     font-size: 15px;
 }
@@ -949,6 +952,7 @@ a{
 .LF-description .slider-nav .slick-prev:before,.LF-description .slider-nav .slick-next:before{
     color: #000;
 }
+
 .LF-description .slider-nav .slick-slide img{
     padding: 2px;
 }
@@ -966,12 +970,12 @@ a{
     padding-bottom: 0;
     margin-bottom: 0;
 }
-.LF-description  .LF-price{
+.LF-description .LF-price{
     background-color: #000;
     color: #fff;
     padding: 10px;
     position: relative;
-    margin-right: 5px;
+    margin: 0 auto;
 }
 .LF-description h1{
     color: #1065ab;

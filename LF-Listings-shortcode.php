@@ -1,373 +1,379 @@
 <?php
 
 $attr = shortcode_atts( array(
-		'type' => 'any',
-		'sale' => '',
-		'location'=>'',
-		'agent'=>'',
-		'office'=>'',
-		'openhouse'=>''
-	), $atts );
+	'type' => 'any',
+	'sale' => '',
+	'location'=>'',
+	'agent'=>'',
+	'office'=>'',
+	'openhouse'=>'',
+	'search'=>'',
+	'style'=>'',
+	'ids'=>''
+), $atts );
 
-	$listkey = get_query_var('listkey');
+$listkey = get_query_var('listkey');
 
-	if ($listkey) {
+if ($listkey) {
+	?>
+	<style>
+	h1.entry-title{
+		display: none;
+	}
+	</style>
+	<?php
+	$propertyDetails = getLFListingsDetails($listkey);
+
+	if($propertyDetails->error==false){
+		$propertyDetail = $propertyDetails->results;
+		$propertyImages = $propertyDetail->Images;
 		?>
-		<style>
-		h1.entry-title{
-			display: none;
-		}
-		</style>
-		<?php
-		$propertyDetails = getLFListingsDetails($listkey);
-
-		if($propertyDetails->error==false){
-			$propertyDetail = $propertyDetails->results;
-			$propertyImages = $propertyDetail->Images;
-			?>
-			<h1 class="main_title"><?php echo $propertyDetail->UnparsedAddress;?></h1>
-			<div class="LF-description">
-				<div class="LF-row">
-					<div class="LF-col-md-12">
-						<a href="javascript:void(0)" onclick="window.history.back();">Back</a>
-						<p class="image-count"><?php echo $propertyDetail->ImageCount.' Images Found';?></p>
-						<div class="slider slider-nav">
-							<?php
-							foreach ($propertyImages as $propertyImage) {
-								echo '<div><img src="'.$propertyImage.'"></div>';
-							}
-							?>
-						</div>
+		<h1 class="main_title"><?php echo $propertyDetail->UnparsedAddress;?></h1>
+		<div class="LF-description">
+			<div class="LF-row">
+				<div class="LF-col-md-12">
+					<a href="javascript:void(0)" onclick="window.history.back();">Back</a>
+					<p class="image-count"><?php echo $propertyDetail->ImageCount.' Images Found';?></p>
+					<div class="slider slider-nav">
+						<?php
+						foreach ($propertyImages as $propertyImage) {
+							echo '<div><img src="'.$propertyImage.'"></div>';
+						}
+						?>
 					</div>
-					<div class="LF-col-md-12">
-						<div class="LF-address">
-							<p>
-								<?= $propertyDetail->FullAddress ?>
-							</p>
-							<p>
-								<?= 'ID#'. $propertyDetail->ListingId;?>
-							</p>
-						</div><!-- .LF-address -->
-					</div><!-- .LF-col-md-12 -->
-				</div><!-- .LF-row -->
-				<div class="LF-row">
-					<div class="LF-col-md-12">
-						<span class="LF-price">
-							<?php
-							if(empty($propertyDetail->Lease)){
-								echo '$ ',number_format_i18n($propertyDetail->ListPrice);
-							}else{
-								echo '$ ',$propertyDetail->Lease,'/',$propertyDetail->LeaseTerm;
-							}
+				</div>
+				<div class="LF-col-md-12">
+					<div class="LF-address">
+						<p>
+							<?= $propertyDetail->FullAddress ?>
+						</p>
+						<p>
+							<?= 'ID#'. $propertyDetail->ListingId;?>
+						</p>
+					</div><!-- .LF-address -->
+				</div><!-- .LF-col-md-12 -->
+			</div><!-- .LF-row -->
+			<div class="LF-row">
+				<div class="LF-col-md-12">
+					<!-- Trigger/Open The Modal -->
+					<?php if(!empty(LF_get_settings('LF_mapApiKey'))):?>
+						<?php
+						if(!empty($propertyDetail->Latitude) and !empty($propertyDetail->Longitude)){
 							?>
-						</span>
-						<!-- Trigger/Open The Modal -->
-						<?php if(!empty(LF_get_settings('LF_mapApiKey'))):?>
-							<?php
-							if(!empty($propertyDetail->Latitude) and !empty($propertyDetail->Longitude)){
-								?>
-								<button class="LF-btn LF-btn-map" id="myBtn">View in map</button>
-							<?php }?>
-							<!-- The Modal -->
-							<div id="myModal" class="modal">
-								<!-- Modal content -->
-								<div class="modal-content">
-									<div class="modal-header">
-										<button class="close">&times;</button>
-									</div>
-									<div class="modal-body">
-										<div id="map"></div>
-									</div>
+							<button class="LF-btn LF-btn-map" id="myBtn">View in map</button>
+						<?php }?>
+						<!-- The Modal -->
+						<div id="myModal" class="modal">
+							<!-- Modal content -->
+							<div class="modal-content">
+								<div class="modal-header">
+									<button class="close">&times;</button>
+								</div>
+								<div class="modal-body">
+									<div id="map"></div>
 								</div>
 							</div>
-						<?php endif?>
-					</div><!-- .LF-col-md-12 -->
-				</div><!-- .LF-row -->
-				<div class="LF-row">
-					<div class="LF-col-md-6">
-						<div class="slider slider-single">
-							<?php
-							foreach ($propertyImages as $propertyImage) {
-								$largeImage = str_replace('property/', 'property/large/', $propertyImage);
-								echo '<div><a class="fancybox-thumbs" data-fancybox-group="thumb" href="'.$largeImage.'"><img src="'.$largeImage.'"></a></div>';
-							}
-							?>
 						</div>
-					</div><!-- .LF-col-md-6 -->
-					<div class="LF-col-md-6">
-						<div class="LF-inquiry-details">
-							<div class="mailmessage"></div>
-							<form method="post" name="formInquiry" id="formInquiry">
-								<div class="LF-form-group">
-									<input type="text" name="txtSubject" id="txtSubject" class="LF-form-control" placeholder="" value="ID#<?php echo $propertyDetail->ListingId;?>" readonly>
-								</div>
-								<div class="LF-form-group">
-									<input type="text" name="txtName" id="txtName" class="LF-form-control" placeholder="Name">
-								</div>
-								<div class="LF-form-group">
-									<input type="email" name="txtemail" id="txtemail" class="LF-form-control" placeholder="Email">
-								</div>
-								<div class="LF-form-group">
-									<textarea name="txtMessage" id="txtMessage" rows="3" class="LF-form-control" placeholder="Message"></textarea>
-								</div>
-								<div class="LF-form-group">
-									<button class="LF-btn send_inquiry_mail" type="button">Send</button>
-								</div>
-							</form>
-						</div><!-- .LF-inquiry-details -->
-					</div><!-- .LF-col-md-6 -->
-				</div><!-- .LF-row -->
-
-				<div class="LF-row">
-					<h1>Description</h1>
-					<p>
-						<?= $propertyDetail->PublicRemarks;?>
-					</p>
-					<p>
-						<img src="<?php echo plugins_url('assets/images/realtor_logos.png',__FILE__);?>">
-					</p>
-					<h1>Building</h1>
-					<ul id="LF-building-details">
+					<?php endif?>
+				</div><!-- .LF-col-md-12 -->
+			</div><!-- .LF-row -->
+			<div class="LF-row">
+				<div class="LF-col-md-6" style="text-align: center;">
+					<div class="slider slider-single">
 						<?php
-						if(!empty($propertyDetail->BuildingAreaTotal)){
-							echo '<li><b>Building Area: </b>'. $propertyDetail->BuildingAreaTotal.' '. $propertyDetail->BuildingAreaUnits.'</li>';
-						}
-
-						if(!empty($propertyDetail->BathroomsTotal)){
-							echo '<li><b>Bathrooms (Total): </b>'. $propertyDetail->BathroomsTotal.'</li>';
-						}
-						if(!empty($propertyDetail->BathroomsHalf)){
-							echo '<li><b>Bathrooms (Partial): </b>'. $propertyDetail->BathroomsHalf.'</li>';
-						}
-						if(!empty($propertyDetail->BedroomsTotal)){
-							echo '<li><b>Bedrooms: </b>'. $propertyDetail->BedroomsTotal.'</li>';
-						}
-						if(!empty($propertyDetail->Heating)){
-							echo '<li><b>Heating: </b>'. $propertyDetail->Heating.' '.$propertyDetail->HeatingFuel.'</li>';
-						}
-						if(!empty($propertyDetail->Sewer)){
-							echo '<li><b>Utility Sewer: </b>'. $propertyDetail->Sewer.' '.$propertyDetail->HeatingFuel.'</li>';
+						foreach ($propertyImages as $propertyImage) {
+							$largeImage = str_replace('property/', 'property/large/', $propertyImage);
+							echo '<div><a class="fancybox-thumbs" data-fancybox-group="thumb" href="'.$largeImage.'"><img src="'.$largeImage.'"></a></div>';
 						}
 						?>
-					</ul>
 
-					<h1>Details</h1>
-					<ul id="LF-building-details">
+					</div>
+					<p class="LF-price">
 						<?php
-						if(!empty($propertyDetail->ArchitecturalStyle)){
-							echo '<li><b>Architectural Style: </b>'. $propertyDetail->ArchitecturalStyle.'</li>';
-						}
-						if(!empty($propertyDetail->YearBuilt)){
-							echo '<li><b>Year Built: </b>'. $propertyDetail->YearBuilt.'</li>';
-						}
-						if(!empty($propertyDetail->PropertyType)){
-							echo '<li><b>Property Type: </b>'. $propertyDetail->PropertyType.'</li>';
-						}
-						if(!empty($propertyDetail->OwnershipType)){
-							echo '<li><b>Ownership Type: </b>'. $propertyDetail->OwnershipType.'</li>';
-						}
-						if(!empty($propertyDetail->Levels)){
-							echo '<li><b>Levels: </b>'. $propertyDetail->Levels.'</li>';
-						}
-						if(!empty($propertyDetail->GarageSpaces)){
-							echo '<li><b>Garage: </b>'. $propertyDetail->GarageSpaces.'</li>';
-						}
-						if(!empty($propertyDetail->FireplaceFuel)){
-							echo '<li><b>Fireplace Fuel: </b>'. $propertyDetail->FireplaceFuel.'</li>';
-						}
-						if(!empty($propertyDetail->Cooling)){
-							echo '<li><b>Cooling: </b>'. $propertyDetail->Cooling.'</li>';
-						}
-						if(!empty($propertyDetail->Flooring)){
-							echo '<li><b>Flooring: </b>'. $propertyDetail->Flooring.'</li>';
-						}
-						if(!empty($propertyDetail->View) and $propertyDetail->WaterfrontYN==true){
-							echo '<li><b>Waterfront: </b>'.'Yes ('.$propertyDetail->WaterBodyName.')</li>';
-						}
-						if(!empty($propertyDetail->View)){
-							echo '<li><b>View: </b>'.$propertyDetail->View.'</li>';
-						}
-						if(!empty($propertyDetail->GarageYN) and $propertyDetail->GarageYN==true){
-							echo '<li><b>View: </b>Yes</li>';
+						if(empty($propertyDetail->Lease)){
+							echo '$ ',number_format_i18n($propertyDetail->ListPrice);
+						}else{
+							echo '$ ',$propertyDetail->Lease,'/',$propertyDetail->LeaseTerm;
 						}
 						?>
-					</ul>
+					</p>
+				</div><!-- .LF-col-md-6 -->
+				<div class="LF-col-md-6">
+					<div class="LF-inquiry-details">
+						<div class="mailmessage"></div>
+						<form method="post" name="formInquiry" id="formInquiry">
+							<div class="LF-form-group">
+								<input type="text" name="txtSubject" id="txtSubject" class="LF-form-control" placeholder="" value="ID#<?php echo $propertyDetail->ListingId;?>" readonly>
+							</div>
+							<div class="LF-form-group">
+								<input type="text" name="txtName" id="txtName" class="LF-form-control" placeholder="Name">
+							</div>
+							<div class="LF-form-group">
+								<input type="email" name="txtemail" id="txtemail" class="LF-form-control" placeholder="Email">
+							</div>
+							<div class="LF-form-group">
+								<textarea name="txtMessage" id="txtMessage" rows="3" class="LF-form-control" placeholder="Message"></textarea>
+							</div>
+							<div class="LF-form-group">
+								<button class="LF-btn send_inquiry_mail" type="button">Send</button>
+							</div>
+						</form>
+					</div><!-- .LF-inquiry-details -->
+				</div><!-- .LF-col-md-6 -->
+			</div><!-- .LF-row -->
+			<div class="LF-clear"></div>
+
+			<div class="LF-row">
+				<h1>Description</h1>
+				<p>
+					<?= $propertyDetail->PublicRemarks;?>
+				</p>
+				<p>
+					<img src="<?php echo plugins_url('assets/images/realtor_logos.png',__FILE__);?>">
+				</p>
+				<h1>Building</h1>
+				<ul id="LF-building-details">
 					<?php
-					if(!empty($propertyDetail->RoomType1)){
-						?>
-						<h1>Rooms</h1>
-						<ul id="LF-room-details">
-							<li>
-								<b>Type</b>
-							</li>
-							<li>
-								<b>Level</b>
-							</li>
-							<li>
-								<b>Dimension</b>
-							</li>
-							<?php
-							if(!empty($propertyDetail->RoomType1)){
-								echo '<li>'.$propertyDetail->RoomType1.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel1.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions1.'</li>';
-							}
+					if(!empty($propertyDetail->BuildingAreaTotal)){
+						echo '<li><b>Building Area: </b>'. $propertyDetail->BuildingAreaTotal.' '. $propertyDetail->BuildingAreaUnits.'</li>';
+					}
 
-							if(!empty($propertyDetail->RoomType2)){
-								echo '<li>'.$propertyDetail->RoomType2.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel2.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions2.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType3)){
-								echo '<li>'.$propertyDetail->RoomType3.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel3.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions3.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType4)){
-								echo '<li>'.$propertyDetail->RoomType4.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel4.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions4.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType5)){
-								echo '<li>'.$propertyDetail->RoomType5.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel5.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions5.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType6)){
-								echo '<li>'.$propertyDetail->RoomType6.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel6.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions6.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType7)){
-								echo '<li>'.$propertyDetail->RoomType7.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel7.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions7.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType8)){
-								echo '<li>'.$propertyDetail->RoomType8.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel8.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions8.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType9)){
-								echo '<li>'.$propertyDetail->RoomType9.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel9.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions9.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType10)){
-								echo '<li>'.$propertyDetail->RoomType10.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel10.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions10.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType11)){
-								echo '<li>'.$propertyDetail->RoomType11.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel11.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions11.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType12)){
-								echo '<li>'.$propertyDetail->RoomType12.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel12.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions12.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType13)){
-								echo '<li>'.$propertyDetail->RoomType13.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel13.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions13.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType14)){
-								echo '<li>'.$propertyDetail->RoomType14.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel14.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions14.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType15)){
-								echo '<li>'.$propertyDetail->RoomType15.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel15.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions15.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType16)){
-								echo '<li>'.$propertyDetail->RoomType16.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel16.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions16.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType17)){
-								echo '<li>'.$propertyDetail->RoomType17.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel17.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions17.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType18)){
-								echo '<li>'.$propertyDetail->RoomType18.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel18.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions18.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType19)){
-								echo '<li>'.$propertyDetail->RoomType19.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel19.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions19.'</li>';
-							}
-
-							if(!empty($propertyDetail->RoomType20)){
-								echo '<li>'.$propertyDetail->RoomType20.'</li>';
-								echo '<li>'.$propertyDetail->RoomLevel20.'</li>';
-								echo '<li>'.$propertyDetail->RoomDimensions20.'</li>';
-							}
-
-							?>
-						</ul>
-						<?php
+					if(!empty($propertyDetail->BathroomsTotal)){
+						echo '<li><b>Bathrooms (Total): </b>'. $propertyDetail->BathroomsTotal.'</li>';
+					}
+					if(!empty($propertyDetail->BathroomsHalf)){
+						echo '<li><b>Bathrooms (Partial): </b>'. $propertyDetail->BathroomsHalf.'</li>';
+					}
+					if(!empty($propertyDetail->BedroomsTotal)){
+						echo '<li><b>Bedrooms: </b>'. $propertyDetail->BedroomsTotal.'</li>';
+					}
+					if(!empty($propertyDetail->Heating)){
+						echo '<li><b>Heating: </b>'. $propertyDetail->Heating.' '.$propertyDetail->HeatingFuel.'</li>';
+					}
+					if(!empty($propertyDetail->Sewer)){
+						echo '<li><b>Utility Sewer: </b>'. $propertyDetail->Sewer.' '.$propertyDetail->HeatingFuel.'</li>';
 					}
 					?>
-				</div>
-				<div class="detail-footer">
-					<?php
-					echo '<p>This listing is brought to you by '.$propertyDetail->ListOfficeName.'</p>
-					<p>Provided by: '.$propertyDetail->ListAOR.'</p>';
-					?>
-				</div>
-				<div class="LF-disclaimer"><?php echo LF_get_settings('LF_detail_footer');?></div>
-			</div><!-- .LF-description -->
+				</ul>
 
-			<script>
-			var Latitude = <?php echo "$propertyDetail->Latitude";?>;
-			var Longitude = <?php echo "$propertyDetail->Longitude";?>;
-			// Initialize and add the map
-			function initMap() {
-				// The location of Uluru
-				var uluru = {lat: Latitude, lng: Longitude};
-				// The map, centered at Uluru
-				var map = new google.maps.Map(
-					document.getElementById('map'), {zoom: 18, center: uluru});
-					// The marker, positioned at Uluru
-					var marker = new google.maps.Marker({position: uluru, map: map});
-				}
-				</script>
+				<h1>Details</h1>
+				<ul id="LF-building-details">
+					<?php
+					if(!empty($propertyDetail->ArchitecturalStyle)){
+						echo '<li><b>Architectural Style: </b>'. $propertyDetail->ArchitecturalStyle.'</li>';
+					}
+					if(!empty($propertyDetail->YearBuilt)){
+						echo '<li><b>Year Built: </b>'. $propertyDetail->YearBuilt.'</li>';
+					}
+					if(!empty($propertyDetail->PropertyType)){
+						echo '<li><b>Property Type: </b>'. $propertyDetail->PropertyType.'</li>';
+					}
+					if(!empty($propertyDetail->OwnershipType)){
+						echo '<li><b>Ownership Type: </b>'. $propertyDetail->OwnershipType.'</li>';
+					}
+					if(!empty($propertyDetail->Levels)){
+						echo '<li><b>Levels: </b>'. $propertyDetail->Levels.'</li>';
+					}
+					if(!empty($propertyDetail->GarageSpaces)){
+						echo '<li><b>Garage: </b>'. $propertyDetail->GarageSpaces.'</li>';
+					}
+					if(!empty($propertyDetail->FireplaceFuel)){
+						echo '<li><b>Fireplace Fuel: </b>'. $propertyDetail->FireplaceFuel.'</li>';
+					}
+					if(!empty($propertyDetail->Cooling)){
+						echo '<li><b>Cooling: </b>'. $propertyDetail->Cooling.'</li>';
+					}
+					if(!empty($propertyDetail->Flooring)){
+						echo '<li><b>Flooring: </b>'. $propertyDetail->Flooring.'</li>';
+					}
+					if(!empty($propertyDetail->View) and $propertyDetail->WaterfrontYN==true){
+						echo '<li><b>Waterfront: </b>'.'Yes ('.$propertyDetail->WaterBodyName.')</li>';
+					}
+					if(!empty($propertyDetail->View)){
+						echo '<li><b>View: </b>'.$propertyDetail->View.'</li>';
+					}
+					if(!empty($propertyDetail->GarageYN) and $propertyDetail->GarageYN==true){
+						echo '<li><b>View: </b>Yes</li>';
+					}
+					?>
+				</ul>
 				<?php
+				if(!empty($propertyDetail->RoomType1)){
+					?>
+					<h1>Rooms</h1>
+					<ul id="LF-room-details">
+						<li>
+							<b>Type</b>
+						</li>
+						<li>
+							<b>Level</b>
+						</li>
+						<li>
+							<b>Dimension</b>
+						</li>
+						<?php
+						if(!empty($propertyDetail->RoomType1)){
+							echo '<li>'.$propertyDetail->RoomType1.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel1.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions1.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType2)){
+							echo '<li>'.$propertyDetail->RoomType2.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel2.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions2.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType3)){
+							echo '<li>'.$propertyDetail->RoomType3.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel3.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions3.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType4)){
+							echo '<li>'.$propertyDetail->RoomType4.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel4.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions4.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType5)){
+							echo '<li>'.$propertyDetail->RoomType5.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel5.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions5.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType6)){
+							echo '<li>'.$propertyDetail->RoomType6.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel6.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions6.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType7)){
+							echo '<li>'.$propertyDetail->RoomType7.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel7.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions7.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType8)){
+							echo '<li>'.$propertyDetail->RoomType8.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel8.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions8.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType9)){
+							echo '<li>'.$propertyDetail->RoomType9.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel9.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions9.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType10)){
+							echo '<li>'.$propertyDetail->RoomType10.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel10.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions10.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType11)){
+							echo '<li>'.$propertyDetail->RoomType11.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel11.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions11.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType12)){
+							echo '<li>'.$propertyDetail->RoomType12.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel12.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions12.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType13)){
+							echo '<li>'.$propertyDetail->RoomType13.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel13.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions13.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType14)){
+							echo '<li>'.$propertyDetail->RoomType14.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel14.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions14.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType15)){
+							echo '<li>'.$propertyDetail->RoomType15.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel15.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions15.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType16)){
+							echo '<li>'.$propertyDetail->RoomType16.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel16.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions16.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType17)){
+							echo '<li>'.$propertyDetail->RoomType17.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel17.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions17.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType18)){
+							echo '<li>'.$propertyDetail->RoomType18.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel18.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions18.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType19)){
+							echo '<li>'.$propertyDetail->RoomType19.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel19.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions19.'</li>';
+						}
+
+						if(!empty($propertyDetail->RoomType20)){
+							echo '<li>'.$propertyDetail->RoomType20.'</li>';
+							echo '<li>'.$propertyDetail->RoomLevel20.'</li>';
+							echo '<li>'.$propertyDetail->RoomDimensions20.'</li>';
+						}
+
+						?>
+					</ul>
+					<?php
+				}
+				?>
+			</div>
+			<div class="detail-footer">
+				<?php
+				echo '<p>This listing is brought to you by '.$propertyDetail->ListOfficeName.'</p>
+				<p>Provided by: '.$propertyDetail->ListAOR.'</p>';
+				?>
+			</div>
+			<div class="LF-disclaimer"><?php echo LF_get_settings('LF_detail_footer');?></div>
+		</div><!-- .LF-description -->
+
+		<script>
+		var Latitude = <?php echo "$propertyDetail->Latitude";?>;
+		var Longitude = <?php echo "$propertyDetail->Longitude";?>;
+		// Initialize and add the map
+		function initMap() {
+			// The location of Uluru
+			var uluru = {lat: Latitude, lng: Longitude};
+			// The map, centered at Uluru
+			var map = new google.maps.Map(
+				document.getElementById('map'), {zoom: 18, center: uluru});
+				// The marker, positioned at Uluru
+				var marker = new google.maps.Marker({position: uluru, map: map});
 			}
-			else{
-				echo $propertyDetails->message;
-			}
-			?>
+			</script>
 			<?php
 		}
 		else{
-			?>
-			<div id="LF-listigs">
-				<?php
+			echo $propertyDetails->message;
+		}
+		?>
+		<?php
+	}
+	else{
+		?>
+		<div id="LF-listigs">
+			<?php
+			if(empty($attr['search']) OR $attr['search']=='yes' OR $attr['search']=="only"):
 				if(LF_get_settings('LF_show_search')=='yes'):
 					?>
 					<div class="LF-row">
@@ -498,96 +504,112 @@ $attr = shortcode_atts( array(
 						</form>
 					</div>
 					<?php
-				endif;
+				endif; //end check search enable/disable from admin
+			endif; //end search tag in shortcode
 
-				$token = getToken();
-				$agent_id = LF_get_settings('agent_id');
-				$office_id = LF_get_settings('office_id');
-				if(!empty($attr['agent'])){
-					$agent = '&agents='.$attr['agent'];
-				}
-				else{
-					$agent = '';
-				}
+			$token = getToken();
+			$agent_id = LF_get_settings('agent_id');
+			$office_id = LF_get_settings('office_id');
+			if(!empty($attr['agent'])){
+				$agent = '&agents='.$attr['agent'];
+			}
+			else{
+				$agent = '';
+			}
 
-				if(!empty($attr['office'])){
-					$office = '&offices='.$attr['office'];
-				}
-				else{
-					$office = '';
-				}
-				if(!empty($attr['openhouse'])){
-					$openhouse = '&openhouse='.$attr['openhouse'];
-				}
-				else{
-					$openhouse = '';
-				}
+			if(!empty($attr['office'])){
+				$office = '&offices='.$attr['office'];
+			}
+			else{
+				$office = '';
+			}
+			if(!empty($attr['openhouse'])){
+				$openhouse = '&openhouse='.$attr['openhouse'];
+			}
+			else{
+				$openhouse = '';
+			}
 
-				if(!empty($attr['location'])){
-					$search = '&area='.urlencode($attr['location']);
-				}
-				else{
-					$search = '';
-				}
+			if(!empty($attr['location'])){
+				$search = '&area='.urlencode($attr['location']);
+			}
+			else{
+				$search = '';
+			}
 
-				$paginate = LF_get_settings('LF_page');
-				$sort = LF_get_settings('LF_priceOrder');
+			if(!empty($attr['ids'])){
+				$ids = '&search='.$attr['ids'];
+			}
+			else{
+				$ids = '';
+			}
 
-				if(isset($sort)){
-					$sort = $sort;
-				}
-				else{
-					$sort = 'ASC';
-				}
-				if(!empty($attr['sale'])){
-					$sale = '&sale='.$attr['sale'];
-				}
-				else{
-					$sale = '';
-				}
+			$paginate = LF_get_settings('LF_page');
+			$sort = LF_get_settings('LF_priceOrder');
 
-				$curl = curl_init();
-				curl_setopt_array($curl, array(
-					CURLOPT_URL => API_URL."/properties?token=".$token."&agent_id=".$agent_id."&office_id=".$office_id."&paginate=".$paginate."&type=".$attr['type']."&sort=".$sort.$sale.$search.$agent.$office,
-					CURLOPT_RETURNTRANSFER => true,
-					CURLOPT_ENCODING => "",
-					CURLOPT_MAXREDIRS => 10,
-					CURLOPT_TIMEOUT => 30,
-					CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-					CURLOPT_CUSTOMREQUEST => "GET",
-				));
+			if(isset($sort)){
+				$sort = $sort;
+			}
+			else{
+				$sort = 'ASC';
+			}
+			if(!empty($attr['sale'])){
+				$sale = '&sale='.$attr['sale'];
+			}
+			else{
+				$sale = '';
+			}
 
-				$response = curl_exec($curl);
-				$err = curl_error($curl);
+			$curl = curl_init();
+			curl_setopt_array($curl, array(
+				CURLOPT_URL => API_URL."/properties?token=".$token."&agent_id=".$agent_id."&office_id=".$office_id."&paginate=".$paginate."&type=".$attr['type']."&sort=".$sort.$sale.$search.$agent.$office.$ids,
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_ENCODING => "",
+				CURLOPT_MAXREDIRS => 10,
+				CURLOPT_TIMEOUT => 30,
+				CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+				CURLOPT_CUSTOMREQUEST => "GET",
+			));
 
-				curl_close($curl);
+			$response = curl_exec($curl);
+			$err = curl_error($curl);
 
-				if ($err) {
-					echo "cURL Error #:" . $err;
-				} else {
-					// echo $response;
+			curl_close($curl);
 
-					$page_id = get_the_ID();
-					$pageSlug = get_post_field( 'post_name', $post_id );
+			if ($err) {
+				echo "cURL Error #:" . $err;
+			} else {
+				// echo $response;
 
-					$result = json_decode($response);
-					?>
-					<div class="LF-row">
-						<input type="hidden" name="pageSlug" id="pageSlug" value="<?php echo $pageSlug;?>">
+				$page_id = get_the_ID();
+				$pageSlug = get_post_field( 'post_name', $post_id );
 
-						<input type="hidden" name="defaultSearchType" id="defaultSearchType" value="<?php echo $attr['type'];?>">
+				$result = json_decode($response);
+				?>
+				<div class="LF-row">
+					<input type="hidden" name="pageSlug" id="pageSlug" value="<?php echo $pageSlug;?>">
 
-						<input type="hidden" name="defaultagents" id="defaultagents" value="<?php echo $attr['agent'];?>">
+					<input type="hidden" name="defaultSearchType" id="defaultSearchType" value="<?php echo $attr['type'];?>">
 
-						<input type="hidden" name="defaultoffice" id="defaultoffice" value="<?php echo $attr['office'];?>">
+					<input type="hidden" name="defaultagents" id="defaultagents" value="<?php echo $attr['agent'];?>">
 
-						<input type="hidden" name="defaultlocation" id="defaultlocation" value="<?php echo $attr['location'];?>">
+					<input type="hidden" name="defaultoffice" id="defaultoffice" value="<?php echo $attr['office'];?>">
 
-						<input type="hidden" name="defaultsale" id="defaultsale" value="<?php echo $attr['sale'];?>">
+					<input type="hidden" name="defaultlocation" id="defaultlocation" value="<?php echo $attr['location'];?>">
 
-						<input type="hidden" name="defaultopenhouse" id="defaultopenhouse" value="<?php echo $attr['openhouse'];?>">
-						<?php
-						if($result->error==false):
+					<input type="hidden" name="defaultsale" id="defaultsale" value="<?php echo $attr['sale'];?>">
+
+					<input type="hidden" name="defaultopenhouse" id="defaultopenhouse" value="<?php echo $attr['openhouse'];?>">
+
+					<input type="hidden" name="search" id="search" value="<?php echo $attr['search'];?>">
+
+					<input type="hidden" name="style" id="style" value="<?php echo $attr['style'];?>">
+
+					<input type="hidden" name="ids" id="ids" value="<?php echo $attr['ids'];?>">
+
+					<?php
+					if(empty($attr['search']) or $attr['search']!="only" or $attr['search']=="no" or $attr['search'] == 'yes'){
+						if($result->error==false){
 
 							$current_page = $result->results->current_page;
 							$last = ceil($result->results->total / $result->results->per_page);
@@ -638,9 +660,8 @@ $attr = shortcode_atts( array(
 							else{
 								$descchecked = '';
 							}
-
 							echo '<div class="LF-col-md-7">'.$html.'</div>';
-							if(LF_get_settings('LF_show_priceOrder')=='yes'):
+							if(LF_get_settings('LF_show_priceOrder')=='yes'){
 								echo '<div class="LF-col-md-5">
 								<div class="LF-sortblock">
 								<label>Order by price: </lable>
@@ -648,7 +669,7 @@ $attr = shortcode_atts( array(
 								High <input type="radio" class="LF-sort" name="LF-sort" value="DESC" '.$descchecked.'>
 								</div>
 								</div>';
-							endif;
+							}
 							echo '<div class="clear"></div>';
 							//get column from admin setting
 							$column = LF_get_settings('LF_column');
@@ -672,8 +693,12 @@ $attr = shortcode_atts( array(
 								$col=3;
 								break;
 							}
-							foreach($result->results->data as $propertyList):
-								if($col==0):
+							$style = 'horizontal';
+							if(!empty($attr['style']) and $attr['style'] == 'horizontal'){
+								echo '<div class="horizantal-slide">';
+							}
+							foreach($result->results->data as $propertyList){
+								if($col==0){
 									?>
 									<div class="LF-col-md-12">
 										<div class="LF-listing-details LF-listview">
@@ -702,7 +727,8 @@ $attr = shortcode_atts( array(
 										</div>
 									</div>
 									<?php
-								else:
+								}
+								else{
 									?>
 									<div class="LF-col-md-<?= $col?> LF-col-sm-6 LF-col-xs-12">
 										<div class="LF-listing-details LF-gridview">
@@ -725,11 +751,14 @@ $attr = shortcode_atts( array(
 										</div>
 									</div>
 									<?php
-								endif;
-							endforeach;
+								}
+							}
+							if(!empty($attr['style']) and $attr['style'] == 'horizontal'){
+								echo '</div>';
+							}
 							echo '<div class="clear"></div>';
 							echo '<div class="LF-col-md-7">'.$html.'</div>';
-							if(LF_get_settings('LF_show_priceOrder')=='yes'):
+							if(LF_get_settings('LF_show_priceOrder')=='yes'){
 								echo '<div class="LF-col-md-5">
 								<div class="LF-sortblock">
 								<label>Order by price: </lable>
@@ -738,15 +767,15 @@ $attr = shortcode_atts( array(
 								</div>
 								</div>';
 								echo '<div class="clear"></div>';
-							endif;
-						else:
+							}
+						}
+						else{
 							echo '<div class="LF-col-md-12"><p>Sorry, your search did not return any results. Please try again with different search parameters.</p></div>';
-						endif;
-						?>
-						<?php
-					}?>
-				</div>
-				<div class="LF-disclaimer"><?php echo LF_get_settings('LF_detail_footer');?></div>
-				<?php
-			}
-?>
+						}
+					}
+				}?>
+			</div>
+			<div class="LF-disclaimer"><?php echo LF_get_settings('LF_detail_footer');?></div>
+			<?php
+		}
+		?>

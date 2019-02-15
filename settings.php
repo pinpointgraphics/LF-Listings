@@ -2,8 +2,8 @@
 add_action('admin_menu','LF_create_admin_main_menu');
 
 /**
- * this function creates entries (Menu and submenu) in wordpress admin section
- */
+* this function creates entries (Menu and submenu) in wordpress admin section
+*/
 function LF_create_admin_main_menu()
 {
 	add_menu_page(__('LF Listings'),__('LF Listings'),'manage_options','LF-listings','LF_main_menu_view_creator','dashicons-editor-ul',50);
@@ -11,14 +11,14 @@ function LF_create_admin_main_menu()
 }
 
 /**
- * this function renders main menu.
- * generally "included how to use tags" information.
- */
+* this function renders main menu.
+* generally "included how to use tags" information.
+*/
 function LF_main_menu_view_creator()
 {
 	echo '<div class="LF-header">
-		<img src="'.plugins_url('assets/images/LF-Listings-logo-sm.png',__FILE__).'" alt="" width="250">
-		</div>';
+	<img src="'.plugins_url('assets/images/LF-Listings-logo-sm.png',__FILE__).'" alt="" width="250">
+	</div>';
 	echo '<div class="wrap">';
 	echo '<h1 class="wp-heading-inline">'.get_admin_page_title().'</h1>';
 	?>
@@ -55,22 +55,36 @@ function LF_main_menu_view_creator()
 	<p>
 		<b>OR</b>
 	</p>
+	<p>[LF-Listings search="yes"]</p>
+	<p>
+		<b>OR</b>
+	</p>
+	<p>[LF-Listings style="grid"]</p>
+	<p>
+		<b>OR</b>
+	</p>
+	<p>[LF-Listings ids="133172"]</p>
+	<br>
+	<strong>Note: </strong> Comma separated ids
+	<p>
+		<b>OR</b>
+	</p>
 	<p>[LF-Listings type="residential" sale="rent"]</p>
 	<p>
-		<b>NOTE: </b>Where <i> type=residential, commercial, condo, recreational, agriculture or land </i> and <i> sale=sale or rent </i>.
+		<b>NOTE: </b>Where <i> type=residential, commercial, condo, recreational, agriculture or land </i> and <i> sale=sale or rent </i> and <i>search=yes, no and only</i> and <i>style=grid and horizontal</i>.
 	</p>
 	<?php
 	echo '</div>';
 }
 
 /**
- * this function renders the setting page view.
- */
+* this function renders the setting page view.
+*/
 function LF_settings_view_creator()
 {
 	echo '<div class="LF-header">
-		<img src="'.plugins_url('assets/images/LF-Listings-logo-sm.png',__FILE__).'" alt="" width="250">
-		</div>';
+	<img src="'.plugins_url('assets/images/LF-Listings-logo-sm.png',__FILE__).'" alt="" width="250">
+	</div>';
 	echo '<div class="wrap">';
 	echo '<h1 class="wp-heading-inline">'.get_admin_page_title().'</h1>';
 	?>
@@ -250,8 +264,8 @@ function LF_settings_view_creator()
 add_action('admin_enqueue_scripts', 'LF_admin_css');
 
 /**
- * this function loads up the necessary css for admin view.
- */
+* this function loads up the necessary css for admin view.
+*/
 function LF_admin_css()
 {
 	if(isset($_GET['page']) && ($_GET['page']=='LF-setting' || $_GET['page']=='LF-listings')){
@@ -269,8 +283,8 @@ function LF_admin_css()
 }
 
 /**
- * this function loads up the necessary JS for admin footer.
- */
+* this function loads up the necessary JS for admin footer.
+*/
 add_action('admin_footer','LF_admin_js');
 
 function LF_admin_js()
@@ -404,8 +418,8 @@ function LF_admin_js()
 	add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 
 	/**
-	 * this function saves the data of account info section to the database.
-	 */
+	* this function saves the data of account info section to the database.
+	*/
 	function LF_save_account_info_data()
 	{
 		check_ajax_referer( 'savepluginData', 'token' );
@@ -448,8 +462,8 @@ function LF_admin_js()
 	add_action('wp_ajax_LF_save_listing_config_data','LF_save_listing_config_data');
 
 	/**
-	 * this function saves the data of Listing config section to the database.
-	 */
+	* this function saves the data of Listing config section to the database.
+	*/
 	function LF_save_listing_config_data()
 	{
 		check_ajax_referer( 'savepluginData', 'token' );
@@ -507,8 +521,8 @@ function LF_admin_js()
 	add_action('wp_ajax_LF_save_custom_css_data','LF_save_custom_css_data');
 
 	/**
-	 * this function saves the data of Custom css section to the database.
-	 */
+	* this function saves the data of Custom css section to the database.
+	*/
 	function LF_save_custom_css_data(){
 		check_ajax_referer( 'savepluginData', 'token' );
 		$customCss = $_POST['LF_customCss'];
@@ -637,6 +651,42 @@ function LF_admin_js()
 							slidesToScroll: 2,
 						}
 					}]
+				});
+
+				jQuery('.horizantal-slide').slick({
+					dots: true,
+					infinite: false,
+					speed: 300,
+					slidesToShow: 3,
+					slidesToScroll: 3,
+					responsive: [
+						{
+							breakpoint: 1024,
+							settings: {
+								slidesToShow: 3,
+								slidesToScroll: 3,
+								infinite: true,
+								dots: true
+							}
+						},
+						{
+							breakpoint: 600,
+							settings: {
+								slidesToShow: 2,
+								slidesToScroll: 2
+							}
+						},
+						{
+							breakpoint: 480,
+							settings: {
+								slidesToShow: 1,
+								slidesToScroll: 1
+							}
+						}
+						// You can unslick at a given breakpoint now by adding:
+						// settings: "unslick"
+						// instead of a settings object
+					]
 				});
 
 				jQuery('.slider-single').on('afterChange', function(event, slick, currentSlide) {
