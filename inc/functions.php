@@ -109,7 +109,7 @@ function getCities()
 function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bedroom='',$bathroom='',$property_Type='residential',$priceFrom='',$priceTo='',$waterFront='',$sort,$offices='',$agents='',$openhouse='',$slug,$search='',$style='',$ids='')
 {
 	if(empty($search) OR $search=='yes' OR $search=='only'):
-		if(LF_get_settings('LF_show_search')=='yes'):
+		if(LF_get_settings('LF_show_search')=='yes' || ($search=='yes' AND LF_get_settings('LF_show_search')!='yes')):
 			?>
 			<div class="LF-row">
 				<form method="post" name="search">

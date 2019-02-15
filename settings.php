@@ -654,11 +654,11 @@ function LF_admin_js()
 				});
 
 				jQuery('.horizantal-slide').slick({
-					dots: true,
+					dots: false,
 					infinite: false,
 					speed: 300,
-					slidesToShow: 3,
-					slidesToScroll: 3,
+					slidesToShow: 4,
+					slidesToScroll: 4,
 					responsive: [
 						{
 							breakpoint: 1024,
@@ -683,9 +683,6 @@ function LF_admin_js()
 								slidesToScroll: 1
 							}
 						}
-						// You can unslick at a given breakpoint now by adding:
-						// settings: "unslick"
-						// instead of a settings object
 					]
 				});
 

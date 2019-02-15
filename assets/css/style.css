@@ -920,8 +920,8 @@ a{
     width: 100%;
     border-bottom: none !important;
 }
-.slick-prev:before, .slick-next:before{
-    color: #000;
+.horizantal-slide .slick-prev:before, .horizantal-slide .slick-next:before{
+    color: #000 !important;
 }
 .LF-details .LF-price{
     font-size: 15px;
