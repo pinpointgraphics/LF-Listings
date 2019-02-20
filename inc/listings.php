@@ -23,6 +23,22 @@ function LF_pagination(){
 	$search = sanitize_text_field($_POST['search']);
 	$style = sanitize_text_field($_POST['style']);
 	$ids = sanitize_text_field($_POST['ids']);
+	$pagination = sanitize_text_field($_POST['pagination']);
+	$priceorder = sanitize_text_field($_POST['priceorder']);
+
+	if(isset($pagination)){
+		$pagination = $pagination;
+	}
+	else{
+		$pagination = '';
+	}
+
+	if(isset($priceorder)){
+		$priceorder = $priceorder;
+	}
+	else{
+		$priceorder = '';
+	}
 
 	if(isset($style)){
 		$style = $style;
@@ -126,7 +142,7 @@ function LF_pagination(){
 	else{
 		$waterFront='';
 	}
-	getLFListings($page,$mainSearch,$municipality,$sale,$bedroom,$bathroom,$property_Type,$priceFrom,$priceTo,$waterFront,$sort,$offices,$agents,$openhouse,$slug,$search,$style,$ids);
+	getLFListings($page,$mainSearch,$municipality,$sale,$bedroom,$bathroom,$property_Type,$priceFrom,$priceTo,$waterFront,$sort,$offices,$agents,$openhouse,$slug,$search,$style,$ids,$pagination,$priceorder);
 
 	wp_die();
 }
@@ -153,6 +169,22 @@ function LF_search(){
 	$search = sanitize_text_field($_POST['search']);
 	$style = sanitize_text_field($_POST['style']);
 	$ids = sanitize_text_field($_POST['ids']);
+	$pagination = sanitize_text_field($_POST['pagination']);
+	$priceorder = sanitize_text_field($_POST['priceorder']);
+
+	if(isset($pagination)){
+		$pagination = $pagination;
+	}
+	else{
+		$pagination = '';
+	}
+
+	if(isset($priceorder)){
+		$priceorder = $priceorder;
+	}
+	else{
+		$priceorder = '';
+	}
 
 	if(isset($style)){
 		$style = $style;
@@ -254,7 +286,7 @@ function LF_search(){
 		$waterFront='';
 	}
 
-	getLFListings($page,$mainSearch,$municipality,$sale,$bedroom,$bathroom,$property_Type,$priceFrom,$priceTo,$waterFront,$sort,$offices,$agents,$openhouse,$slug,$search,$style);
+	getLFListings($page,$mainSearch,$municipality,$sale,$bedroom,$bathroom,$property_Type,$priceFrom,$priceTo,$waterFront,$sort,$offices,$agents,$openhouse,$slug,$search,$style,$pagination,$priceorder);
 	wp_die();
 }
 

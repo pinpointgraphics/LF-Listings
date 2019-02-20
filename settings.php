@@ -63,15 +63,24 @@ function LF_main_menu_view_creator()
 	<p>
 		<b>OR</b>
 	</p>
-	<p>[LF-Listings ids="133172"]</p>
+	<p>[LF-Listings ids="133172,123456,789465"]
 	<br>
 	<strong>Note: </strong> Comma separated ids
+	</p>
 	<p>
 		<b>OR</b>
 	</p>
 	<p>[LF-Listings type="residential" sale="rent"]</p>
 	<p>
-		<b>NOTE: </b>Where <i> type=residential, commercial, condo, recreational, agriculture or land </i> and <i> sale=sale or rent </i> and <i>search=yes, no and only</i> and <i>style=grid and horizontal</i>.
+		<b>OR</b>
+	</p>
+	<p>[LF-Listings priceorder="yes"]</p>
+	<p>
+		<b>OR</b>
+	</p>
+	<p>[LF-Listings pagination="no"]</p>
+	<p>
+		<b>NOTE: </b>Where <i> type=residential, commercial, condo, recreational, agriculture or land </i> and <i> sale=sale or rent </i> and <i>search=yes, no and only</i> and <i>style=grid and horizontal</i> and <i>priceorder=yes, no</i> and <i>pagiantion=yes, no</i>.
 	</p>
 	<?php
 	echo '</div>';
@@ -657,8 +666,8 @@ function LF_admin_js()
 					dots: false,
 					infinite: false,
 					speed: 300,
-					slidesToShow: 4,
-					slidesToScroll: 4,
+					slidesToShow: <?php echo LF_get_settings('LF_column')?>,
+					slidesToScroll: <?php echo LF_get_settings('LF_column')?>,
 					responsive: [
 						{
 							breakpoint: 1024,

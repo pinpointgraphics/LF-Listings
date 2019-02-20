@@ -12,12 +12,13 @@ jQuery(document).ready(function() {
         jQuery('#LF-listigs .LF-btn-search').trigger('click');
     }
 });
+var noofcol = jQuery('#noofcol').val();
 var options = {
     dots: false,
     infinite: false,
     speed: 300,
-    slidesToShow: 4,
-    slidesToScroll: 4,
+    slidesToShow: noofcol,
+    slidesToScroll: noofcol,
     responsive: [
         {
             breakpoint: 1024,
@@ -64,15 +65,29 @@ jQuery(document).on('click', '.LF-sort, .LF-pagination>li>a', function() {
     var tagSearch = jQuery('#search').val();
     var tagStyle = jQuery('#style').val();
     var tagids = jQuery('#ids').val();
+    var pagination = jQuery('#pagination').val();
+    var priceorder = jQuery('#priceorder').val();
 
-    var search, sale, municipalities, bedroom, bathroom, property_Type, priceFrom, priceTo, waterFront, page, LF_sort, defaultoffice, defaultagents, defaultopenhouse,srch,style,ids;
-
+    var search, sale, municipalities, bedroom, bathroom, property_Type, priceFrom, priceTo, waterFront, page, LF_sort, defaultoffice, defaultagents, defaultopenhouse,srch,style,ids,pagi,priord;
 
     if(jQuery.trim(LF_defaultopenhouse) !=''){
         defaultopenhouse = '&openhouse='+LF_defaultopenhouse;
     }
     else{
         defaultopenhouse = '';
+    }
+
+    if(jQuery.trim(pagination) != '' && typeof pagination !== 'undefined') {
+        pagi = '&pagination='+pagination;
+    }
+    else{
+        pagi = '';
+    }
+    if(jQuery.trim(priceorder) != '' && typeof priceorder !== 'undefined') {
+        priord = '&priceorder='+priceorder;
+    }
+    else{
+        priord = '';
     }
 
     if(jQuery.trim(tagSearch) != '' && typeof tagSearch !== 'undefined') {
@@ -192,7 +207,7 @@ jQuery(document).on('click', '.LF-sort, .LF-pagination>li>a', function() {
     jQuery.ajax({
         method: 'POST',
         url: LF_custom.ajaxurl,
-        data: "action=LF_pagination&token=" + LF_custom.security + page + search + municipalities + sale + bedroom + bathroom + property_Type + priceFrom + priceTo + waterFront + sort + defaultoffice + defaultagents + defaultopenhouse + '&slug='+slug + srch + style + ids,
+        data: "action=LF_pagination&token=" + LF_custom.security + page + search + municipalities + sale + bedroom + bathroom + property_Type + priceFrom + priceTo + waterFront + sort + defaultoffice + defaultagents + defaultopenhouse + '&slug='+slug + srch + style + ids + pagi + priord,
         beforeSend: function() {
             jQuery('#LF-listigs').css('opacity', '0.5');
         },
@@ -231,8 +246,23 @@ jQuery(document).on('click', '.LF-btn-search', function() {
     var tagSearch = jQuery('#search').val();
     var tagStyle = jQuery('#style').val();
     var tagids = jQuery('#ids').val();
+    var pagination = jQuery('#pagination').val();
+    var priceorder = jQuery('#priceorder').val();
 
-    var search, municipalities, sale, bedroom, bathroom, property_Type, priceFrom, priceTo, waterFront, LF_sort, defaultoffice, defaultagents, defaultopenhouse,srch,style,ids;
+    var search, municipalities, sale, bedroom, bathroom, property_Type, priceFrom, priceTo, waterFront, LF_sort, defaultoffice, defaultagents, defaultopenhouse,srch,style,ids,pagi,priord;
+
+    if(jQuery.trim(pagination) != '' && typeof pagination !== 'undefined') {
+        pagi = '&pagination='+pagination;
+    }
+    else{
+        pagi = '';
+    }
+    if(jQuery.trim(priceorder) != '' && typeof priceorder !== 'undefined') {
+        priord = '&priceorder='+priceorder;
+    }
+    else{
+        priord = '';
+    }
 
     if(jQuery.trim(tagSearch) != '' && typeof tagSearch !== 'undefined') {
         srch = '&search='+tagSearch;
@@ -353,7 +383,7 @@ jQuery(document).on('click', '.LF-btn-search', function() {
     jQuery.ajax({
         method: 'POST',
         url: LF_custom.ajaxurl,
-        data: "action=LF_search&token=" + LF_custom.security + search + municipalities + sale + bedroom + bathroom + property_Type + priceFrom + priceTo + waterFront + sort + defaultoffice + defaultagents + defaultopenhouse + '&slug='+slug + srch + style + ids,
+        data: "action=LF_search&token=" + LF_custom.security + search + municipalities + sale + bedroom + bathroom + property_Type + priceFrom + priceTo + waterFront + sort + defaultoffice + defaultagents + defaultopenhouse + '&slug='+slug + srch + style + ids + pagi + priord,
         beforeSend: function() {
             jQuery('#LF-listigs').css('opacity', '0.5');
         },

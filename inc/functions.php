@@ -106,10 +106,11 @@ function getCities()
 /**
 * this function get the listings as per the search parameters.
 */
-function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bedroom='',$bathroom='',$property_Type='residential',$priceFrom='',$priceTo='',$waterFront='',$sort,$offices='',$agents='',$openhouse='',$slug,$search='',$style='',$ids='')
+function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bedroom='',$bathroom='',$property_Type='',$priceFrom='',$priceTo='',$waterFront='',$sort,$offices='',$agents='',$openhouse='',$slug,$search='',$style='',$ids='',$pagination='',$priceorder='')
 {
-	if(empty($search) OR $search=='yes' OR $search=='only'):
-		if(LF_get_settings('LF_show_search')=='yes' || ($search=='yes' AND LF_get_settings('LF_show_search')!='yes')):
+
+	if(empty($search) OR $search=='yes' OR $search=='only'){
+		if(LF_get_settings('LF_show_search')=='yes' || (($search=='yes' OR $search=='only') AND LF_get_settings('LF_show_search')!='yes')){
 			?>
 			<div class="LF-row">
 				<form method="post" name="search">
@@ -239,8 +240,8 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 				</form>
 			</div>
 			<?php
-		endif; //end check search enable/disable from admin
-	endif; //end search tag in shortcode
+		} //end check search enable/disable from admin
+	} //end search tag in shortcode
 	if(!empty($page)){
 		$page = '&page='.$page;
 	}
@@ -328,7 +329,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 	}
 	if(!empty($ids))
 	{
-		$ids = '&search='.$ids;
+		$ids = '&ids='.$ids;
 	}
 	else
 	{
@@ -338,7 +339,13 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 	$token = getToken();
 	$agent_id = LF_get_settings('agent_id');
 	$office_id = LF_get_settings('office_id');
-	$paginate = LF_get_settings('LF_page');
+
+	if($attr['style']=='horizontal'){
+		$paginate = '500';
+	}
+	else{
+		$paginate = LF_get_settings('LF_page');
+	}
 
 	$curl = curl_init();
 	curl_setopt_array($curl, array(
@@ -365,6 +372,9 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 		$pageSlug = $slug;
 
 		$result = json_decode($response);
+		if(empty($result)){
+			return true;
+		}
 		?>
 		<div class="LF-row">
 			<input type="hidden" name="pageSlug" id="pageSlug" value="<?php echo $slug;?>">
@@ -385,6 +395,11 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 
 			<input type="hidden" name="style" id="style" value="<?php echo !empty($style)?$style:'';?>">
 
+			<input type="hidden" name="noofcol" id="noofcol" value="<?php echo !empty(LF_get_settings('LF_column'))?LF_get_settings('LF_column'):'';?>">
+
+			<input type="hidden" name="pagination" id="pagination" value="<?php echo !empty($pagination)?$pagination:'';?>">
+			
+			<input type="hidden" name="priceorder" id="priceorder" value="<?php echo !empty($priceorder)?$priceorder:'';?>">
 			<!-- <input type="hidden" name="ids" id="ids" value="<?php echo !empty($ids)?$ids:'';?>"> -->
 
 			<?php
@@ -409,10 +424,11 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					$html   .= '<li><a href="javascript:void(0);" data-page="1">1</a></li>';
 					$html   .= '<li class="disabled"><span>...</span></li>';
 				}
-
-				for ( $i = $start ; $i <= $end; $i++ ) {
-					$class  = ( $current_page == $i ) ? "active" : "";
-					$html   .= '<li class="' . $class . '"><a href="javascript:void(0);" data-page="'.$i.'">' . $i . '</a></li>';
+				if($end>1){
+					for ( $i = $start ; $i <= $end; $i++ ) {
+						$class  = ( $current_page == $i ) ? "active" : "";
+						$html   .= '<li class="' . $class . '"><a href="javascript:void(0);" data-page="'.$i.'">' . $i . '</a></li>';
+					}
 				}
 
 				if ( $end < $last ) {
@@ -425,6 +441,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					$html   .= '<li><a href="javascript:void(0);" data-page="'.$next.'">Next</a></li>';
 				}
 				$html       .= '</ul><div class="LF-clear"></div>';
+				
 				if($sort == 'ASC'){
 					$ascchecked = 'checked';
 				}
@@ -439,15 +456,22 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					$descchecked = '';
 				}
 
-				echo '<div class="LF-col-md-7">'.$html.'</div>';
-				if(LF_get_settings('LF_show_priceOrder')=='yes'){
-					echo '<div class="LF-col-md-5">
-					<div class="LF-sortblock">
-					<label>Order by price: </lable>
-					Low <input type="radio" class="LF-sort" name="LF-sort" value="ASC" '.$ascchecked.'>
-					High <input type="radio" class="LF-sort" name="LF-sort" value="DESC" '.$descchecked.'>
-					</div>
-					</div>';
+				echo '<div class="LF-col-md-7">';
+				if((empty($pagination) || $pagination == 'yes') and $style != 'horizontal'){
+					echo $html;
+				}
+				echo '</div>';
+				if(empty($priceorder) OR $priceorder=='yes'){
+					if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($priceorder=='yes' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
+
+						echo '<div class="LF-col-md-5">
+						<div class="LF-sortblock">
+						<label>Order by price: </lable>
+						Low <input type="radio" class="LF-sort" name="LF-sort" value="ASC" '.$ascchecked.'>
+						High <input type="radio" class="LF-sort" name="LF-sort" value="DESC" '.$descchecked.'>
+						</div>
+						</div>';
+					}
 				}
 				echo '<div class="clear"></div>';
 
@@ -473,7 +497,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					$col=3;
 					break;
 				}
-				$style = 'horizontal';
+				
 				if(!empty($style) and $style == 'horizontal'){
 					echo '<div class="horizantal-slide">';
 				}
@@ -536,16 +560,22 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					echo '</div>';
 				}
 				echo '<div class="clear"></div>';
-				echo '<div class="LF-col-md-7">'.$html.'</div>';
-				if(LF_get_settings('LF_show_priceOrder')=='yes'):
-					echo '<div class="LF-col-md-5">
-					<div class="LF-sortblock">
-					<label>Order by price: </lable>
-					Low <input type="radio" class="LF-sort" name="LF-Bsort" value="ASC" '.$ascchecked.'>
-					High <input type="radio" class="LF-sort" name="LF-Bsort" value="DESC" '.$descchecked.'>
-					</div>
-					</div>';
-				endif;
+				echo '<div class="LF-col-md-7">';
+				if((empty($pagination) || $pagination == 'yes') and $style != 'horizontal'){
+					echo $html;
+				}
+				echo '</div>';
+				if(empty($priceorder) OR $priceorder=='yes'){
+					if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($priceorder=='yes' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
+						echo '<div class="LF-col-md-5">
+						<div class="LF-sortblock">
+						<label>Order by price: </lable>
+						Low <input type="radio" class="LF-sort" name="LF-Bsort" value="ASC" '.$ascchecked.'>
+						High <input type="radio" class="LF-sort" name="LF-Bsort" value="DESC" '.$descchecked.'>
+						</div>
+						</div>';
+					}
+				}
 			}
 			else{
 				echo '<div class="LF-col-md-12"><p>Sorry, your search did not return any results. Please try again with different search parameters.</p></div>';

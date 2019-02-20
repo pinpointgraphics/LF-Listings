@@ -9,7 +9,9 @@ $attr = shortcode_atts( array(
 	'openhouse'=>'',
 	'search'=>'',
 	'style'=>'',
-	'ids'=>''
+	'ids'=>'',
+	'pagination'=>'',
+	'priceorder'=>''
 ), $atts );
 
 $listkey = get_query_var('listkey');
@@ -374,7 +376,7 @@ if ($listkey) {
 		<div id="LF-listigs">
 			<?php
 			if(empty($attr['search']) OR $attr['search']=='yes' OR $attr['search']=="only"):
-				if(LF_get_settings('LF_show_search')=='yes'):
+				if(LF_get_settings('LF_show_search')=='yes'  || (($attr['search']=='yes' OR $attr['search']=='only') AND LF_get_settings('LF_show_search')!='yes')):
 					?>
 					<div class="LF-row">
 						<form method="post" name="search">
@@ -538,13 +540,18 @@ if ($listkey) {
 			}
 
 			if(!empty($attr['ids'])){
-				$ids = '&search='.$attr['ids'];
+				$ids = '&ids='.$attr['ids'];
 			}
 			else{
 				$ids = '';
 			}
+			if($attr['style']=='horizontal'){
+				$paginate = '500';
+			}
+			else{
+				$paginate = LF_get_settings('LF_page');
+			}
 
-			$paginate = LF_get_settings('LF_page');
 			$sort = LF_get_settings('LF_priceOrder');
 
 			if(isset($sort)){
@@ -585,6 +592,9 @@ if ($listkey) {
 				$pageSlug = get_post_field( 'post_name', $post_id );
 
 				$result = json_decode($response);
+				if(empty($result)){
+					return true;
+				}
 				?>
 				<div class="LF-row">
 					<input type="hidden" name="pageSlug" id="pageSlug" value="<?php echo $pageSlug;?>">
@@ -604,10 +614,16 @@ if ($listkey) {
 					<input type="hidden" name="search" id="search" value="<?php echo $attr['search'];?>">
 
 					<input type="hidden" name="style" id="style" value="<?php echo $attr['style'];?>">
+					
+					<input type="hidden" name="noofcol" id="noofcol" value="<?php echo !empty(LF_get_settings('LF_column'))?LF_get_settings('LF_column'):'';?>">
 
 					<input type="hidden" name="ids" id="ids" value="<?php echo $attr['ids'];?>">
+					
+					<input type="hidden" name="pagination" id="pagination" value="<?php echo $attr['pagination'];?>">
+					<input type="hidden" name="priceorder" id="priceorder" value="<?php echo $attr['priceorder'];?>">
 
 					<?php
+
 					if(empty($attr['search']) or $attr['search']!="only" or $attr['search']=="no" or $attr['search'] == 'yes'){
 						if($result->error==false){
 
@@ -630,12 +646,12 @@ if ($listkey) {
 								$html   .= '<li><a href="javascript:void(0);" data-page="1">1</a></li>';
 								$html   .= '<li class="disabled"><span>...</span></li>';
 							}
-
-							for ( $i = $start ; $i <= $end; $i++ ) {
-								$class  = ( $current_page == $i ) ? "active" : "";
-								$html   .= '<li class="' . $class . '"><a href="javascript:void(0);" data-page="'.$i.'">' . $i . '</a></li>';
+							if($end>1){
+								for ( $i = $start ; $i <= $end; $i++ ) {
+									$class  = ( $current_page == $i ) ? "active" : "";
+									$html   .= '<li class="' . $class . '"><a href="javascript:void(0);" data-page="'.$i.'">' . $i . '</a></li>';
+								}
 							}
-
 							if ( $end < $last ) {
 								$html   .= '<li class="disabled"><span>...</span></li>';
 								$html   .= '<li><a href="javascript:void(0);" data-page="'.$last.'">' . $last . '</a></li>';
@@ -660,15 +676,24 @@ if ($listkey) {
 							else{
 								$descchecked = '';
 							}
-							echo '<div class="LF-col-md-7">'.$html.'</div>';
-							if(LF_get_settings('LF_show_priceOrder')=='yes'){
-								echo '<div class="LF-col-md-5">
-								<div class="LF-sortblock">
-								<label>Order by price: </lable>
-								Low <input type="radio" class="LF-sort" name="LF-sort" value="ASC" '.$ascchecked.'>
-								High <input type="radio" class="LF-sort" name="LF-sort" value="DESC" '.$descchecked.'>
-								</div>
-								</div>';
+
+							echo '<div class="LF-col-md-7">';
+							if((empty($attr['pagination']) || $attr['pagination'] == 'yes') and $attr['style'] != 'horizontal'){
+								echo $html;
+							}
+							echo '</div>';
+
+							if(empty($attr['priceorder']) OR $attr['priceorder']=='yes'){
+								if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($attr['priceorder']=='yes' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
+								
+									echo '<div class="LF-col-md-5">
+									<div class="LF-sortblock">
+									<label>Order by price: </lable>
+									Low <input type="radio" class="LF-sort" name="LF-sort" value="ASC" '.$ascchecked.'>
+									High <input type="radio" class="LF-sort" name="LF-sort" value="DESC" '.$descchecked.'>
+									</div>
+									</div>';
+								}
 							}
 							echo '<div class="clear"></div>';
 							//get column from admin setting
@@ -693,7 +718,7 @@ if ($listkey) {
 								$col=3;
 								break;
 							}
-							$style = 'horizontal';
+							
 							if(!empty($attr['style']) and $attr['style'] == 'horizontal'){
 								echo '<div class="horizantal-slide">';
 							}
@@ -757,16 +782,22 @@ if ($listkey) {
 								echo '</div>';
 							}
 							echo '<div class="clear"></div>';
-							echo '<div class="LF-col-md-7">'.$html.'</div>';
-							if(LF_get_settings('LF_show_priceOrder')=='yes'){
-								echo '<div class="LF-col-md-5">
-								<div class="LF-sortblock">
-								<label>Order by price: </lable>
-								Low <input type="radio" class="LF-sort" name="LF-Bsort" value="ASC" '.$ascchecked.'>
-								High <input type="radio" class="LF-sort" name="LF-Bsort" value="DESC" '.$descchecked.'>
-								</div>
-								</div>';
-								echo '<div class="clear"></div>';
+							echo '<div class="LF-col-md-7">';
+							if((empty($attr['pagination']) || $attr['pagination'] == 'yes') and $attr['style'] != 'horizontal'){
+								echo $html;
+							}
+							echo '</div>';
+							if(empty($attr['priceorder']) OR $attr['priceorder']=='yes'){
+								if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($attr['priceorder']=='yes' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
+								
+									echo '<div class="LF-col-md-5">
+									<div class="LF-sortblock">
+									<label>Order by price: </lable>
+									Low <input type="radio" class="LF-sort" name="LF-Bsort" value="ASC" '.$ascchecked.'>
+									High <input type="radio" class="LF-sort" name="LF-Bsort" value="DESC" '.$descchecked.'>
+									</div>
+									</div>';
+								}
 							}
 						}
 						else{
