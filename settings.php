@@ -259,7 +259,7 @@ function LF_settings_view_creator()
 					?>
 					<div class="LF-form-group">
 						<label for="LF_customCss">Custom CSS: </label>
-						<textarea name="LF_customCss" id="LF_customCss" class="LF-form-control"><?php echo stripslashes_deep(file_get_contents($stylesheet));//echo LF_get_settings('customCss');?></textarea>
+						<textarea name="LF_customCss" id="LF_customCss" class="LF-form-control"><?php echo stripslashes_deep(LF_get_settings('customCss'));//stripslashes_deep(file_get_contents($stylesheet));?></textarea>
 					</div>
 					<input type="button" name="submit" id="LF-save-listingDetails-setting" class="button button-primary" value="Save">
 				</form>
@@ -535,7 +535,8 @@ function LF_admin_js()
 	function LF_save_custom_css_data(){
 		check_ajax_referer( 'savepluginData', 'token' );
 		$customCss = $_POST['LF_customCss'];
-		$stylesheet = plugin_dir_path( __FILE__ ).'assets/css/style.css';
+		LF_add_settings('customCss',$customCss);
+		// $stylesheet = plugin_dir_path( __FILE__ ).'assets/css/style.css';
 		file_put_contents($stylesheet, $customCss);
 		echo 1;
 		die();
@@ -769,6 +770,7 @@ function LF_admin_js()
 			'post_type'   => $post_type,
 			'post_status' => 'publish',
 			'posts_per_page' => -1,
+			'order'=>'ASC'
 		);
 		$query_result = new WP_Query($args);
 		foreach ($query_result->posts as $post) {

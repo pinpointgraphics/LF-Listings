@@ -3,7 +3,7 @@
 Plugin Name: Lightning Fast Listings
 Plugin URI: https://lightningfastlistings.ca
 Description: Lightning Fast Listings is a WordPress plugin exclusively designed for Canadian Real Estate Agents who are licensed by the Canadian Real Estate Association (CREA ®) to display listings via the Data Distribution Facility (DDF ®). All real estate listings are served "lightning fast", designed and hosted remotely to not take up any of the website's own resources.
-Version: 1.5
+Version: 1.6
 Author: Pinpoint Media Design
 Author URI: https://www.pinpointmediadesign.com
 License: GLP2
@@ -31,6 +31,15 @@ require_once LF_PLUGIN_DIR. '/inc/listings.php';
 register_activation_hook(__FILE__,'LF_plugin_on_activation');
 function LF_plugin_on_activation()
 {
+	$termsandcondition = '<p>This website is operated by Royal LePage Trinity Realty, Brokerage, a Brokerage who is a member of The Canadian Real Estate Association (CREA<sup>®</sup>). The content on this website is owned or controlled by CREA<sup>®</sup>. By accessing this website, the user agrees to be bound by these terms of use as amended from time to time, and agrees that these terms of use constitute a binding contract between the user, Royal LePage Trinity Realty, Brokerage, and CREA<sup>®</sup>.</p>
+	<h4>Copyright</h4>
+	<p>The listing content on this website is protected by copyright and other laws, and is intended solely for the private, non-commercial use by individuals. Any other reproduction, distribution or use of the content, in whole or in part, is specifically forbidden. The prohibited uses include commercial use, "screen scraping", "database scraping", and any other activity intended to collect, store, reorganize or manipulate data on the pages produced by or displayed on this website.</p>
+	<h4>Trademarks</h4>
+	<p>REALTOR<sup>®</sup>, REALTORS<sup>®</sup>, and the REALTOR<sup>®</sup> logo are certification marks that are owned by REALTOR<sup>®</sup> Canada Inc. and licensed exclusively to The Canadian Real Estate Association (CREA<sup>®</sup>). These certification marks identify real estate professionals who are members of CREA<sup>®</sup> and who must abide by CREA<sup>®</sup>\'s By-Laws, Rules, and the REALTOR<sup>®</sup> Code. The MLS<sup>®</sup> trademark and the MLS<sup>®</sup> logo are owned by CREA<sup>®</sup> and identify the professional real estate services provided by members of CREA<sup>®</sup>.</p>
+	<h4>Liability and Warranty Disclaimer</h4>
+	<p>The information contained on this website is based in whole or in part on information that is provided by members of CREA<sup>®</sup>, who are responsible for its accuracy. CREA<sup>®</sup> reproduces and distributes this information as a service for its members, and assumes no responsibility for its completeness or accuracy.
+		  Amendments  may at any time amend these Terms of Use by updating this posting. All users of this site are bound by these amendments should they wish to continue accessing the website, and should therefore periodically visit this page to review any and all such amendments.</p>';
+
 	//create table to store multiple information.
 	global $wpdb;
 	$charset_collate = $wpdb->get_charset_collate();
@@ -66,6 +75,22 @@ function LF_plugin_on_activation()
 		array(
 			'meta_key' => 'LF_show_priceOrder',
 			'meta_value' => 'yes'
+		)
+	);
+	$wpdb->insert(
+		$table_name,
+		array(
+			'meta_key' => 'termsandcondition',
+			'meta_value' => stripslashes_deep($termsandcondition)
+		)
+	);
+	$stylesheetUrl = plugin_dir_path( __FILE__ ).'assets/css/style.css';
+	$stylesheet = stripslashes_deep(file_get_contents($stylesheetUrl));
+	$wpdb->insert(
+		$table_name,
+		array(
+			'meta_key' => 'customCss',
+			'meta_value' => $stylesheet
 		)
 	);
 }
