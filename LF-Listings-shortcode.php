@@ -591,6 +591,12 @@ if ($listkey) {
 				$page_id = get_the_ID();
 				$pageSlug = get_post_field( 'post_name', $post_id );
 
+				if(is_home() || is_front_page()){
+					$option_name = 'LF-Listings';
+					$postContent = LF_find_shortcode_occurencesName($option_name);
+					$pageSlug = $postContent['slug'];
+				}
+
 				$result = json_decode($response);
 				if(empty($result)){
 					return true;
