@@ -3,7 +3,11 @@
 Plugin Name: Lightning Fast Listings
 Plugin URI: https://lightningfastlistings.ca
 Description: Lightning Fast Listings is a WordPress plugin exclusively designed for Canadian Real Estate Agents who are licensed by the Canadian Real Estate Association (CREA ®) to display listings via the Data Distribution Facility (DDF ®). All real estate listings are served "lightning fast", designed and hosted remotely to not take up any of the website's own resources.
+<<<<<<< HEAD
+Version: 1.0.0
+=======
 Version: 1.7
+>>>>>>> origin/master
 Author: Pinpoint Media Design
 Author URI: https://www.pinpointmediadesign.com
 License: GLP2
@@ -93,6 +97,13 @@ function LF_plugin_on_activation()
 			'meta_value' => $stylesheet
 		)
 	);
+	$wpdb->insert(
+		$table_name,
+		array(
+			'meta_key' => 'LF_MailText',
+			'meta_value' => 'Hey Admin below is the inquiry form details'
+		)
+	);
 }
 
 /**
@@ -160,7 +171,7 @@ function LF_plugin_init()
 	require_once( LF_PLUGIN_DIR.'/updater.php' );
 	if ( is_admin() )
 	{
-    		new LF_Listings_Plugin_Updater( __FILE__, 'pinpointgraphics', "LF-Listings" );
+    	new LF_Listings_Plugin_Updater( __FILE__, 'pinpointgraphics', "LF-Listings" );
 	}
 }
 

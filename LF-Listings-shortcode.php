@@ -109,13 +109,28 @@ if ($listkey) {
 							</div>
 							<div class="LF-form-group">
 								<input type="text" name="txtName" id="txtName" class="LF-form-control" placeholder="Name">
+								<label for="" class="alert-error" id="txtName_error"></label>
 							</div>
 							<div class="LF-form-group">
 								<input type="email" name="txtemail" id="txtemail" class="LF-form-control" placeholder="Email">
+								<label for="" class="alert-error" id="txtemail_error"></label>
 							</div>
 							<div class="LF-form-group">
 								<textarea name="txtMessage" id="txtMessage" rows="3" class="LF-form-control" placeholder="Message"></textarea>
+								<label for="" class="alert-error" id="txtMessage_error"></label>
 							</div>
+							<?php
+							if(!empty(LF_get_settings('LF_reCaptcha'))){
+								?>
+								<div class="LF-form-group">
+									<div class="g-recaptcha" data-sitekey="<?php echo LF_get_settings('LF_reCaptcha');?>"></div>
+									<input type="hidden" name="recaptcha" id="recaptcha" value="yes">
+									<label for="" class="alert-error" id="recaptcha_error"></label>
+									
+								</div>
+								<?php 
+								}
+							?>
 							<div class="LF-form-group">
 								<button class="LF-btn send_inquiry_mail" type="button">Send</button>
 							</div>

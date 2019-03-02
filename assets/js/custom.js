@@ -404,23 +404,62 @@ jQuery(document).on('click', '.LF-btn-search', function() {
     });
 });
 jQuery(document).on('click', '.send_inquiry_mail', function() {
+    var flag=0;
     var form = jQuery('#formInquiry').serialize();
-    jQuery.ajax({
-        method: 'POST',
-        url: LF_custom.ajaxurl,
-        data: 'action=LF_send_inquiryMail&token=' + LF_custom.security + '&' + form,
-        success: function(data) {
-            if (jQuery.trim(data) == '1') {
-                jQuery('#txtName').val('');
-                jQuery('#txtemail').val('');
-                jQuery('#txtMessage').val('');
-                jQuery('.mailmessage').html('<div class="alert-success">Mail sent successfully.</div>');
-            }
-            else{
-                jQuery('.mailmessage').html('<div class="alert-error">failed to mail sent.</div>');
-            }
+    var captcha = jQuery('#recaptcha').val();
+    var txtName = jQuery('#txtName').val();
+    var txtemail = jQuery('#txtemail').val();
+    var txtMessage = jQuery('#txtMessage').val();
+    if(jQuery.trim(txtName)==''){
+        jQuery('#txtName_error').text('This field is required.');
+        flag++;
+    }
+    else{
+        jQuery('#txtName_error').text('');        
+    }
+    if(jQuery.trim(txtemail)==''){
+        jQuery('#txtemail_error').text('This field is required.');
+        flag++;
+    }
+    else{
+        jQuery('#txtemail_error').text('');    
+    }
+    if(jQuery.trim(txtMessage)==''){
+        jQuery('#txtMessage_error').text('This field is required.');
+        flag++;
+    }
+    else{
+        jQuery('#txtMessage_error').text('');
+    }
+    if (captcha != '' && typeof captcha !== 'undefined') {
+        if(grecaptcha.getResponse() == "") {
+            jQuery('#recaptcha_error').text('Please select captcha.');
+            flag++;
         }
-    });
+        else{
+            jQuery('#recaptcha_error').text('');            
+        }
+    }
+
+    if(flag==0){
+        jQuery('.mailmessage').html('');
+        jQuery.ajax({
+            method: 'POST',
+            url: LF_custom.ajaxurl,
+            data: 'action=LF_send_inquiryMail&token=' + LF_custom.security + '&' + form,
+            success: function(data) {
+                if (jQuery.trim(data) == '1') {
+                    jQuery('#txtName').val('');
+                    jQuery('#txtemail').val('');
+                    jQuery('#txtMessage').val('');
+                    jQuery('.mailmessage').html('<div class="alert-success">Mail sent successfully.</div>');
+                }
+                else{
+                    jQuery('.mailmessage').html('<div class="alert-error">failed to mail sent.</div>');
+                }
+            }
+        });
+    }
 });
 function resetSearch(){
     // location.reload();

@@ -217,6 +217,10 @@ function LF_settings_view_creator()
 							<input type="text" name="LF_mapApi" id="LF_mapApi" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_mapApiKey'))? LF_get_settings('LF_mapApiKey'):'';?>">
 						</div>
 						<div class="LF-form-group">
+							<label for="LF_reCaptcha">Google reCaptcha Key: </label>
+							<input type="text" name="LF_reCaptcha" id="LF_reCaptcha" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_reCaptcha'))? LF_get_settings('LF_reCaptcha'):'';?>">
+						</div>
+						<div class="LF-form-group">
 							<label for="LF_mapApi">Image Width (in pixel): </label>
 							<input type="number" name="LF_imageWidth" id="LF_imageWidth" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_imageWidth'))? LF_get_settings('LF_imageWidth'):'';?>">
 						</div>
@@ -224,7 +228,10 @@ function LF_settings_view_creator()
 							<label for="LF_mapApi">Image Height (in pixel): </label>
 							<input type="number" name="LF_imageHeight" id="LF_imageHeight" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_imageHeight'))? LF_get_settings('LF_imageHeight'):'';?>">
 						</div>
-
+						<div class="LF-form-group">
+							<label for="LF_detail_footer">Inquiry Mail text: </label>
+							<textarea name="LF_MailText" id="LF_MailText" cols="30" rows="5" class="LF-form-control"><?php echo !empty(LF_get_settings('LF_MailText'))? LF_get_settings('LF_MailText'):'';?></textarea>
+						</div>
 						<div class="LF-form-group">
 							<label for="LF_detail_footer">Property Footer: </label>
 							<textarea name="LF_detail_footer" id="LF_detail_footer" cols="30" rows="5" class="LF-form-control"><?php echo !empty(LF_get_settings('LF_detail_footer'))? LF_get_settings('LF_detail_footer'):'';?></textarea>
@@ -483,10 +490,12 @@ function LF_admin_js()
 		$LF_show_priceOrder = sanitize_text_field($_POST['LF_show_priceOrder']);
 		$LF_priceOrder = sanitize_text_field($_POST['LF_priceOrder']);
 		$mapApi = sanitize_text_field($_POST['LF_mapApi']);
+		$LF_reCaptcha = sanitize_text_field($_POST['LF_reCaptcha']);
 		$imageWidth = sanitize_text_field($_POST['LF_imageWidth']);
 		$imageHeight = sanitize_text_field($_POST['LF_imageHeight']);
 		$LF_Municipalities = implode(',',$_POST['LF_Municipalities']);
 		$LF_detail_footer = $_POST['LF_detail_footer'];
+		$LF_MailText = $_POST['LF_MailText'];
 		$termsandcondition = $_POST['termsandcondition'];
 
 		if(isset($LF_show_search) and $LF_show_search!=''){
@@ -510,6 +519,9 @@ function LF_admin_js()
 		if(isset($mapApi)){
 			LF_add_settings('LF_mapApiKey',$mapApi);
 		}
+		if(isset($LF_reCaptcha)){
+			LF_add_settings('LF_reCaptcha',$LF_reCaptcha);
+		}		
 		if(isset($imageWidth)){
 			LF_add_settings('LF_imageWidth', $imageWidth);
 		}
@@ -518,6 +530,9 @@ function LF_admin_js()
 		}
 		if(isset($LF_detail_footer)){
 			LF_add_settings('LF_detail_footer', $LF_detail_footer);
+		}
+		if(isset($LF_MailText)){
+			LF_add_settings('LF_MailText', $LF_MailText);
 		}
 		if(isset($termsandcondition)){
 			LF_add_settings('termsandcondition',$termsandcondition);
@@ -602,6 +617,7 @@ function LF_admin_js()
 			wp_enqueue_script( 'slick.min.js', plugins_url('assets/js/slick.min.js',__FILE__), array('jquery'), '1.0.0', true );
 
 			?>
+			<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 			<script type="text/javascript">
 			jQuery(document).ready(function() {
 				jQuery('.fancybox-thumbs').fancybox({
@@ -786,7 +802,7 @@ function LF_admin_js()
 	{
 		$slugs = explode('/',$_SERVER['REQUEST_URI']);
 		$slugs = array_filter($slugs, function($value) { return $value !== ''; });
-		$slug = $slugs[1];
+		$slug = $slugs[2];
 		return $slug;
 	}
 

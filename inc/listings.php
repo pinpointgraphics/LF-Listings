@@ -307,7 +307,7 @@ function LF_send_inquiryMail()
 	$subject = "Inquiry for ".$property;
 	$txtMessage = sanitize_text_field($_POST['txtMessage']);
 	$message = '
-	<p>Hey admin, you the the listings inquiry</p>
+	<p>'.LF_get_settings('LF_MailText').'</p>
 	<table border="0">
 	<tr>
 	<td>Property Id: </td>

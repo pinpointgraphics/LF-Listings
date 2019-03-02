@@ -1192,4 +1192,5 @@ ul#LF-room-details li{
 }
 .alert-error{
     color: red;
+    font-size: 14px;
 }
