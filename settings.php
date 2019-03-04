@@ -217,7 +217,7 @@ function LF_settings_view_creator()
 							<input type="text" name="LF_mapApi" id="LF_mapApi" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_mapApiKey'))? LF_get_settings('LF_mapApiKey'):'';?>">
 						</div>
 						<div class="LF-form-group">
-							<label for="LF_reCaptcha">Google reCaptcha Key: </label>
+							<label for="LF_reCaptcha">Google reCaptcha Site Key: </label>
 							<input type="text" name="LF_reCaptcha" id="LF_reCaptcha" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_reCaptcha'))? LF_get_settings('LF_reCaptcha'):'';?>">
 						</div>
 						<div class="LF-form-group">
@@ -802,7 +802,7 @@ function LF_admin_js()
 	{
 		$slugs = explode('/',$_SERVER['REQUEST_URI']);
 		$slugs = array_filter($slugs, function($value) { return $value !== ''; });
-		$slug = $slugs[2];
+		$slug = $slugs[1];
 		return $slug;
 	}
 
