@@ -217,7 +217,13 @@ function LF_settings_view_creator()
 							<input type="text" name="LF_mapApi" id="LF_mapApi" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_mapApiKey'))? LF_get_settings('LF_mapApiKey'):'';?>">
 						</div>
 						<div class="LF-form-group">
-							<label for="LF_reCaptcha">Google reCaptcha Site Key: </label>
+							<label for="LF_reCaptchastate">Google reCAPTCHA Type: </label><br>
+							<input type="radio" name="LF_reCaptchastate" value="yes" <?php if(LF_get_settings('LF_reCaptchastate')=='yes'){ echo 'checked';}?>> "i'm not a rebot" Checkbox
+							<br>
+							<input type="radio" name="LF_reCaptchastate" value="no" <?php if(LF_get_settings('LF_reCaptchastate')=='no'){ echo 'checked';}?>> Invisible reCAPTCHA badge
+						</div>
+						<div class="LF-form-group">
+							<label for="LF_reCaptcha">Google reCAPTCHA v2 Site Key: </label>
 							<input type="text" name="LF_reCaptcha" id="LF_reCaptcha" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_reCaptcha'))? LF_get_settings('LF_reCaptcha'):'';?>">
 						</div>
 						<div class="LF-form-group">
@@ -491,6 +497,7 @@ function LF_admin_js()
 		$LF_priceOrder = sanitize_text_field($_POST['LF_priceOrder']);
 		$mapApi = sanitize_text_field($_POST['LF_mapApi']);
 		$LF_reCaptcha = sanitize_text_field($_POST['LF_reCaptcha']);
+		$LF_reCaptchastate = sanitize_text_field($_POST['LF_reCaptchastate']);
 		$imageWidth = sanitize_text_field($_POST['LF_imageWidth']);
 		$imageHeight = sanitize_text_field($_POST['LF_imageHeight']);
 		$LF_Municipalities = implode(',',$_POST['LF_Municipalities']);
@@ -518,6 +525,9 @@ function LF_admin_js()
 		}
 		if(isset($mapApi)){
 			LF_add_settings('LF_mapApiKey',$mapApi);
+		}
+		if(isset($LF_reCaptchastate)){
+			LF_add_settings('LF_reCaptchastate',$LF_reCaptchastate);			
 		}
 		if(isset($LF_reCaptcha)){
 			LF_add_settings('LF_reCaptcha',$LF_reCaptcha);

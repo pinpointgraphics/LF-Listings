@@ -121,6 +121,7 @@ if ($listkey) {
 							</div>
 							<?php
 							if(!empty(LF_get_settings('LF_reCaptcha'))){
+								if(LF_get_settings('LF_reCaptchastate')=='yes'){
 								?>
 								<div class="LF-form-group">
 									<div class="g-recaptcha" data-sitekey="<?php echo LF_get_settings('LF_reCaptcha');?>"></div>
@@ -128,12 +129,24 @@ if ($listkey) {
 									<label for="" class="alert-error" id="recaptcha_error"></label>
 									
 								</div>
+								<button class="LF-btn send_inquiry_mail" type="submit">Send</button>
 								<?php 
 								}
+								else{
+								?>
+								<div class="LF-form-group">
+									<input type="hidden" name="mailsent" id="mailsent" value="">
+									<button class=" g-recaptcha" data-sitekey="<?php echo LF_get_settings('LF_reCaptcha');?>" data-callback='onSubmit'>Send</button>
+								</div>
+								<?php 
+								}
+							}
+							else{
+								?>
+								<button class="LF-btn send_inquiry_mail" type="submit">Send</button>
+								<?php
+							}
 							?>
-							<div class="LF-form-group">
-								<button class="LF-btn send_inquiry_mail" type="button">Send</button>
-							</div>
 						</form>
 					</div><!-- .LF-inquiry-details -->
 				</div><!-- .LF-col-md-6 -->

@@ -403,35 +403,37 @@ jQuery(document).on('click', '.LF-btn-search', function() {
         }
     });
 });
-jQuery(document).on('click', '.send_inquiry_mail', function() {
+jQuery(document).on('submit', '#formInquiry', function() {
     var flag=0;
     var form = jQuery('#formInquiry').serialize();
     var captcha = jQuery('#recaptcha').val();
     var txtName = jQuery('#txtName').val();
     var txtemail = jQuery('#txtemail').val();
     var txtMessage = jQuery('#txtMessage').val();
-    if(jQuery.trim(txtName)==''){
-        jQuery('#txtName_error').text('This field is required.');
-        flag++;
-    }
-    else{
-        jQuery('#txtName_error').text('');        
-    }
-    if(jQuery.trim(txtemail)==''){
-        jQuery('#txtemail_error').text('This field is required.');
-        flag++;
-    }
-    else{
-        jQuery('#txtemail_error').text('');    
-    }
-    if(jQuery.trim(txtMessage)==''){
-        jQuery('#txtMessage_error').text('This field is required.');
-        flag++;
-    }
-    else{
-        jQuery('#txtMessage_error').text('');
-    }
+    
     if (captcha != '' && typeof captcha !== 'undefined') {
+        if(jQuery.trim(txtName)==''){
+            jQuery('#txtName_error').text('This field is required.');
+            flag++;
+        }
+        else{
+            jQuery('#txtName_error').text('');        
+        }
+        if(jQuery.trim(txtemail)==''){
+            jQuery('#txtemail_error').text('This field is required.');
+            flag++;
+        }
+        else{
+            jQuery('#txtemail_error').text('');    
+        }
+        if(jQuery.trim(txtMessage)==''){
+            jQuery('#txtMessage_error').text('This field is required.');
+            flag++;
+        }
+        else{
+            jQuery('#txtMessage_error').text('');
+        }
+    
         if(grecaptcha.getResponse() == "") {
             jQuery('#recaptcha_error').text('Please select captcha.');
             flag++;
@@ -455,12 +457,23 @@ jQuery(document).on('click', '.send_inquiry_mail', function() {
                     jQuery('.mailmessage').html('<div class="alert-success">Mail sent successfully.</div>');
                 }
                 else{
-                    jQuery('.mailmessage').html('<div class="alert-error">failed to mail sent.</div>');
+                    jQuery('.mailmessage').html('<div class="alert-error">Failed to mail sent.</div>');
+                    jQuery('#mailsent').val('0');
                 }
             }
         });
+        return false;
+    }
+    else if(jQuery('#mailsent').val()==0){
+        return false;
+    }
+    else{
+        return false;
     }
 });
+function onSubmit(token) {
+    jQuery("#formInquiry").submit();
+}
 function resetSearch(){
     // location.reload();
     jQuery('.LF-row').css('opacity','0.5');
