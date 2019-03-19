@@ -13,7 +13,7 @@ function LF_create_admin_main_menu()
 /**
 * this function renders main menu.
 * generally "included how to use tags" information.
-*/
+**/
 function LF_main_menu_view_creator()
 {
 	echo '<div class="LF-header">
@@ -80,7 +80,11 @@ function LF_main_menu_view_creator()
 	</p>
 	<p>[LF-Listings pagination="no"]</p>
 	<p>
-		<b>NOTE: </b>Where <i> type=residential, commercial, condo, recreational, agriculture or land </i> and <i> sale=sale or rent </i> and <i>search=yes, no and only</i> and <i>style=grid and horizontal</i> and <i>priceorder=yes, no</i> and <i>pagiantion=yes, no</i>.
+		<b>OR</b>
+	</p>
+	<p>[LF-Listings per-row="3"]</p>
+	<p>
+		<b>NOTE: </b>Where <i> type=residential, commercial, condo, recreational, agriculture or land </i> and <i> sale=sale or rent </i> and <i>search=yes, no and only</i> and <i>style=grid and horizontal</i> and <i>priceorder=yes, no</i> and <i>pagiantion=yes, no</i> and <i>per-row=1, 2, 3 and 4</i>.
 	</p>
 	<?php
 	echo '</div>';
@@ -218,7 +222,7 @@ function LF_settings_view_creator()
 						</div>
 						<div class="LF-form-group">
 							<label for="LF_reCaptchastate">Google reCAPTCHA Type: </label><br>
-							<input type="radio" name="LF_reCaptchastate" value="yes" <?php if(LF_get_settings('LF_reCaptchastate')=='yes'){ echo 'checked';}?>> "i'm not a rebot" Checkbox
+							<input type="radio" name="LF_reCaptchastate" value="yes" <?php if(LF_get_settings('LF_reCaptchastate')=='yes'){ echo 'checked';}?>> "i'm not a robot" Checkbox
 							<br>
 							<input type="radio" name="LF_reCaptchastate" value="no" <?php if(LF_get_settings('LF_reCaptchastate')=='no'){ echo 'checked';}?>> Invisible reCAPTCHA badge
 						</div>

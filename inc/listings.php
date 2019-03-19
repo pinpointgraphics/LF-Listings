@@ -25,6 +25,14 @@ function LF_pagination(){
 	$ids = sanitize_text_field($_POST['ids']);
 	$pagination = sanitize_text_field($_POST['pagination']);
 	$priceorder = sanitize_text_field($_POST['priceorder']);
+	$per_row = sanitize_text_field($_POST['per_row']);
+
+	if(isset($per_row)){
+		$per_row = $per_row;
+	}
+	else{
+		$per_row = '';
+	}
 
 	if(isset($pagination)){
 		$pagination = $pagination;
@@ -142,7 +150,8 @@ function LF_pagination(){
 	else{
 		$waterFront='';
 	}
-	getLFListings($page,$mainSearch,$municipality,$sale,$bedroom,$bathroom,$property_Type,$priceFrom,$priceTo,$waterFront,$sort,$offices,$agents,$openhouse,$slug,$search,$style,$ids,$pagination,$priceorder);
+	
+	getLFListings($page, $mainSearch, $municipality, $sale, $bedroom, $bathroom, $property_Type, $priceFrom, $priceTo, $waterFront, $sort, $offices, $agents, $openhouse, $slug, $search, $style, $ids, $pagination, $priceorder, $per_row);
 
 	wp_die();
 }
@@ -171,6 +180,14 @@ function LF_search(){
 	$ids = sanitize_text_field($_POST['ids']);
 	$pagination = sanitize_text_field($_POST['pagination']);
 	$priceorder = sanitize_text_field($_POST['priceorder']);
+	$per_row = sanitize_text_field($_POST['per_row']);
+
+	if(isset($per_row)){
+		$per_row = $per_row;
+	}
+	else{
+		$per_row = '';
+	}
 
 	if(isset($pagination)){
 		$pagination = $pagination;
@@ -286,7 +303,7 @@ function LF_search(){
 		$waterFront='';
 	}
 
-	getLFListings($page,$mainSearch,$municipality,$sale,$bedroom,$bathroom,$property_Type,$priceFrom,$priceTo,$waterFront,$sort,$offices,$agents,$openhouse,$slug,$search,$style,$pagination,$priceorder);
+	getLFListings($page, $mainSearch, $municipality, $sale, $bedroom, $bathroom, $property_Type, $priceFrom, $priceTo, $waterFront, $sort, $offices, $agents, $openhouse, $slug, $search, $style, $ids, $pagination, $priceorder, $per_row);
 	wp_die();
 }
 
@@ -335,13 +352,12 @@ function LF_send_inquiryMail()
 	die();
 }
 
-
-function LF_SessionStart()
-{
+function LF_SessionStart(){
 	check_ajax_referer( 'my-special-string', 'token' );
-	$_SESSION['acceptTerms']=$_SERVER['REMOTE_ADDR'];
+	$_SESSION['acceptTerms'] = $_SERVER['REMOTE_ADDR'];
 	die();
 }
+
 add_action( 'wp_ajax_LF_SessionStart', 'LF_SessionStart' );
 add_action( 'wp_ajax_nopriv_LF_SessionStart', 'LF_SessionStart' );
 ?>

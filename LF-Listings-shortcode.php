@@ -11,7 +11,8 @@ $attr = shortcode_atts( array(
 	'style'=>'',
 	'ids'=>'',
 	'pagination'=>'',
-	'priceorder'=>''
+	'priceorder'=>'',
+	'per-row'=>''
 ), $atts );
 
 $listkey = get_query_var('listkey');
@@ -654,7 +655,10 @@ if ($listkey) {
 					<input type="hidden" name="ids" id="ids" value="<?php echo $attr['ids'];?>">
 					
 					<input type="hidden" name="pagination" id="pagination" value="<?php echo $attr['pagination'];?>">
+
 					<input type="hidden" name="priceorder" id="priceorder" value="<?php echo $attr['priceorder'];?>">
+
+					<input type="hidden" name="per_row" id="per_row" value="<?php echo $attr['per-row'];?>">
 
 					<?php
 
@@ -731,26 +735,32 @@ if ($listkey) {
 							}
 							echo '<div class="clear"></div>';
 							//get column from admin setting
-							$column = LF_get_settings('LF_column');
+							if(empty($attr['per-row'])){
+								$column = LF_get_settings('LF_column');
+							}
+							else{
+								$column = $attr['per-row'];
+							}
+
 							switch($column){
 								case 0:
-								$col=0;
-								break;
+									$col=0;
+									break;
 								case 1:
-								$col=12;
-								break;
+									$col=12;
+									break;
 								case 2:
-								$col=6;
-								break;
+									$col=6;
+									break;
 								case 3:
-								$col=4;
-								break;
+									$col=4;
+									break;
 								case 4:
-								$col=3;
-								break;
+									$col=3;
+									break;
 								default:
-								$col=3;
-								break;
+									$col=3;
+									break;
 							}
 							
 							if(!empty($attr['style']) and $attr['style'] == 'horizontal'){

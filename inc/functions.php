@@ -106,7 +106,7 @@ function getCities()
 /**
 * this function get the listings as per the search parameters.
 */
-function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bedroom='',$bathroom='',$property_Type='',$priceFrom='',$priceTo='',$waterFront='',$sort,$offices='',$agents='',$openhouse='',$slug,$search='',$style='',$ids='',$pagination='',$priceorder='')
+function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bedroom='',$bathroom='',$property_Type='',$priceFrom='',$priceTo='',$waterFront='',$sort='',$offices='',$agents='',$openhouse='',$slug='',$search='',$style='',$ids='',$pagination='',$priceorder='',$per_row='')
 {
 
 	if(empty($search) OR $search=='yes' OR $search=='only'){
@@ -400,6 +400,9 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 			<input type="hidden" name="pagination" id="pagination" value="<?php echo !empty($pagination)?$pagination:'';?>">
 			
 			<input type="hidden" name="priceorder" id="priceorder" value="<?php echo !empty($priceorder)?$priceorder:'';?>">
+
+			<input type="hidden" name="per_row" id="per_row" value="<?php echo !empty($per_row)?$per_row:'';?>">
+
 			<!-- <input type="hidden" name="ids" id="ids" value="<?php echo !empty($ids)?$ids:'';?>"> -->
 
 			<?php
@@ -476,26 +479,32 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 				echo '<div class="clear"></div>';
 
 				//get column from admin setting
-				$column = LF_get_settings('LF_column');
+				if(!isset($per_row)){
+					$column = LF_get_settings('LF_column');
+				}
+				else{
+					$column = $per_row;
+				}
+				// $column = LF_get_settings('LF_column');
 				switch($column){
 					case 0:
-					$col=0;
-					break;
+						$col=0;
+						break;
 					case 1:
-					$col=12;
-					break;
+						$col=12;
+						break;
 					case 2:
-					$col=6;
-					break;
+						$col=6;
+						break;
 					case 3:
-					$col=4;
-					break;
+						$col=4;
+						break;
 					case 4:
-					$col=3;
-					break;
+						$col=3;
+						break;
 					default:
-					$col=3;
-					break;
+						$col=3;
+						break;
 				}
 				
 				if(!empty($style) and $style == 'horizontal'){
