@@ -4,7 +4,8 @@ add_action( 'wp_ajax_nopriv_LF_pagination', 'LF_pagination' );
 
 function LF_pagination(){
 	check_ajax_referer( 'my-special-string', 'token' );
-
+// print_r($_POST);
+// exit();
 	$page = sanitize_text_field($_POST['page']);
 	$mainSearch = sanitize_text_field($_POST['mainSearch']);
 	$municipality = sanitize_text_field($_POST['LF_municipalities']);
@@ -26,7 +27,14 @@ function LF_pagination(){
 	$pagination = sanitize_text_field($_POST['pagination']);
 	$priceorder = sanitize_text_field($_POST['priceorder']);
 	$per_row = sanitize_text_field($_POST['per_row']);
+	$index = sanitize_text_field($_POST['index']);
 
+	if(isset($index)){
+		$index = $index;
+	}
+	else{
+		$index='';
+	}
 	if(isset($per_row)){
 		$per_row = $per_row;
 	}
@@ -151,7 +159,7 @@ function LF_pagination(){
 		$waterFront='';
 	}
 	
-	getLFListings($page, $mainSearch, $municipality, $sale, $bedroom, $bathroom, $property_Type, $priceFrom, $priceTo, $waterFront, $sort, $offices, $agents, $openhouse, $slug, $search, $style, $ids, $pagination, $priceorder, $per_row);
+	getLFListings($page, $mainSearch, $municipality, $sale, $bedroom, $bathroom, $property_Type, $priceFrom, $priceTo, $waterFront, $sort, $offices, $agents, $openhouse, $slug, $search, $style, $ids, $pagination, $priceorder, $per_row,$index);
 
 	wp_die();
 }
@@ -181,6 +189,14 @@ function LF_search(){
 	$pagination = sanitize_text_field($_POST['pagination']);
 	$priceorder = sanitize_text_field($_POST['priceorder']);
 	$per_row = sanitize_text_field($_POST['per_row']);
+	$index = sanitize_text_field($_POST['index']);
+
+	if(isset($index)){
+		$index = $index;
+	}
+	else{
+		$index='';
+	}
 
 	if(isset($per_row)){
 		$per_row = $per_row;
@@ -303,7 +319,7 @@ function LF_search(){
 		$waterFront='';
 	}
 
-	getLFListings($page, $mainSearch, $municipality, $sale, $bedroom, $bathroom, $property_Type, $priceFrom, $priceTo, $waterFront, $sort, $offices, $agents, $openhouse, $slug, $search, $style, $ids, $pagination, $priceorder, $per_row);
+	getLFListings($page, $mainSearch, $municipality, $sale, $bedroom, $bathroom, $property_Type, $priceFrom, $priceTo, $waterFront, $sort, $offices, $agents, $openhouse, $slug, $search, $style, $ids, $pagination, $priceorder, $per_row,$index);
 	wp_die();
 }
 

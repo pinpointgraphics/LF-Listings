@@ -12,7 +12,8 @@ $attr = shortcode_atts( array(
 	'ids'=>'',
 	'pagination'=>'',
 	'priceorder'=>'',
-	'per-row'=>''
+	'per-row'=>'',
+	'waterfront'=>''
 ), $atts );
 
 $listkey = get_query_var('listkey');
@@ -31,7 +32,7 @@ if ($listkey) {
 		$propertyDetail = $propertyDetails->results;
 		$propertyImages = $propertyDetail->Images;
 		?>
-		<h1 class="main_title"><?php echo $propertyDetail->UnparsedAddress;?></h1>
+		<h1 class="main_title LF-page-title"><?php echo $propertyDetail->UnparsedAddress;?></h1>
 		<div class="LF-description">
 			<div class="LF-row">
 				<div class="LF-col-md-12">
@@ -402,7 +403,7 @@ if ($listkey) {
 	}
 	else{
 		?>
-		<div id="LF-listigs">
+		<div class="LF-listigs">
 			<?php
 			if(empty($attr['search']) OR $attr['search']=='yes' OR $attr['search']=="only"):
 				if(LF_get_settings('LF_show_search')=='yes'  || (($attr['search']=='yes' OR $attr['search']=='only') AND LF_get_settings('LF_show_search')!='yes')):
@@ -524,7 +525,7 @@ if ($listkey) {
 							<div class="LF-col-md-12">
 								<div class="LF-form-group">
 									<label id="waterfront-search" for="waterfront">
-										<input id="waterfront" name="waterfront" <?php if(isset($waterFront) and $waterFront=='y'){ echo 'checked';}?> value="y" type="checkbox">Show waterfront properties only
+										<input id="waterfront" name="waterfront" <?php if(!empty($attr['waterfront']) and $attr['waterfront']=='yes'){ echo 'checked';}?> value="y" type="checkbox">Show waterfront properties only
 									</label>
 								</div>
 								<div class="LF-form-group">
@@ -575,7 +576,7 @@ if ($listkey) {
 				$ids = '';
 			}
 			if($attr['style']=='horizontal'){
-				$paginate = '500';
+				$paginate = '50';
 			}
 			else{
 				$paginate = LF_get_settings('LF_page');
@@ -596,9 +597,16 @@ if ($listkey) {
 				$sale = '';
 			}
 
+			if(!empty($attr['waterfront']) and $attr['waterfront']=='yes'){
+				$waterfront = '&waterfront=y';
+			}
+			else{
+				$waterfront = '';
+			}
+
 			$curl = curl_init();
 			curl_setopt_array($curl, array(
-				CURLOPT_URL => API_URL."/properties?token=".$token."&agent_id=".$agent_id."&office_id=".$office_id."&paginate=".$paginate."&type=".$attr['type']."&sort=".$sort.$sale.$search.$agent.$office.$ids,
+				CURLOPT_URL => API_URL."/properties?token=".$token."&agent_id=".$agent_id."&office_id=".$office_id."&paginate=".$paginate."&type=".$attr['type']."&sort=".$sort.$sale.$search.$agent.$office.$ids.$waterfront,
 				CURLOPT_RETURNTRANSFER => true,
 				CURLOPT_ENCODING => "",
 				CURLOPT_MAXREDIRS => 10,
@@ -630,6 +638,12 @@ if ($listkey) {
 				if(empty($result)){
 					return true;
 				}
+				if(empty($attr['per-row'])){
+					$column = LF_get_settings('LF_column');
+				}
+				else{
+					$column = $attr['per-row'];
+				}
 				?>
 				<div class="LF-row">
 					<input type="hidden" name="pageSlug" id="pageSlug" value="<?php echo $pageSlug;?>">
@@ -645,12 +659,14 @@ if ($listkey) {
 					<input type="hidden" name="defaultsale" id="defaultsale" value="<?php echo $attr['sale'];?>">
 
 					<input type="hidden" name="defaultopenhouse" id="defaultopenhouse" value="<?php echo $attr['openhouse'];?>">
-
+					
+					<input type="hidden" name="defaultwaterfront" id="defaultwaterfront" value="<?php echo $attr['waterfront'];?>">
+					
 					<input type="hidden" name="search" id="search" value="<?php echo $attr['search'];?>">
 
 					<input type="hidden" name="style" id="style" value="<?php echo $attr['style'];?>">
 					
-					<input type="hidden" name="noofcol" id="noofcol" value="<?php echo !empty(LF_get_settings('LF_column'))?LF_get_settings('LF_column'):'';?>">
+					<input type="hidden" name="noofcol" id="noofcol" value="<?php echo !empty($column)?$column:'';?>">
 
 					<input type="hidden" name="ids" id="ids" value="<?php echo $attr['ids'];?>">
 					
@@ -727,21 +743,20 @@ if ($listkey) {
 									echo '<div class="LF-col-md-5">
 									<div class="LF-sortblock">
 									<label>Order by price: </lable>
-									Low <input type="radio" class="LF-sort" name="LF-sort" value="ASC" '.$ascchecked.'>
-									High <input type="radio" class="LF-sort" name="LF-sort" value="DESC" '.$descchecked.'>
+									Low <input type="radio" class="LF-sort" name="LF-sort" id="asc" value="ASC" '.$ascchecked.'>
+									High <input type="radio" class="LF-sort" name="LF-sort" id="desc" value="DESC" '.$descchecked.'>
 									</div>
 									</div>';
 								}
 							}
 							echo '<div class="clear"></div>';
 							//get column from admin setting
-							if(empty($attr['per-row'])){
+							/*if(empty($attr['per-row'])){
 								$column = LF_get_settings('LF_column');
 							}
 							else{
 								$column = $attr['per-row'];
-							}
-
+							}*/
 							switch($column){
 								case 0:
 									$col=0;
@@ -837,8 +852,8 @@ if ($listkey) {
 									echo '<div class="LF-col-md-5">
 									<div class="LF-sortblock">
 									<label>Order by price: </lable>
-									Low <input type="radio" class="LF-sort" name="LF-Bsort" value="ASC" '.$ascchecked.'>
-									High <input type="radio" class="LF-sort" name="LF-Bsort" value="DESC" '.$descchecked.'>
+									Low <input type="radio" class="LF-sort" name="LF-Bsort" id="Basc" value="ASC" '.$ascchecked.'>
+									High <input type="radio" class="LF-sort" name="LF-Bsort" id="Bdesc" value="DESC" '.$descchecked.'>
 									</div>
 									</div>';
 								}
@@ -851,6 +866,7 @@ if ($listkey) {
 				}?>
 			</div>
 			<div class="LF-disclaimer"><?php echo LF_get_settings('LF_detail_footer');?></div>
+		</div>
 			<?php
 		}
 		?>

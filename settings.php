@@ -84,7 +84,11 @@ function LF_main_menu_view_creator()
 	</p>
 	<p>[LF-Listings per-row="3"]</p>
 	<p>
-		<b>NOTE: </b>Where <i> type=residential, commercial, condo, recreational, agriculture or land </i> and <i> sale=sale or rent </i> and <i>search=yes, no and only</i> and <i>style=grid and horizontal</i> and <i>priceorder=yes, no</i> and <i>pagiantion=yes, no</i> and <i>per-row=1, 2, 3 and 4</i>.
+		<b>OR</b>
+	</p>
+	<p>[LF-Listings waterfront="yes"]</p>
+	<p>
+		<b>NOTE: </b>Where <i> type=residential, commercial, condo, recreational, agriculture or land </i> and <i> sale=sale or rent </i> and <i>search=yes, no and only</i> and <i>style=grid and horizontal</i> and <i>priceorder=yes, no</i> and <i>pagiantion=yes, no</i> and <i>per-row=1, 2, 3 and 4</i> and <i>waterfront=yes,no</i>.
 	</p>
 	<?php
 	echo '</div>';
@@ -587,6 +591,7 @@ function LF_admin_js()
 			wp_enqueue_style('jquery.fancybox.css',plugins_url('assets/css/jquery.fancybox.css',__FILE__));
 
 			?>
+			<link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
 			<style type="text/css">
 			#LF_bedroom{
 				background-image: url('<?php echo plugins_url('assets/images/bed.png',__FILE__)?>');
@@ -598,7 +603,28 @@ function LF_admin_js()
 				background-repeat: no-repeat;
 				background-position: 90% center;
 			}
-
+			.flickity-button {
+			  	background: transparent;
+			}
+			.flickity-button:hover {
+			  	background: transparent;
+			}	
+			.flickity-prev-next-button {
+			  	width: 30px;
+			  	height: 30px;
+			  	border-radius: 5px;
+			}
+			/* icon color */
+			.flickity-button-icon {
+			  	fill: black;
+			}
+			/* position outside */
+			.flickity-prev-next-button.previous {
+			  	left: -40px;
+			}
+			.flickity-prev-next-button.next {
+			  	right: -40px;
+			}
 			</style>
 			<?php
 		}
@@ -629,10 +655,15 @@ function LF_admin_js()
 			wp_enqueue_script( 'jquery.fancybox.pack.js', plugins_url('assets/js/jquery.fancybox.pack.js',__FILE__), array('jquery'), '1.0.0', true );
 			wp_enqueue_script( 'jquery.fancybox.thumbs.js', plugins_url('assets/js/jquery.fancybox-thumbs.js',__FILE__), array('jquery'), '1.0.0', true );
 			wp_enqueue_script( 'slick.min.js', plugins_url('assets/js/slick.min.js',__FILE__), array('jquery'), '1.0.0', true );
-
+			
 			?>
+			<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
 			<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 			<script type="text/javascript">
+			var noofcol = jQuery('#noofcol').val();
+			if(noofcol>4){
+				noofcol = 4;
+			}
 			jQuery(document).ready(function() {
 				jQuery('.fancybox-thumbs').fancybox({
 					prevEffect : 'none',
@@ -693,20 +724,25 @@ function LF_admin_js()
 					}]
 				});
 
-				jQuery('.horizantal-slide').slick({
+				jQuery('.horizantal-slide').flickity({
+				  // options
+				  cellAlign: 'left',
+				  contain: true,
+				  pageDots: false
+				});
+				/*jQuery('.horizantal-slide').slick({
 					dots: false,
-					infinite: false,
+					infinite: true,
 					speed: 300,
-					slidesToShow: <?php echo LF_get_settings('LF_column')?>,
-					slidesToScroll: <?php echo LF_get_settings('LF_column')?>,
+					slidesToShow: noofcol,
+					slidesToScroll: noofcol,
+					swipeToSlide: true,
 					responsive: [
 						{
 							breakpoint: 1024,
 							settings: {
 								slidesToShow: 3,
-								slidesToScroll: 3,
-								infinite: true,
-								dots: true
+								slidesToScroll: 3
 							}
 						},
 						{
@@ -724,7 +760,7 @@ function LF_admin_js()
 							}
 						}
 					]
-				});
+				});*/
 
 				jQuery('.slider-single').on('afterChange', function(event, slick, currentSlide) {
 					jQuery('.slider-nav').slick('slickGoTo', currentSlide);
@@ -851,6 +887,7 @@ function LF_admin_js()
 						</div>
 						<div class="modal-footer">
 							<button name="acceptTermsofUse" class="btn btn_close_model">Accept Terms of Use</button>
+							<button type="button" class="LF-btn LF-btn-close" data-dismiss="modal">Decline</button>
 						</div>
 					</div>
 				</div>

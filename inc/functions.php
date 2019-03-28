@@ -106,7 +106,7 @@ function getCities()
 /**
 * this function get the listings as per the search parameters.
 */
-function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bedroom='',$bathroom='',$property_Type='',$priceFrom='',$priceTo='',$waterFront='',$sort='',$offices='',$agents='',$openhouse='',$slug='',$search='',$style='',$ids='',$pagination='',$priceorder='',$per_row='')
+function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bedroom='',$bathroom='',$property_Type='',$priceFrom='',$priceTo='',$waterFront='',$sort='',$offices='',$agents='',$openhouse='',$slug='',$search='',$style='',$ids='',$pagination='',$priceorder='',$per_row='',$index='')
 {
 
 	if(empty($search) OR $search=='yes' OR $search=='only'){
@@ -116,7 +116,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 				<form method="post" name="search">
 					<div class="LF-col-md-6">
 						<div class="LF-form-group">
-							<input type="text" name="LF_main_search" id="LF_main_search" class="LF-form-control" placeholder="Search by Location, City, Postal Code or ID#" value="<?php echo !empty($mainSearch)?$mainSearch:'';?>">
+							<input type="text" name="LF_main_search" id="LF_main_search-<?php echo $index;?>" class="LF-form-control" placeholder="Search by Location, City, Postal Code or ID#" value="<?php echo !empty($mainSearch)?$mainSearch:'';?>">
 						</div>
 					</div>
 					<div class="LF-col-md-6">
@@ -124,7 +124,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 						$LF_Municipalities = explode(',',LF_get_settings('LF_Municipalities'));
 						?>
 						<div class="LF-form-group">
-							<select name="LF_municipalities" id="LF_municipalities" class="LF-form-control">
+							<select name="LF_municipalities" id="LF_municipalities-<?php echo $index;?>" class="LF-form-control">
 								<option value="0">All Municipalities</option>
 								<?php
 								foreach($LF_Municipalities as $LF_Municipalitie):
@@ -142,7 +142,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					</div>
 					<div class="LF-col-md-4">
 						<div class="LF-form-group">
-							<select name="LF_sale" id="LF_sale" class="LF-form-control">
+							<select name="LF_sale" id="LF_sale-<?php echo $index;?>" class="LF-form-control">
 								<option value="0">For Sale or Rent</option>
 								<option value="sale" <?php if($sale=='sale'){ echo 'selected';}?>>Sale</option>
 								<option value="rent" <?php if($sale=='rent'){ echo 'selected';}?>>Rent</option>
@@ -151,7 +151,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					</div>
 					<div class="LF-col-md-4">
 						<div class="LF-form-group">
-							<select name="LF_bedroom" id="LF_bedroom" class="LF-form-control">
+							<select name="LF_bedroom" id="LF_bedroom-<?php echo $index;?>" class="LF-form-control">
 								<option value="0">Any</option>
 								<option value="1" <?php if($bedroom=='1'){ echo 'selected';}?>>1</option>
 								<option value="2" <?php if($bedroom=='2'){ echo 'selected';}?>>2</option>
@@ -163,7 +163,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					</div>
 					<div class="LF-col-md-4">
 						<div class="LF-form-group">
-							<select name="LF_bathroom" id="LF_bathroom" class="LF-form-control">
+							<select name="LF_bathroom" id="LF_bathroom-<?php echo $index;?>" class="LF-form-control">
 								<option value="0">Any</option>
 								<option value="1" <?php if($bathroom=='1'){ echo 'selected';}?>>1</option>
 								<option value="2" <?php if($bathroom=='2'){ echo 'selected';}?>>2</option>
@@ -175,7 +175,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					</div>
 					<div class="LF-col-md-4">
 						<div class="LF-form-group">
-							<select name="LF_property_search" id="LF_property_search" class="LF-form-control">
+							<select name="LF_property_search" id="LF_property_search-<?php echo $index;?>" class="LF-form-control">
 								<option value="any" selected="">All Property Types</option>
 								<option value="residential" <?php if($property_Type=='residential'){ echo 'selected';}?>>Residential</option>
 								<option value="commercial" <?php if($property_Type=='commercial'){ echo 'selected';}?>>Commercial</option>
@@ -188,7 +188,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					</div>
 					<div class="LF-col-md-4">
 						<div class="LF-form-group">
-							<select id="LF_pricefrom_search" name="LF_pricefrom_search" class="LF-form-control">
+							<select id="LF_pricefrom_search-<?php echo $index;?>" name="LF_pricefrom_search" class="LF-form-control">
 								<option value="">Price From</option>
 								<option value="0" <?php if($priceFrom=='0'){ echo 'selected';}?>>0</option>
 								<option value="25000" <?php if($priceFrom=='25000'){ echo 'selected';}?>>25,000</option>
@@ -208,7 +208,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					</div>
 					<div class="LF-col-md-4">
 						<div class="LF-form-group">
-							<select id="LF_priceto_search" name="LF_priceto_search" class="LF-form-control">
+							<select id="LF_priceto_search-<?php echo $index;?>" name="LF_priceto_search" class="LF-form-control">
 								<option value="">Price To</option>
 								<option value="0" <?php if($priceTo=='0'){ echo 'selected';}?>>0</option>
 								<option value="25000" <?php if($priceTo=='25000'){ echo 'selected';}?>>25,000</option>
@@ -229,11 +229,11 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					<div class="LF-col-md-12">
 						<div class="LF-form-group">
 							<label id="waterfront-search" for="waterfront">
-								<input id="waterfront" name="waterfront" <?php if(isset($waterFront) and $waterFront=='y'){ echo 'checked';}?> value="y" type="checkbox">Show waterfront properties only
+								<input id="waterfront-<?php echo $index;?>" name="waterfront" <?php if(isset($waterFront) and $waterFront=='y'){ echo 'checked';}?> value="y" type="checkbox">Show waterfront properties only
 							</label>
 						</div>
 						<div class="LF-form-group">
-							<button class="LF-btn LF-btn-search" type="button">Search</button>
+							<button class="LF-btn LF-btn-search" type="button" data-index="<?php echo $index;?>">Search</button>
 							<button class="LF-btn LF-btn-reset" type="button" onclick="resetSearch()">Reset</button>
 						</div>
 					</div>
@@ -262,10 +262,10 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 		$municipality = '';
 	}
 	if(!empty($sale)){
-		$sale = '&sale='.$sale;
+		$LF_sale = '&sale='.$sale;
 	}
 	else{
-		$sale = '';
+		$LF_sale = '';
 	}
 
 	if(!empty($bedroom)){
@@ -297,23 +297,23 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 	}
 
 	if(!empty($priceTo)){
-		$priceTo = '&priceto='.$priceTo;
+		$LF_priceTo = '&priceto='.$priceTo;
 	}
 	else{
-		$priceTo = '';
+		$LF_priceTo = '';
 	}
 
 	if(!empty($waterFront)){
-		$waterFront = '&waterfront='.$waterFront;
+		$LF_waterFront = '&waterfront='.$waterFront;
 	}
 	else{
-		$waterFront='';
+		$LF_waterFront='';
 	}
 	if(!empty($offices)){
-		$offices = '&offices='.$offices;
+		$office = '&offices='.$offices;
 	}
 	else{
-		$offices = '';
+		$office = '';
 	}
 	if(!empty($agents)){
 		$agent = '&agents='.$agents;
@@ -322,26 +322,26 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 		$agent = '';
 	}
 	if(!empty($openhouse)){
-		$openhouse = '&openhouse='.$openhouse;
+		$LF_openhouse = '&openhouse='.$openhouse;
 	}
 	else{
-		$openhouse = '';
+		$LF_openhouse = '';
 	}
 	if(!empty($ids))
 	{
-		$ids = '&ids='.$ids;
+		$id = '&ids='.$ids;
 	}
 	else
 	{
-		$ids = '';
+		$id = '';
 	}
 
 	$token = getToken();
 	$agent_id = LF_get_settings('agent_id');
 	$office_id = LF_get_settings('office_id');
 
-	if($attr['style']=='horizontal'){
-		$paginate = '500';
+	if($style=='horizontal'){
+		$paginate = '50';
 	}
 	else{
 		$paginate = LF_get_settings('LF_page');
@@ -349,7 +349,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 
 	$curl = curl_init();
 	curl_setopt_array($curl, array(
-		CURLOPT_URL => API_URL."/properties?token=".$token."&agent_id=".$agent_id."&office_id=".$office_id."&paginate=".$paginate."&sort=".$sort.$page.$mainSearch.$sale.$bedroom.$bathroom.$propertyType.$priceFrom.$priceTo.$waterFront.$municipality.$offices.$agent.$ids,
+		CURLOPT_URL => API_URL."/properties?token=".$token."&agent_id=".$agent_id."&office_id=".$office_id."&paginate=".$paginate."&sort=".$sort.$page.$mainSearch.$LF_sale.$bedroom.$bathroom.$propertyType.$priceFrom.$LF_priceTo.$LF_waterFront.$municipality.$office.$agent.$id,
 		CURLOPT_RETURNTRANSFER => true,
 		CURLOPT_ENCODING => "",
 		CURLOPT_MAXREDIRS => 10,
@@ -377,31 +377,33 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 		}
 		?>
 		<div class="LF-row">
-			<input type="hidden" name="pageSlug" id="pageSlug" value="<?php echo $slug;?>">
+			<input type="hidden" name="pageSlug" id="pageSlug-<?php echo $index;?>" value="<?php echo $slug;?>">
 
-			<input type="hidden" name="defaultSearchType" id="defaultSearchType" value="<?php echo !empty($property_Type)?$property_Type:'';?>">
+			<input type="hidden" name="defaultSearchType" id="defaultSearchType-<?php echo $index;?>" value="<?php echo !empty($property_Type)?$property_Type:'';?>">
 
-			<input type="hidden" name="defaultagents" id="defaultagents" value="<?php echo !empty($agents)?$agents:'';?>">
+			<input type="hidden" name="defaultagents" id="defaultagents-<?php echo $index;?>-<?php echo $index;?>" value="<?php echo !empty($agents)?$agents:'';?>">
 
-			<input type="hidden" name="defaultoffice" id="defaultoffice" value="<?php echo !empty($offices)?$offices:'';?>">
+			<input type="hidden" name="defaultoffice" id="defaultoffice-<?php echo $index;?>" value="<?php echo !empty($offices)?$offices:'';?>">
 
-			<input type="hidden" name="defaultlocation" id="defaultlocation" value="<?php echo !empty($municipalities)?$municipalities:'';?>">
+			<input type="hidden" name="defaultlocation" id="defaultlocation-<?php echo $index;?>" value="<?php echo !empty($municipalities)?$municipalities:'';?>">
 
-			<input type="hidden" name="defaultsale" id="defaultsale" value="<?php echo !empty($sale)?$sale:'';?>">
+			<input type="hidden" name="defaultsale" id="defaultsale-<?php echo $index;?>" value="<?php echo !empty($sale)?$sale:'';?>">
 
-			<input type="hidden" name="defaultopenhouse" id="defaultopenhouse" value="<?php echo !empty($openhouse)?$openhouse:'';?>">
-
-			<input type="hidden" name="search" id="search" value="<?php echo !empty($search)?$search:'';?>">
-
-			<input type="hidden" name="style" id="style" value="<?php echo !empty($style)?$style:'';?>">
-
-			<input type="hidden" name="noofcol" id="noofcol" value="<?php echo !empty(LF_get_settings('LF_column'))?LF_get_settings('LF_column'):'';?>">
-
-			<input type="hidden" name="pagination" id="pagination" value="<?php echo !empty($pagination)?$pagination:'';?>">
+			<input type="hidden" name="defaultopenhouse" id="defaultopenhouse-<?php echo $index;?>" value="<?php echo !empty($openhouse)?$openhouse:'';?>">
 			
-			<input type="hidden" name="priceorder" id="priceorder" value="<?php echo !empty($priceorder)?$priceorder:'';?>">
+			<input type="hidden" name="defaultwaterfront" id="defaultwaterfront-<?php echo $index;?>" value="<?php echo !empty($waterFront)?$waterFront:'';?>">
 
-			<input type="hidden" name="per_row" id="per_row" value="<?php echo !empty($per_row)?$per_row:'';?>">
+			<input type="hidden" name="search" id="search-<?php echo $index;?>" value="<?php echo !empty($search)?$search:'';?>">
+
+			<input type="hidden" name="style" id="style-<?php echo $index;?>" value="<?php echo !empty($style)?$style:'';?>">
+
+			<input type="hidden" name="noofcol" id="noofcol-<?php echo $index;?>" value="<?php echo !empty(LF_get_settings('LF_column'))?LF_get_settings('LF_column'):'';?>">
+
+			<input type="hidden" name="pagination" id="pagination-<?php echo $index;?>" value="<?php echo !empty($pagination)?$pagination:'';?>">
+			
+			<input type="hidden" name="priceorder" id="priceorder-<?php echo $index;?>" value="<?php echo !empty($priceorder)?$priceorder:'';?>">
+
+			<input type="hidden" name="per_row" id="per_row-<?php echo $index;?>" value="<?php echo !empty($per_row)?$per_row:'';?>">
 
 			<!-- <input type="hidden" name="ids" id="ids" value="<?php echo !empty($ids)?$ids:'';?>"> -->
 
@@ -416,7 +418,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 				$end        = ( ( $current_page + $links - $a) < $last ) ? $current_page + $links - $a: $last;
 				$class      = ( $current_page == 1 ) ? "disabled" : "";
 
-				$html       = '<ul class="LF-pagination">';
+				$html       = '<ul class="LF-pagination" data-index="'.$index.'">';
 
 				if($current_page>1){
 					$prev=$current_page-1;
@@ -468,10 +470,10 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($priceorder=='yes' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
 
 						echo '<div class="LF-col-md-5">
-						<div class="LF-sortblock">
+						<div class="LF-sortblock" data-index="'.$index.'">
 						<label>Order by price: </lable>
-						Low <input type="radio" class="LF-sort" name="LF-sort" value="ASC" '.$ascchecked.'>
-						High <input type="radio" class="LF-sort" name="LF-sort" value="DESC" '.$descchecked.'>
+						Low <input type="radio" class="LF-sort" name="LF-sort" value="ASC" id="asc-'.$index.'" '.$ascchecked.'>
+						High <input type="radio" class="LF-sort" name="LF-sort" value="DESC" id="desc-'.$index.'" '.$descchecked.'>
 						</div>
 						</div>';
 					}
@@ -479,7 +481,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 				echo '<div class="clear"></div>';
 
 				//get column from admin setting
-				if(!isset($per_row)){
+				if(empty($per_row)){
 					$column = LF_get_settings('LF_column');
 				}
 				else{
@@ -577,7 +579,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 				if(empty($priceorder) OR $priceorder=='yes'){
 					if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($priceorder=='yes' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
 						echo '<div class="LF-col-md-5">
-						<div class="LF-sortblock">
+						<div class="LF-sortblock" data-index="'.$index.'">
 						<label>Order by price: </lable>
 						Low <input type="radio" class="LF-sort" name="LF-Bsort" value="ASC" '.$ascchecked.'>
 						High <input type="radio" class="LF-sort" name="LF-Bsort" value="DESC" '.$descchecked.'>

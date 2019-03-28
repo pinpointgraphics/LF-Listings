@@ -920,6 +920,10 @@ a{
     width: 100%;
     border-bottom: none !important;
 }
+.LF-btn-close{
+	padding: 10px 20px;
+    font-weight: bold;
+}
 .horizantal-slide .slick-prev:before, .horizantal-slide .slick-next:before{
     color: #000 !important;
 }
@@ -1193,4 +1197,7 @@ ul#LF-room-details li{
 .alert-error{
     color: red;
     font-size: 14px;
+}
+#waterfront{
+    margin-right: 5px;
 }
