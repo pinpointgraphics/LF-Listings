@@ -21,6 +21,7 @@ define('API_URL','https://ddf.dfiner.net/v1');
 
 // required getpages
 require_once LF_PLUGIN_DIR. '/settings.php';
+require_once LF_PLUGIN_DIR. '/detailpage.php';
 require_once LF_PLUGIN_DIR. '/inc/functions.php';
 require_once LF_PLUGIN_DIR. '/inc/listings.php';
 
@@ -97,7 +98,21 @@ function LF_plugin_on_activation()
 		$table_name,
 		array(
 			'meta_key' => 'LF_MailText',
-			'meta_value' => 'Hey Admin below is the inquiry form details'
+			'meta_value' => '<p>Hello,</p><p>Here are the details of the inquiry form:</p>'
+		)
+	);
+	$wpdb->insert(
+		$table_name,
+		array(
+			'meta_key' => 'LF_detail_footer',
+			'meta_value' => 'MLS&reg;, REALTOR&reg;, and the associated logos are trademarks of The Canadian Real Estate Association'
+		)
+	);
+	$wpdb->insert(
+		$table_name,
+		array(
+			'meta_key' => 'LF_reCaptchastate',
+			'meta_value' => 'no-captch'
 		)
 	);
 }

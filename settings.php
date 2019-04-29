@@ -6,93 +6,13 @@ add_action('admin_menu','LF_create_admin_main_menu');
 */
 function LF_create_admin_main_menu()
 {
-	add_menu_page(__('LF Listings'),__('LF Listings'),'manage_options','LF-listings','LF_main_menu_view_creator','dashicons-editor-ul',50);
-	add_submenu_page( 'LF-listings', __('Settings'), __('Settings'), 'manage_options', 'LF-setting', 'LF_settings_view_creator');
+	add_menu_page(__('LF Listings'),__('LF Listings'),'manage_options','LF-setting','LF_settings_view_creator','dashicons-editor-ul',50);
+	
+	add_submenu_page( 'LF-setting', __('LF Settings'), __('LF Settings'), 'manage_options', 'LF-setting', 'LF_settings_view_creator');
+
+	add_submenu_page( 'LF-setting', __('LF Listings Tags'), __('LF Listings Tags'), 'manage_options', 'LF-listings', 'LF_main_menu_view_creator');
 }
 
-/**
-* this function renders main menu.
-* generally "included how to use tags" information.
-**/
-function LF_main_menu_view_creator()
-{
-	echo '<div class="LF-header">
-	<img src="'.plugins_url('assets/images/LF-Listings-logo-sm.png',__FILE__).'" alt="" width="250">
-	</div>';
-	echo '<div class="wrap">';
-	echo '<h1 class="wp-heading-inline">'.get_admin_page_title().'</h1>';
-	?>
-	<p>
-		<b>Use the following shortcode tags to create pre-selected property listings pages.</b>
-	</p>
-	<p>[LF-Listings]</p>
-	<p>
-		<b>OR</b>
-	</p>
-	<p>[LF-Listings type="residential"]</p>
-	<p>
-		<b>OR</b>
-	</p>
-	<p>[LF-Listings sale="sale"]</p>
-	<p>
-		<b>OR</b>
-	</p>
-	<p>[LF-Listings location="Wasaga Beach"]</p>
-	<p>
-		<b>OR</b>
-	</p>
-	<p>[LF-Listings agent="crea agent id"]
-		<br>
-		<strong>Note: </strong> Comma separated agents ids
-	</p>
-	<p>
-		<b>OR</b>
-	</p>
-	<p>[LF-Listings office="crea office id"]
-		<br>
-		<strong>Note: </strong> Comma separated office ids
-	</p>
-	<p>
-		<b>OR</b>
-	</p>
-	<p>[LF-Listings search="yes"]</p>
-	<p>
-		<b>OR</b>
-	</p>
-	<p>[LF-Listings style="grid"]</p>
-	<p>
-		<b>OR</b>
-	</p>
-	<p>[LF-Listings ids="133172,123456,789465"]
-	<br>
-	<strong>Note: </strong> Comma separated ids
-	</p>
-	<p>
-		<b>OR</b>
-	</p>
-	<p>[LF-Listings type="residential" sale="rent"]</p>
-	<p>
-		<b>OR</b>
-	</p>
-	<p>[LF-Listings priceorder="yes"]</p>
-	<p>
-		<b>OR</b>
-	</p>
-	<p>[LF-Listings pagination="no"]</p>
-	<p>
-		<b>OR</b>
-	</p>
-	<p>[LF-Listings per-row="3"]</p>
-	<p>
-		<b>OR</b>
-	</p>
-	<p>[LF-Listings waterfront="yes"]</p>
-	<p>
-		<b>NOTE: </b>Where <i> type=residential, commercial, condo, recreational, agriculture or land </i> and <i> sale=sale or rent </i> and <i>search=yes, no and only</i> and <i>style=grid and horizontal</i> and <i>priceorder=yes, no</i> and <i>pagiantion=yes, no</i> and <i>per-row=1, 2, 3 and 4</i> and <i>waterfront=yes,no</i>.
-	</p>
-	<?php
-	echo '</div>';
-}
 
 /**
 * this function renders the setting page view.
@@ -107,13 +27,14 @@ function LF_settings_view_creator()
 	?>
 	<div class="LF-tabSection">
 		<div class="LF-tab-link">
-			<button class="LF-tablink" data-id="account_info">Account Info</button>
+			<button class="LF-tablink LF-active" data-id="account_info">Account Info</button>
 			<button class="LF-tablink" data-id="listings">Listings Config.</button>
-			<button class="LF-tablink LF-active" data-id="custom_css">Custom CSS</button>
+			<button class="LF-tablink" data-id="Integrations">Integrations</button>
+			<button class="LF-tablink" data-id="custom_css">Custom CSS</button>
 		</div>
 		<div class="LF-clear"></div>
 		<div class="LF-tab-content">
-			<div id="account_info" class="LF-tabcontent">
+			<div id="account_info" class="LF-tabcontent LF-fade">
 				<div class="LF-msg-account"></div>
 				<form method="post" name="LF-general-form" id="LF-general-form">
 					<div class="LF-form-width">
@@ -150,6 +71,37 @@ function LF_settings_view_creator()
 				<div class="LF-msg-listing"></div>
 				<div class="LF-form-width">
 					<form method="post" name="LF-listing-form" id="LF-listing-form">
+						<div class="LF-form-group">
+							<label for="LF_show_search">Homepage Listings category:</label>
+							<?php
+							$args         = array(
+								'post_type'   => 'page',
+								'post_status' => 'publish',
+								'posts_per_page' => -1,
+								'order'=>'ASC'
+							);
+							$shortcode = 'LF-Listings';
+							$query_result = new WP_Query($args);
+							// print_r($query_result);
+							
+							?>
+							<select name="homepageSlug" id="homepageSlug" class="LF-form-control">
+								<option value="">Select</option>
+								<?php
+								foreach ($query_result->posts as $post) {
+									if(LF_get_settings('LF_homepageSlug') == $post->post_name){
+										$selected = "selected";
+									}
+									else{
+										$selected = '';
+									}
+									if (false !== strpos($post->post_content, $shortcode)) {
+										echo '<option value="'.$post->post_name.'" '.$selected.'>'.$post->post_title.'</option>';
+									}
+								}
+								?>
+							</select>
+						</div>
 						<div class="LF-form-group">
 							<label for="LF_show_search">Show Search Panel:</label>
 							<select name="LF_show_search" id="LF_show_search" class="LF-form-control">
@@ -221,20 +173,6 @@ function LF_settings_view_creator()
 							</select>
 						</div>
 						<div class="LF-form-group">
-							<label for="LF_mapApi">Map API Key: </label>
-							<input type="text" name="LF_mapApi" id="LF_mapApi" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_mapApiKey'))? LF_get_settings('LF_mapApiKey'):'';?>">
-						</div>
-						<div class="LF-form-group">
-							<label for="LF_reCaptchastate">Google reCAPTCHA Type: </label><br>
-							<input type="radio" name="LF_reCaptchastate" value="yes" <?php if(LF_get_settings('LF_reCaptchastate')=='yes'){ echo 'checked';}?>> "i'm not a robot" Checkbox
-							<br>
-							<input type="radio" name="LF_reCaptchastate" value="no" <?php if(LF_get_settings('LF_reCaptchastate')=='no'){ echo 'checked';}?>> Invisible reCAPTCHA badge
-						</div>
-						<div class="LF-form-group">
-							<label for="LF_reCaptcha">Google reCAPTCHA v2 Site Key: </label>
-							<input type="text" name="LF_reCaptcha" id="LF_reCaptcha" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_reCaptcha'))? LF_get_settings('LF_reCaptcha'):'';?>">
-						</div>
-						<div class="LF-form-group">
 							<label for="LF_mapApi">Image Width (in pixel): </label>
 							<input type="number" name="LF_imageWidth" id="LF_imageWidth" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_imageWidth'))? LF_get_settings('LF_imageWidth'):'';?>">
 						</div>
@@ -271,8 +209,36 @@ function LF_settings_view_creator()
 					</form>
 				</div>
 			</div>
+			
+			<div id="Integrations" class="LF-tabcontent">
+				<div class="LF-msg-integration"></div>
+				<div class="LF-form-width">
+					<form method="post" name="LF-integration-form" id="LF-integration-form">
+						<div class="LF-form-group">
+							<label for="LF_mapApi">Google Map API Key: </label>
+							<input type="text" name="LF_mapApi" id="LF_mapApi" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_mapApiKey'))? LF_get_settings('LF_mapApiKey'):'';?>">
+						</div>
+						<div class="LF-form-group">
+							<label for="LF_reCaptchastate">Google reCAPTCHA Type: </label><br>
+							<input type="radio" name="LF_reCaptchastate" value="yes" <?php if(LF_get_settings('LF_reCaptchastate')=='yes'){ echo 'checked';}?>> "i'm not a robot" Checkbox
+							<br>
+							<input type="radio" name="LF_reCaptchastate" value="no" <?php if(LF_get_settings('LF_reCaptchastate')=='no'){ echo 'checked';}?>> Invisible reCAPTCHA badge
+							<br>
+							<input type="radio" name="LF_reCaptchastate" value="no-captch" <?php if(LF_get_settings('LF_reCaptchastate')=='no-captch'){ echo 'checked';}?>> No reCAPTCHA
+						</div>
+						<div class="LF-form-group">
+							<label for="LF_reCaptcha">Google reCAPTCHA v2 Site Key: </label>
+							<input type="text" name="LF_reCaptcha" id="LF_reCaptcha" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_reCaptcha'))? LF_get_settings('LF_reCaptcha'):'';?>">
+						</div>
+						<br>
+						<div class="LF-form-group">
+							<input type="button" name="submit" id="LF-save-integration-setting" class="button button-primary" value="Save">
+						</div>
+					</form>
+				</div>
+			</div>
 
-			<div id="custom_css" class="LF-tabcontent  LF-fade">
+			<div id="custom_css" class="LF-tabcontent LF-fade" style="display: none;">
 				<div class="LF-msg-custom"></div>
 				<form method="post" name="LF-listingDetails-form" id="LF-listingDetails-form">
 					<?php
@@ -326,16 +292,16 @@ function LF_admin_js()
 	$token = wp_create_nonce("savepluginData");
 	?>
 	<script>
-	jQuery(document).on('click','.LF-tablink',function(){
-		jQuery('.LF-tablink').removeClass('LF-active');
-		jQuery(this).addClass('LF-active');
-		var activePan = jQuery(this).attr('data-id');
-		jQuery('.LF-tabcontent').removeClass('LF-fade');
-		jQuery('#'+activePan).addClass('LF-fade');
-	});
+		jQuery(document).on('click','.LF-tablink',function(){
+			jQuery('.LF-tablink').removeClass('LF-active');
+			jQuery(this).addClass('LF-active');
+			var activePan = jQuery(this).attr('data-id');
+			jQuery('.LF-tabcontent').removeClass('LF-fade');
+			jQuery('#'+activePan).addClass('LF-fade');
+		});
 
 	//multiple select box for municipalities
-	jQuery(document).ready(function(){
+	jQuery(document).ready(function($){
 		jQuery('#LF_Municipalities').multiselect({
 			buttonText: function(options, select) {
 				console.log(select[0].length);
@@ -359,9 +325,7 @@ function LF_admin_js()
 			}
 
 		});
-	});
-
-	jQuery(document).ready( function( $ ) {
+	
 		<?php if(isset($_GET['page']) and $_GET['page'] == 'LF-setting'){?>
 			var codeEditor = CodeMirror.fromTextArea(document.getElementById("LF_customCss"), {
 				lineNumbers: true,
@@ -374,78 +338,105 @@ function LF_admin_js()
 				codeEditor.save();
 			}
 			codeEditor.on('change', updateTextArea);
-			<?php }?>
-			$(document).on('click','#LF-save-listing-setting',function(){
-				var form = $('#LF-listing-form').serialize();
-				var token = '<?php echo $token; ?>';
-				var termsandcondition = tinymce.activeEditor.getContent();
-				$.ajax({
-					method: 'POST',
-					url:ajaxurl,
-					data:'action=LF_save_listing_config_data&token='+token+'&'+form+'&termsandcondition='+termsandcondition,
-					success: function(data){
-						$('html, body').animate({
-							scrollTop: $('body').offset().top - 20
-						}, 'slow');
-						if($.trim(data)=='1'){
-
-							$('.LF-msg-listing').html('<div class="notice notice-success is-dismissible"><p>Data saved successfully.</p></div>');
-						}
-						else{
-							$('.LF-msg-listing').html('<div class="notice notice-error is-dismissible"><p>Please try again...</p></div>');
-						}
-					}
-				});
+			
+			$('button[data-id="custom_css"]').click(function(){ 
+				$('#custom_css').show();
+				codeEditor.refresh();
 			});
+		<?php }?>
+		$(document).on('click','#LF-save-listing-setting',function(){
+			var form = $('#LF-listing-form').serialize();
+			var token = '<?php echo $token; ?>';
+			var termsandcondition = tinymce.activeEditor.getContent();
+			$.ajax({
+				method: 'POST',
+				url:ajaxurl,
+				data:'action=LF_save_listing_config_data&token='+token+'&'+form+'&termsandcondition='+termsandcondition,
+				success: function(data){
+					$('html, body').animate({
+						scrollTop: $('body').offset().top - 20
+					}, 'slow');
+					if($.trim(data)=='1'){
 
-			$(document).on('click','#LF-save-general-setting',function(){
-				var form = $('#LF-general-form').serialize();
-				var token = '<?php echo $token; ?>';
-				$.ajax({
-					method: 'POST',
-					url:ajaxurl,
-					data:'action=LF_save_account_info_data&token='+token+'&'+form,
-					success: function(data){
-						$('html, body').animate({
-							scrollTop: $('body').offset().top - 20
-						}, 'slow');
-						if($.trim(data)=='1'){
-
-							$('.LF-msg-account').html('<div class="notice notice-success is-dismissible"><p>Data saved successfully.</p></div>');
-						}
-						else{
-							$('.LF-msg-account').html('<div class="notice notice-error is-dismissible"><p>Please try again...</p></div>');
-						}
+						$('.LF-msg-listing').html('<div class="notice notice-success is-dismissible"><p>Data saved successfully.</p></div>');
 					}
-				});
-			});
-
-			$(document).on('click','#LF-save-listingDetails-setting',function(){
-				var form = $('#LF-listingDetails-form').serialize();
-				var token = '<?php echo $token; ?>';
-				$.ajax({
-					method: 'POST',
-					url:ajaxurl,
-					data:'action=LF_save_custom_css_data&token='+token+'&'+form,
-					success: function(data){
-						$('html, body').animate({
-							scrollTop: $('body').offset().top - 20
-						}, 'slow');
-						if($.trim(data)=='1'){
-							$('.LF-msg-custom').html('<div class="notice notice-success is-dismissible"><p>Data saved successfully.</p></div>');
-						}
-						else{
-							$('.LF-msg-custom').html('<div class="notice notice-error is-dismissible"><p>Please try again...</p></div>');
-						}
+					else{
+						$('.LF-msg-listing').html('<div class="notice notice-error is-dismissible"><p>Please try again...</p></div>');
 					}
-				});
+				}
 			});
 		});
-		</script>
-		<?php
-	}
 
-	add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
+		$(document).on('click','#LF-save-general-setting',function(){
+			var form = $('#LF-general-form').serialize();
+			var token = '<?php echo $token; ?>';
+			$.ajax({
+				method: 'POST',
+				url:ajaxurl,
+				data:'action=LF_save_account_info_data&token='+token+'&'+form,
+				success: function(data){
+					$('html, body').animate({
+						scrollTop: $('body').offset().top - 20
+					}, 'slow');
+					if($.trim(data)=='1'){
+
+						$('.LF-msg-account').html('<div class="notice notice-success is-dismissible"><p>Data saved successfully.</p></div>');
+					}
+					else{
+						$('.LF-msg-account').html('<div class="notice notice-error is-dismissible"><p>Please try again...</p></div>');
+					}
+				}
+			});
+		});
+
+		$(document).on('click','#LF-save-integration-setting',function(){
+			var form = $('#LF-integration-form').serialize();
+			var token = '<?php echo $token; ?>';
+			$.ajax({
+				method: 'POST',
+				url:ajaxurl,
+				data:'action=LF_save_integration_data&token='+token+'&'+form,
+				success: function(data){
+					$('html, body').animate({
+						scrollTop: $('body').offset().top - 20
+					}, 'slow');
+					if($.trim(data)=='1'){
+						$('.LF-msg-integration').html('<div class="notice notice-success is-dismissible"><p>Data saved successfully.</p></div>');
+					}
+					else{
+						$('.LF-msg-integration').html('<div class="notice notice-error is-dismissible"><p>Please try again...</p></div>');
+					}
+				}
+			});
+		});
+
+		$(document).on('click','#LF-save-listingDetails-setting',function(){
+			var form = $('#LF-listingDetails-form').serialize();
+			var token = '<?php echo $token; ?>';
+			$.ajax({
+				method: 'POST',
+				url:ajaxurl,
+				data:'action=LF_save_custom_css_data&token='+token+'&'+form,
+				success: function(data){
+					$('html, body').animate({
+						scrollTop: $('body').offset().top - 20
+					}, 'slow');
+					if($.trim(data)=='1'){
+						$('.LF-msg-custom').html('<div class="notice notice-success is-dismissible"><p>Data saved successfully.</p></div>');
+					}
+					else{
+						$('.LF-msg-custom').html('<div class="notice notice-error is-dismissible"><p>Please try again...</p></div>');
+					}
+				}
+			});
+		});
+
+	});
+</script>
+<?php
+}
+
+add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 
 	/**
 	* this function saves the data of account info section to the database.
@@ -497,15 +488,12 @@ function LF_admin_js()
 	function LF_save_listing_config_data()
 	{
 		check_ajax_referer( 'savepluginData', 'token' );
-
+		$homepageSlug = sanitize_text_field($_POST['homepageSlug']);
 		$LF_show_search = sanitize_text_field($_POST['LF_show_search']);
 		$LF_column = sanitize_text_field($_POST['LF_column']);
 		$LF_page = sanitize_text_field($_POST['LF_page']);
 		$LF_show_priceOrder = sanitize_text_field($_POST['LF_show_priceOrder']);
 		$LF_priceOrder = sanitize_text_field($_POST['LF_priceOrder']);
-		$mapApi = sanitize_text_field($_POST['LF_mapApi']);
-		$LF_reCaptcha = sanitize_text_field($_POST['LF_reCaptcha']);
-		$LF_reCaptchastate = sanitize_text_field($_POST['LF_reCaptchastate']);
 		$imageWidth = sanitize_text_field($_POST['LF_imageWidth']);
 		$imageHeight = sanitize_text_field($_POST['LF_imageHeight']);
 		$LF_Municipalities = implode(',',$_POST['LF_Municipalities']);
@@ -513,6 +501,9 @@ function LF_admin_js()
 		$LF_MailText = $_POST['LF_MailText'];
 		$termsandcondition = $_POST['termsandcondition'];
 
+		if(isset($homepageSlug)){
+			LF_add_settings('LF_homepageSlug',$homepageSlug);
+		}
 		if(isset($LF_show_search) and $LF_show_search!=''){
 			LF_add_settings('LF_show_search',$LF_show_search);
 		}
@@ -523,6 +514,9 @@ function LF_admin_js()
 			LF_add_settings('LF_column',$LF_column);
 		}
 		if(isset($LF_page) and $LF_page!=''){
+			if($LF_page>48){
+				$LF_page=48;
+			}
 			LF_add_settings('LF_page',$LF_page);
 		}
 		if(isset($LF_show_priceOrder)){
@@ -531,15 +525,6 @@ function LF_admin_js()
 		if(isset($LF_priceOrder)){
 			LF_add_settings('LF_priceOrder',$LF_priceOrder);
 		}
-		if(isset($mapApi)){
-			LF_add_settings('LF_mapApiKey',$mapApi);
-		}
-		if(isset($LF_reCaptchastate)){
-			LF_add_settings('LF_reCaptchastate',$LF_reCaptchastate);			
-		}
-		if(isset($LF_reCaptcha)){
-			LF_add_settings('LF_reCaptcha',$LF_reCaptcha);
-		}		
 		if(isset($imageWidth)){
 			LF_add_settings('LF_imageWidth', $imageWidth);
 		}
@@ -561,6 +546,29 @@ function LF_admin_js()
 
 
 	add_action('wp_ajax_LF_save_custom_css_data','LF_save_custom_css_data');
+
+	/**
+	* this function saves the data of Integrations section to the database.
+	*/
+	function LF_save_integration_data(){
+		check_ajax_referer( 'savepluginData', 'token' );
+
+		$mapApi = sanitize_text_field($_POST['LF_mapApi']);
+		$LF_reCaptcha = sanitize_text_field($_POST['LF_reCaptcha']);
+		$LF_reCaptchastate = sanitize_text_field($_POST['LF_reCaptchastate']);
+		if(isset($mapApi)){
+			LF_add_settings('LF_mapApiKey',$mapApi);
+		}
+		if(isset($LF_reCaptchastate)){
+			LF_add_settings('LF_reCaptchastate',$LF_reCaptchastate);			
+		}
+		if(isset($LF_reCaptcha)){
+			LF_add_settings('LF_reCaptcha',$LF_reCaptcha);
+		}
+		echo 1;
+		die();
+	}
+	add_action('wp_ajax_LF_save_integration_data','LF_save_integration_data');
 
 	/**
 	* this function saves the data of Custom css section to the database.
@@ -592,48 +600,49 @@ function LF_admin_js()
 
 			?>
 			<link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+
 			<style type="text/css">
-			#LF_bedroom{
-				background-image: url('<?php echo plugins_url('assets/images/bed.png',__FILE__)?>');
-				background-repeat: no-repeat;
-				background-position: 90% center;
-			}
-			#LF_bathroom{
-				background-image: url('<?php echo plugins_url('assets/images/bath.png',__FILE__)?>');
-				background-repeat: no-repeat;
-				background-position: 90% center;
-			}
-			.flickity-button {
-			  	background: transparent;
-			}
-			.flickity-button:hover {
-			  	background: transparent;
-			}	
-			.flickity-prev-next-button {
-			  	width: 30px;
-			  	height: 30px;
-			  	border-radius: 5px;
-			}
-			/* icon color */
-			.flickity-button-icon {
-			  	fill: black;
-			}
-			/* position outside */
-			.flickity-prev-next-button.previous {
-			  	left: -40px;
-			}
-			.flickity-prev-next-button.next {
-			  	right: -40px;
-			}
+				select[name="LF_bedroom"]{
+					background-image: url('<?php echo plugins_url('assets/images/bed.png',__FILE__)?>');
+					background-repeat: no-repeat;
+					background-position: 90% center;
+				}
+				select[name="LF_bathroom"]{
+					background-image: url('<?php echo plugins_url('assets/images/bath.png',__FILE__)?>');
+					background-repeat: no-repeat;
+					background-position: 90% center;
+				}
+				.flickity-button {
+					background: transparent;
+				}
+				.flickity-button:hover {
+					background: transparent;
+				}	
+				.flickity-prev-next-button {
+					width: 30px;
+					height: 30px;
+					border-radius: 5px;
+				}
+				/* icon color */
+				.flickity-button-icon {
+					fill: black;
+				}
+				/* position outside */
+				.flickity-prev-next-button.previous {
+					left: -40px;
+				}
+				.flickity-prev-next-button.next {
+					right: -40px;
+				}
 			</style>
 			<?php
 		}
 		else{
 			?>
 			<style type="text/css">
-			#Modal{
-				display: none !important;
-			}
+				#Modal{
+					display: none !important;
+				}
 			</style>
 			<?php
 		}
@@ -660,71 +669,71 @@ function LF_admin_js()
 			<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
 			<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 			<script type="text/javascript">
-			var noofcol = jQuery('#noofcol').val();
-			if(noofcol>4){
-				noofcol = 4;
-			}
-			jQuery(document).ready(function() {
-				jQuery('.fancybox-thumbs').fancybox({
-					prevEffect : 'none',
-					nextEffect : 'none',
+				var noofcol = jQuery('#noofcol').val();
+				if(noofcol>4){
+					noofcol = 4;
+				}
+				jQuery(document).ready(function() {
+					jQuery('.fancybox-thumbs').fancybox({
+						prevEffect : 'none',
+						nextEffect : 'none',
 
-					closeBtn  : true,
-					arrows    : true,
-					nextClick : true,
+						closeBtn  : true,
+						arrows    : true,
+						nextClick : true,
 
-					helpers : {
-						thumbs : {
-							width  : 50,
-							height : 50
+						helpers : {
+							thumbs : {
+								width  : 50,
+								height : 50
+							}
 						}
-					}
-				});
+					});
 
-				jQuery('.slider-single').slick({
-					slidesToShow: 1,
-					slidesToScroll: 1,
-					arrows: false,
-					fade: false,
-					adaptiveHeight: true,
-					infinite: false,
-					useTransform: true,
-					speed: 400,
-					focusOnSelect: true,
-					cssEase: 'cubic-bezier(0.77, 0, 0.18, 1)',
-				});
+					jQuery('.slider-single').slick({
+						slidesToShow: 1,
+						slidesToScroll: 1,
+						arrows: false,
+						fade: false,
+						adaptiveHeight: true,
+						infinite: false,
+						useTransform: true,
+						speed: 400,
+						focusOnSelect: true,
+						cssEase: 'cubic-bezier(0.77, 0, 0.18, 1)',
+					});
 
-				jQuery('.slider-nav').on('init', function(event, slick) {
-					jQuery('.slider-nav .slick-slide.slick-current').addClass('is-active');
-				})
-				.slick({
-					slidesToShow: 5,
-					slidesToScroll: 3,
-					dots: false,
-					focusOnSelect: true,
-					infinite: true,
-					responsive: [{
-						breakpoint: 1024,
-						settings: {
-							slidesToShow: 4,
-							slidesToScroll: 4,
-						}
-					}, {
-						breakpoint: 640,
-						settings: {
-							slidesToShow: 3,
-							slidesToScroll: 3,
-						}
-					}, {
-						breakpoint: 420,
-						settings: {
-							slidesToShow: 2,
-							slidesToScroll: 2,
-						}
-					}]
-				});
+					jQuery('.slider-nav').on('init', function(event, slick) {
+						jQuery('.slider-nav .slick-slide.slick-current').addClass('is-active');
+					})
+					.slick({
+						slidesToShow: 5,
+						slidesToScroll: 3,
+						dots: false,
+						focusOnSelect: true,
+						infinite: true,
+						responsive: [{
+							breakpoint: 1024,
+							settings: {
+								slidesToShow: 4,
+								slidesToScroll: 4,
+							}
+						}, {
+							breakpoint: 640,
+							settings: {
+								slidesToShow: 3,
+								slidesToScroll: 3,
+							}
+						}, {
+							breakpoint: 420,
+							settings: {
+								slidesToShow: 2,
+								slidesToScroll: 2,
+							}
+						}]
+					});
 
-				jQuery('.horizantal-slide').flickity({
+					jQuery('.horizantal-slide').flickity({
 				  // options
 				  cellAlign: 'left',
 				  contain: true,
@@ -777,11 +786,11 @@ function LF_admin_js()
 				});
 			});
 
-			</script>
-			<?php if(!empty(LF_get_settings('LF_mapApiKey'))):?>
-				<script async defer src="https://maps.googleapis.com/maps/api/js?key=<?php echo LF_get_settings('LF_mapApiKey');?>&callback&callback=initMap"></script>
-			<?php endif;?>
-			<script type="text/javascript">
+		</script>
+		<?php if(!empty(LF_get_settings('LF_mapApiKey'))):?>
+			<script async defer src="https://maps.googleapis.com/maps/api/js?key=<?php echo LF_get_settings('LF_mapApiKey');?>&callback&callback=initMap"></script>
+		<?php endif;?>
+		<script type="text/javascript">
 			// Get the modal
 			var modal = document.getElementById('myModal');
 
@@ -807,92 +816,67 @@ function LF_admin_js()
 					modal.style.display = "none";
 				}
 			}
-			</script>
-			<?php
+		</script>
+		<?php
+	}
+}
+
+function LF_find_shortcode_occurences($shortcode, $post_type = 'page')
+{
+	$found_ids = array();
+	$args         = array(
+		'post_type'   => $post_type,
+		'post_status' => 'publish',
+		'posts_per_page' => -1,
+	);
+	$query_result = new WP_Query($args);
+	foreach ($query_result->posts as $post) {
+		if (false !== strpos($post->post_content, $shortcode)) {
+			$found_ids[] = $post->ID;
 		}
 	}
+	return $found_ids;
+}
 
-	function LF_find_shortcode_occurences($shortcode, $post_type = 'page')
-	{
-		$found_ids = array();
-		$args         = array(
-			'post_type'   => $post_type,
-			'post_status' => 'publish',
-			'posts_per_page' => -1,
-		);
-		$query_result = new WP_Query($args);
-		foreach ($query_result->posts as $post) {
-			if (false !== strpos($post->post_content, $shortcode)) {
-				$found_ids[] = $post->ID;
-			}
-		}
-		return $found_ids;
-	}
-
-	function LF_find_shortcode_occurencesName($shortcode, $post_type = 'page')
-	{
-		$found_content = array();
-		$args         = array(
-			'post_type'   => $post_type,
-			'post_status' => 'publish',
-			'posts_per_page' => -1,
-			'order'=>'ASC'
-		);
-		$query_result = new WP_Query($args);
-		foreach ($query_result->posts as $post) {
-			if (false !== strpos($post->post_content, $shortcode)) {
-				$found_content['content'] = $post->post_content;
-				$found_content['slug'] = $post->post_name;
-			}
-		}
-		return $found_content;
-	}
-
-	function getCurrentPageSlug()
-	{
-		$slugs = explode('/',$_SERVER['REQUEST_URI']);
-		$slugs = array_filter($slugs, function($value) { return $value !== ''; });
-		$slug = $slugs[1];
-		return $slug;
-	}
-
-	function LF_save_option_shortcode_post_id_array( $post_id )
-	{
-		if ( wp_is_post_revision( $post_id ) OR 'page' != get_post_type( $post_id )) {
-			return;
-		}
-		$option_name = 'LF-Listings';
-		$id_array = LF_find_shortcode_occurences($option_name);
-		$autoload = 'yes';
-		if (false == add_option($option_name, $id_array, '', $autoload)) update_option($option_name, $id_array);
-	}
-
-	add_action('save_post', 'LF_save_option_shortcode_post_id_array' );
-
-	add_action('wp_footer','termsAndConditionPopup');
-	function termsAndConditionPopup()
-	{
-		if(!isset($_SESSION['acceptTerms']) || $_SESSION['acceptTerms']!=$_SERVER['REMOTE_ADDR']){
-			if(!empty(LF_get_settings('termsandcondition'))){
-				?>
-				<!-- The Modal -->
-				<div id="Modal" class="modal" style="display: block;">
-					<!-- Modal content -->
-					<div class="modal-content">
-						<div class="modal-header">
-							<h1>Terms of Use for CREA® DDF®</h1>
-						</div>
-						<div class="modal-body">
-							<?php echo stripslashes_deep(LF_get_settings('termsandcondition'))?>
-						</div>
-						<div class="modal-footer">
-							<button name="acceptTermsofUse" class="btn btn_close_model">Accept Terms of Use</button>
-							<button type="button" class="LF-btn LF-btn-close" data-dismiss="modal">Decline</button>
-						</div>
-					</div>
-				</div>
-				<?php
-			}
+function LF_find_shortcode_occurencesName($shortcode, $post_type = 'page')
+{
+	$found_content = array();
+	$args         = array(
+		'post_type'   => $post_type,
+		'post_status' => 'publish',
+		'posts_per_page' => -1,
+		'order'=>'ASC'
+	);
+	$query_result = new WP_Query($args);
+	// print_r($query_result);
+	foreach ($query_result->posts as $post) {
+		if (false !== strpos($post->post_content, $shortcode)) {
+			$found_content['content'] = $post->post_content;
+			$found_content['slug'] = $post->post_name;
+			$found_content['title'] = $post->post_title;
 		}
 	}
-	?>
+	return $found_content;
+}
+
+function getCurrentPageSlug()
+{
+	$slugs = explode('/',$_SERVER['REQUEST_URI']);
+	$slugs = array_filter($slugs, function($value) { return $value !== ''; });
+	$slug = $slugs[1];
+	return $slug;
+}
+
+function LF_save_option_shortcode_post_id_array( $post_id )
+{
+	if ( wp_is_post_revision( $post_id ) OR 'page' != get_post_type( $post_id )) {
+		return;
+	}
+	$option_name = 'LF-Listings';
+	$id_array = LF_find_shortcode_occurences($option_name);
+	$autoload = 'yes';
+	if (false == add_option($option_name, $id_array, '', $autoload)) update_option($option_name, $id_array);
+}
+
+add_action('save_post', 'LF_save_option_shortcode_post_id_array' );
+?>

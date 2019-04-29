@@ -28,7 +28,14 @@ function LF_pagination(){
 	$priceorder = sanitize_text_field($_POST['priceorder']);
 	$per_row = sanitize_text_field($_POST['per_row']);
 	$index = sanitize_text_field($_POST['index']);
+	$list_per_page = sanitize_text_field($_POST['list_per_page']);
 
+	if(isset($list_per_page)){
+		$list_per_page = $list_per_page;
+	}
+	else{
+		$list_per_page = '';
+	}
 	if(isset($index)){
 		$index = $index;
 	}
@@ -159,7 +166,7 @@ function LF_pagination(){
 		$waterFront='';
 	}
 	
-	getLFListings($page, $mainSearch, $municipality, $sale, $bedroom, $bathroom, $property_Type, $priceFrom, $priceTo, $waterFront, $sort, $offices, $agents, $openhouse, $slug, $search, $style, $ids, $pagination, $priceorder, $per_row,$index);
+	getLFListings($page, $mainSearch, $municipality, $sale, $bedroom, $bathroom, $property_Type, $priceFrom, $priceTo, $waterFront, $sort, $offices, $agents, $openhouse, $slug, $search, $style, $ids, $pagination, $priceorder, $per_row,$index, $list_per_page);
 
 	wp_die();
 }
@@ -190,6 +197,14 @@ function LF_search(){
 	$priceorder = sanitize_text_field($_POST['priceorder']);
 	$per_row = sanitize_text_field($_POST['per_row']);
 	$index = sanitize_text_field($_POST['index']);
+	$list_per_page = sanitize_text_field($_POST['list_per_page']);
+
+	if(isset($list_per_page)){
+		$list_per_page = $list_per_page;
+	}
+	else{
+		$list_per_page = '';
+	}
 
 	if(isset($index)){
 		$index = $index;
@@ -319,7 +334,7 @@ function LF_search(){
 		$waterFront='';
 	}
 
-	getLFListings($page, $mainSearch, $municipality, $sale, $bedroom, $bathroom, $property_Type, $priceFrom, $priceTo, $waterFront, $sort, $offices, $agents, $openhouse, $slug, $search, $style, $ids, $pagination, $priceorder, $per_row,$index);
+	getLFListings($page, $mainSearch, $municipality, $sale, $bedroom, $bathroom, $property_Type, $priceFrom, $priceTo, $waterFront, $sort, $offices, $agents, $openhouse, $slug, $search, $style, $ids, $pagination, $priceorder, $per_row,$index,$list_per_page);
 	wp_die();
 }
 
@@ -339,32 +354,83 @@ function LF_send_inquiryMail()
 	$email = sanitize_text_field($_POST['txtemail']);
 	$subject = "Inquiry for ".$property;
 	$txtMessage = sanitize_text_field($_POST['txtMessage']);
-	$message = '
-	<p>'.LF_get_settings('LF_MailText').'</p>
-	<table border="0">
-	<tr>
-	<td>Property Id: </td>
-	<td>'.$property.'</td>
-	</tr>
-	<tr>
-	<td>Name: </td>
-	<td>'.$name.'</td>
-	</tr>
-	<tr>
-	<td>Email: </td>
-	<td>'.$email.'</td>
-	</tr>
-	<tr>
-	<td>Message: </td>
-	<td>'.$txtMessage.'</td>
-	</tr>
-	</table>
-	';
-	$headers[] = "From: $name <$fromemail>";
-	$headers[] = "Content-type: text/html" ;
 
-	$sent = wp_mail( $toemail, $subject, $message, $headers );
-	echo $sent;
+	$msg = [];
+	$flag = 0;
+
+	if(empty(trim($name))){
+		$msg['name'] = 'Name field is required.';
+		$flag++;
+	}
+	else if(strlen($name)<2 || strlen($name)>20){
+		$msg['name'] = 'Name should be 2 to 20 characters long.';
+		$flag++;
+	}
+	else{
+		$msg['name'] = '';
+	}
+
+	if(empty(trim($email))){
+		$msg['email'] = 'Email field is required.';
+		$flag++;
+	}
+	else if(!is_email($email)){
+		$msg['email'] = 'This email is invalid.';
+		$flag++;	
+	}
+	else{
+		$msg['email'] = '';
+	}
+
+	if(empty(trim($txtMessage))){
+		$msg['message'] = 'Message field is required.';
+		$flag++;
+	}
+	else if(strlen($txtMessage)<2 || strlen($txtMessage)>140){
+		$msg['message'] = 'Message should be 2 to 140 characters long.';
+		$flag++;	
+	}
+	else{
+		$msg['message'] = '';
+	}
+
+	if($flag==0){
+		$message = '
+		<div>'.LF_get_settings('LF_MailText').'</div>
+		<table border="0">
+		<tr>
+			<td>Property: </td>
+			<td>'.$property.'</td>
+		</tr>
+		<tr>
+			<td>Name: </td>
+			<td>'.stripslashes_deep($name).'</td>
+		</tr>
+		<tr>
+			<td>Email: </td>
+			<td>'.$email.'</td>
+		</tr>
+		<tr>
+			<td>Message: </td>
+			<td>'.stripslashes_deep($txtMessage).'</td>
+		</tr>
+		</table>
+		';
+		$headers[] = "From: $name <$fromemail>";
+		$headers[] = "Content-type: text/html" ;
+		
+		$sent = wp_mail( $toemail, $subject, $message, $headers );
+		if($sent)
+		{
+			echo json_encode(array('response'=>'1'));
+		}
+		else{
+			echo json_encode(array('response'=>'0'));
+		}
+	}
+	else{
+		echo json_encode(array('response'=>'2','message'=>$msg));
+	}
 	die();
 }
 

@@ -54,12 +54,10 @@ function LF_get_settings($meta_key)
 
 	$result = $wpdb->get_row( "SELECT * FROM $table_name WHERE meta_key = '".$meta_key."'" );
 
-	if($result)
-	{
+	if($result){
 		return $result->meta_value;
 	}
-	else
-	{
+	else{
 		return false;
 	}
 
@@ -106,7 +104,7 @@ function getCities()
 /**
 * this function get the listings as per the search parameters.
 */
-function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bedroom='',$bathroom='',$property_Type='',$priceFrom='',$priceTo='',$waterFront='',$sort='',$offices='',$agents='',$openhouse='',$slug='',$search='',$style='',$ids='',$pagination='',$priceorder='',$per_row='',$index='')
+function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bedroom='',$bathroom='',$property_Type='',$priceFrom='',$priceTo='',$waterFront='',$sort='',$offices='',$agents='',$openhouse='',$slug='',$search='',$style='',$ids='',$pagination='',$priceorder='',$per_row='',$index='',$list_per_page)
 {
 
 	if(empty($search) OR $search=='yes' OR $search=='only'){
@@ -114,9 +112,12 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 			?>
 			<div class="LF-row">
 				<form method="post" name="search">
+					<div class="LF-col-md-12">
+						<div class="formmessage"></div>
+					</div>
 					<div class="LF-col-md-6">
 						<div class="LF-form-group">
-							<input type="text" name="LF_main_search" id="LF_main_search-<?php echo $index;?>" class="LF-form-control" placeholder="Search by Location, City, Postal Code or ID#" value="<?php echo !empty($mainSearch)?$mainSearch:'';?>">
+							<input type="text" name="LF_main_search" id="LF_main_search-<?php echo $index;?>" class="LF-form-control" placeholder="Search by Location, City, Postal Code or ID#" value="<?php echo !empty($mainSearch)?$mainSearch:'';?>" maxlength="20">
 						</div>
 					</div>
 					<div class="LF-col-md-6">
@@ -343,6 +344,14 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 	if($style=='horizontal'){
 		$paginate = '50';
 	}
+	elseif(!empty($list_per_page)){
+		if($list_per_page>48){
+			$paginate = 48;
+		}
+		else{
+			$paginate = $list_per_page;
+		}
+	}	
 	else{
 		$paginate = LF_get_settings('LF_page');
 	}
@@ -405,6 +414,8 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 
 			<input type="hidden" name="per_row" id="per_row-<?php echo $index;?>" value="<?php echo !empty($per_row)?$per_row:'';?>">
 
+			<input type="hidden" name="list_per_page" id="list_per_page-<?php echo $index;?>" value="<?php echo !empty($list_per_page)?$list_per_page:'';?>">
+
 			<!-- <input type="hidden" name="ids" id="ids" value="<?php echo !empty($ids)?$ids:'';?>"> -->
 
 			<?php
@@ -466,8 +477,8 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					echo $html;
 				}
 				echo '</div>';
-				if(empty($priceorder) OR $priceorder=='yes'){
-					if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($priceorder=='yes' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
+				if(empty($priceorder) OR $priceorder!='no'){
+					if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($priceorder!='no' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
 
 						echo '<div class="LF-col-md-5">
 						<div class="LF-sortblock" data-index="'.$index.'">
@@ -490,23 +501,23 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 				// $column = LF_get_settings('LF_column');
 				switch($column){
 					case 0:
-						$col=0;
-						break;
+					$col=0;
+					break;
 					case 1:
-						$col=12;
-						break;
+					$col=12;
+					break;
 					case 2:
-						$col=6;
-						break;
+					$col=6;
+					break;
 					case 3:
-						$col=4;
-						break;
+					$col=4;
+					break;
 					case 4:
-						$col=3;
-						break;
+					$col=3;
+					break;
 					default:
-						$col=3;
-						break;
+					$col=3;
+					break;
 				}
 				
 				if(!empty($style) and $style == 'horizontal'){
@@ -520,7 +531,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 								<div class="LF-row">
 									<div class="LF-col-md-4">
 										<div class="LF-image">
-											<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.$propertyList->FriendlyUrl;?>">
+											<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower(str_replace(' ','-',$propertyList->City)).'/'.strtolower($propertyList->FriendlyUrl);?>">
 												<img src="<?php echo getLFImageProxy($propertyList->ListingThumb);?>" alt="">
 											</a>
 										</div>
@@ -535,7 +546,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 												<?php echo $propertyList->FullAddress;?>
 												<p><?php echo $propertyList->BuildingAreaTotal.' '.$propertyList->BuildingAreaUnits?></p>
 											</div>
-											<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.$propertyList->FriendlyUrl;?>" class="LF-btn LF-btn-link">View Details</a>
+											<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower(str_replace(' ','-',$propertyList->City)).'/'.strtolower($propertyList->FriendlyUrl);?>" class="LF-btn LF-btn-link">View Details</a>
 										</div>
 									</div>
 								</div>
@@ -550,12 +561,12 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 									<span class="LF-heading-link"><?php echo '#'.$propertyList->OriginatingSystemKey?></span>
 								</div>
 								<div class="LF-image">
-									<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.$propertyList->FriendlyUrl;?>">
+									<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower(str_replace(' ','-',$propertyList->City)).'/'.strtolower($propertyList->FriendlyUrl);?>">
 										<img src="<?php echo getLFImageProxy($propertyList->ListingThumb);?>" alt="">
 									</a>
 								</div>
 								<div class="LF-details">
-									<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.$propertyList->FriendlyUrl;?>" class="LF-btn LF-btn-link">View Details</a>
+									<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower(str_replace(' ','-',$propertyList->City)).'/'.strtolower($propertyList->FriendlyUrl);?>" class="LF-btn LF-btn-link">View Details</a>
 									<div class="LF-price"><?php echo '$'.$propertyList->ListPriceFormatted;?></div>
 									<div class="LF-address">
 										<?php echo $propertyList->FullAddress;?>
@@ -576,8 +587,8 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					echo $html;
 				}
 				echo '</div>';
-				if(empty($priceorder) OR $priceorder=='yes'){
-					if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($priceorder=='yes' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
+				if(empty($priceorder) OR $priceorder!='no'){
+					if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($priceorder!='no' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
 						echo '<div class="LF-col-md-5">
 						<div class="LF-sortblock" data-index="'.$index.'">
 						<label>Order by price: </lable>

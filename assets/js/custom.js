@@ -97,14 +97,25 @@ jQuery(document).on('click', '.LF-pagination>li>a', function() {
     var pagination = jQuery('#pagination-'+indexData).val();
     var priceorder = jQuery('#priceorder-'+indexData).val();
     var LF_per_row = jQuery('#per_row-'+indexData).val();
+    var LF_list_per_page = jQuery('#list_per_page-'+indexData).val();
 
-    var search, sale, municipalities, bedroom, bathroom, property_Type, priceFrom, priceTo, waterFront, page, LF_sort, defaultoffice, defaultagents, defaultopenhouse,srch,style,ids,pagi,priord,per_row;
+    var search, sale, municipalities, bedroom, bathroom, property_Type, priceFrom, priceTo, waterFront, page, LF_sort, defaultoffice, defaultagents, defaultopenhouse,srch,style,ids,pagi,priord,per_row,list_per_page;
+
+    var flag = 0;
+    
 
     if(jQuery.trim(LF_defaultopenhouse) !=''){
         defaultopenhouse = '&openhouse='+LF_defaultopenhouse;
     }
     else{
         defaultopenhouse = '';
+    }
+
+    if(jQuery.trim(LF_list_per_page) !=''){
+        list_per_page = '&list_per_page='+LF_list_per_page;
+    }
+    else{
+        list_per_page = '';
     }
 
     if(jQuery.trim(LF_per_row) !='' && typeof LF_per_row !== 'undefined'){
@@ -165,6 +176,13 @@ jQuery(document).on('click', '.LF-pagination>li>a', function() {
     }
 
     if (jQuery.trim(main_search) != '' && typeof main_search !== 'undefined') {
+        if((main_search.length<2 || main_search.length>20) && main_search!=''){
+            jQuery('.formmessage').html('<div class="alert-error">Search should be 2 to 20 characters long.</div>');
+            flag++;
+        }
+        else{
+            jQuery('.formmessage').html('');
+        }
         search = '&mainSearch=' + main_search;
     } else {
         search = '';
@@ -174,7 +192,7 @@ jQuery(document).on('click', '.LF-pagination>li>a', function() {
         municipalities = '&LF_municipalities=' + LF_municipalities;
     } else {
         var defaultlocation = jQuery('#defaultlocation-'+indexData).val();
-        if(defaultlocation!=''){
+        if(defaultlocation!='' && tagSearch=='no'){
             municipalities = '&LF_municipalities=' + defaultlocation;
         }
         else{
@@ -186,7 +204,7 @@ jQuery(document).on('click', '.LF-pagination>li>a', function() {
         sale = '&sale=' + LF_sale;
     } else {
         var defaultSale = jQuery('#defaultsale-'+indexData).val();
-        if(defaultSale!=''){
+        if(defaultSale!='' && tagSearch=='no'){
            sale =  '&sale=' +defaultSale;
         }
         else{
@@ -251,29 +269,31 @@ jQuery(document).on('click', '.LF-pagination>li>a', function() {
 
     $dataID = jQuery(this).closest('#listing-'+indexData);
 
-    jQuery.ajax({
-        method: 'POST',
-        url: LF_custom.ajaxurl,
-        data: "action=LF_pagination&token=" + LF_custom.security + page + search + municipalities + sale + bedroom + bathroom + property_Type + priceFrom + priceTo + waterFront + sort + defaultoffice + defaultagents + defaultopenhouse + '&slug='+slug + srch + style + ids + pagi + priord + per_row + '&index='+indexData,
-        beforeSend: function() {
-            $dataID.css('opacity', '0.5');
-        },
-        success: function(response) {
-            // jQuery('#LF-listigs').html(response);
-            $dataID.html(response);
-            if(tagStyle=='horizontal'){
-                jQuery(".horizantal-slide").flickity(options)
+    if(flag==0){
+        jQuery.ajax({
+            method: 'POST',
+            url: LF_custom.ajaxurl,
+            data: "action=LF_pagination&token=" + LF_custom.security + page + search + municipalities + sale + bedroom + bathroom + property_Type + priceFrom + priceTo + waterFront + sort + defaultoffice + defaultagents + defaultopenhouse + '&slug='+slug + srch + style + ids + pagi + priord + per_row + '&index='+indexData + list_per_page,
+            beforeSend: function() {
+                $dataID.css('opacity', '0.5');
+            },
+            success: function(response) {
+                // jQuery('#LF-listigs').html(response);
+                $dataID.html(response);
+                if(tagStyle=='horizontal'){
+                    jQuery(".horizantal-slide").flickity(options)
+                }
+            },
+            complete: function() {
+                var maxHeight = 0;
+                jQuery(".LF-address").each(function() {
+                    if (jQuery(this).height() > maxHeight) { maxHeight = jQuery(this).height(); }
+                });
+                jQuery(".LF-address").height(maxHeight);
+                $dataID.css('opacity', '1');
             }
-        },
-        complete: function() {
-            var maxHeight = 0;
-            jQuery(".LF-address").each(function() {
-                if (jQuery(this).height() > maxHeight) { maxHeight = jQuery(this).height(); }
-            });
-            jQuery(".LF-address").height(maxHeight);
-            $dataID.css('opacity', '1');
-        }
-    });
+        });
+    }
 });
 
 jQuery(document).on('click', '.LF-sort', function() {
@@ -300,14 +320,24 @@ jQuery(document).on('click', '.LF-sort', function() {
     var pagination = jQuery('#pagination-'+indexData).val();
     var priceorder = jQuery('#priceorder-'+indexData).val();
     var LF_per_row = jQuery('#per_row-'+indexData).val();
+    var LF_list_per_page = jQuery('#list_per_page-'+indexData).val();
 
-    var search, sale, municipalities, bedroom, bathroom, property_Type, priceFrom, priceTo, waterFront, page, LF_sort, defaultoffice, defaultagents, defaultopenhouse,srch,style,ids,pagi,priord,per_row;
+    var search, sale, municipalities, bedroom, bathroom, property_Type, priceFrom, priceTo, waterFront, page, LF_sort, defaultoffice, defaultagents, defaultopenhouse,srch,style,ids,pagi,priord,per_row,list_per_page;
 
+    var flag = 0;
+    
     if(jQuery.trim(LF_defaultopenhouse) !=''){
         defaultopenhouse = '&openhouse='+LF_defaultopenhouse;
     }
     else{
         defaultopenhouse = '';
+    }
+
+	if(jQuery.trim(LF_list_per_page) !=''){
+        list_per_page = '&list_per_page='+LF_list_per_page;
+    }
+    else{
+        list_per_page = '';
     }
 
     if(jQuery.trim(LF_per_row) !='' && typeof LF_per_row !== 'undefined'){
@@ -368,6 +398,13 @@ jQuery(document).on('click', '.LF-sort', function() {
     }
 
     if (jQuery.trim(main_search) != '' && typeof main_search !== 'undefined') {
+        if((main_search.length<2 || main_search.length>20) && main_search!=''){
+            jQuery('.formmessage').html('<div class="alert-error">Search should be 2 to 20 characters long.</div>');
+            flag++;
+        }
+        else{
+            jQuery('.formmessage').html('');
+        }
         search = '&mainSearch=' + main_search;
     } else {
         search = '';
@@ -377,7 +414,7 @@ jQuery(document).on('click', '.LF-sort', function() {
         municipalities = '&LF_municipalities=' + LF_municipalities;
     } else {
         var defaultlocation = jQuery('#defaultlocation-'+indexData).val();
-        if(defaultlocation!=''){
+        if(defaultlocation!='' && tagSearch=='no'){
             municipalities = '&LF_municipalities=' + defaultlocation;
         }
         else{
@@ -389,7 +426,7 @@ jQuery(document).on('click', '.LF-sort', function() {
         sale = '&sale=' + LF_sale;
     } else {
         var defaultSale = jQuery('#defaultsale-'+indexData).val();
-        if(defaultSale!=''){
+        if(defaultSale!='' && tagSearch=='no'){
            sale =  '&sale=' +defaultSale;
         }
         else{
@@ -454,29 +491,31 @@ jQuery(document).on('click', '.LF-sort', function() {
 
     $dataID = jQuery(this).closest('#listing-'+indexData);
 
-    jQuery.ajax({
-        method: 'POST',
-        url: LF_custom.ajaxurl,
-        data: "action=LF_pagination&token=" + LF_custom.security + page + search + municipalities + sale + bedroom + bathroom + property_Type + priceFrom + priceTo + waterFront + sort + defaultoffice + defaultagents + defaultopenhouse + '&slug='+slug + srch + style + ids + pagi + priord + per_row + '&index='+indexData,
-        beforeSend: function() {
-            $dataID.css('opacity', '0.5');
-        },
-        success: function(response) {
-            // jQuery('#LF-listigs').html(response);
-            $dataID.html(response);
-            if(tagStyle=='horizontal'){
-                jQuery(".horizantal-slide").flickity(options)
+    if(flag==0){
+        jQuery.ajax({
+            method: 'POST',
+            url: LF_custom.ajaxurl,
+            data: "action=LF_pagination&token=" + LF_custom.security + page + search + municipalities + sale + bedroom + bathroom + property_Type + priceFrom + priceTo + waterFront + sort + defaultoffice + defaultagents + defaultopenhouse + '&slug='+slug + srch + style + ids + pagi + priord + per_row + '&index='+indexData + list_per_page,
+            beforeSend: function() {
+                $dataID.css('opacity', '0.5');
+            },
+            success: function(response) {
+                // jQuery('#LF-listigs').html(response);
+                $dataID.html(response);
+                if(tagStyle=='horizontal'){
+                    jQuery(".horizantal-slide").flickity(options)
+                }
+            },
+            complete: function() {
+                var maxHeight = 0;
+                jQuery(".LF-address").each(function() {
+                    if (jQuery(this).height() > maxHeight) { maxHeight = jQuery(this).height(); }
+                });
+                jQuery(".LF-address").height(maxHeight);
+                $dataID.css('opacity', '1');
             }
-        },
-        complete: function() {
-            var maxHeight = 0;
-            jQuery(".LF-address").each(function() {
-                if (jQuery(this).height() > maxHeight) { maxHeight = jQuery(this).height(); }
-            });
-            jQuery(".LF-address").height(maxHeight);
-            $dataID.css('opacity', '1');
-        }
-    });
+        });
+    }
 });
 
 jQuery(document).on('click', '.LF-btn-search', function() {
@@ -502,8 +541,10 @@ jQuery(document).on('click', '.LF-btn-search', function() {
     var pagination = jQuery('#pagination-'+indexData).val();
     var priceorder = jQuery('#priceorder-'+indexData).val();
     var LF_per_row = jQuery('#per_row-'+indexData).val();
-
-    var search, municipalities, sale, bedroom, bathroom, property_Type, priceFrom, priceTo, waterFront, LF_sort, defaultoffice, defaultagents, defaultopenhouse,srch,style,ids,pagi,priord, per_row;
+    var LF_list_per_page = jQuery('#list_per_page-'+indexData).val();
+    var flag = 0;
+    var search, municipalities, sale, bedroom, bathroom, property_Type, priceFrom, priceTo, waterFront, LF_sort, defaultoffice, defaultagents, defaultopenhouse,srch,style,ids,pagi,priord, per_row, list_per_page;
+    
 
     if(jQuery.trim(LF_per_row) !='' && typeof LF_per_row !== 'undefined'){
         per_row = '&per_row='+LF_per_row;
@@ -511,7 +552,13 @@ jQuery(document).on('click', '.LF-btn-search', function() {
     else{
         per_row = '';
     }
-    // alert(LF_per_row);
+
+	if(jQuery.trim(LF_list_per_page) !=''){
+        list_per_page = '&list_per_page='+LF_list_per_page;
+    }
+    else{
+        list_per_page = '';
+    }
 
     if(jQuery.trim(pagination) != '' && typeof pagination !== 'undefined') {
         pagi = '&pagination='+pagination;
@@ -574,7 +621,7 @@ jQuery(document).on('click', '.LF-btn-search', function() {
         municipalities = '&LF_municipalities=' + LF_municipalities;
     } else {
         var defaultlocation = jQuery('#defaultlocation-'+indexData).val();
-        if(defaultlocation!=''){
+        if(defaultlocation!='' && tagSearch=='no'){
             municipalities = '&LF_municipalities=' + defaultlocation;
         }
         else{
@@ -583,6 +630,13 @@ jQuery(document).on('click', '.LF-btn-search', function() {
     }
 
     if (jQuery.trim(main_search) != '' && typeof main_search !== 'undefined') {
+        if((main_search.length<2 || main_search.length>20) && main_search!=''){
+            jQuery('.formmessage').html('<div class="alert-error">Search should be 2 to 20 characters long.</div>');
+            flag++;
+        }
+        else{
+            jQuery('.formmessage').html('');
+        }
         search = '&mainSearch=' + main_search;
     } else {
         search = '';
@@ -592,7 +646,7 @@ jQuery(document).on('click', '.LF-btn-search', function() {
         sale = '&sale=' + LF_sale;
     } else {
         var defaultSale = jQuery('#defaultsale-'+indexData).val();
-        if(defaultSale!=''){
+        if(defaultSale!='' && tagSearch=='no'){
            sale =  '&sale=' +defaultSale;
         }
         else{
@@ -649,30 +703,32 @@ jQuery(document).on('click', '.LF-btn-search', function() {
     }
 
     $dataID = jQuery(this).closest('#listing-'+indexData);
-
-    jQuery.ajax({
-        method: 'POST',
-        url: LF_custom.ajaxurl,
-        data: "action=LF_search&token=" + LF_custom.security + search + municipalities + sale + bedroom + bathroom + property_Type + priceFrom + priceTo + waterFront + sort + defaultoffice + defaultagents + defaultopenhouse + '&slug='+slug + srch + style + ids + pagi + priord + per_row + '&index='+indexData,
-        beforeSend: function() {
-            $dataID.css('opacity', '0.5');
-        },
-        success: function(response) {
-            $dataID.html(response);
-            if(tagStyle == 'horizontal'){
-                jQuery(".horizantal-slide").flickity(options)
+    if(flag==0){
+        jQuery.ajax({
+            method: 'POST',
+            url: LF_custom.ajaxurl,
+            data: "action=LF_search&token=" + LF_custom.security + search + municipalities + sale + bedroom + bathroom + property_Type + priceFrom + priceTo + waterFront + sort + defaultoffice + defaultagents + defaultopenhouse + '&slug='+slug + srch + style + ids + pagi + priord + per_row + '&index='+indexData + list_per_page,
+            beforeSend: function() {
+                $dataID.css('opacity', '0.5');
+            },
+            success: function(response) {
+                $dataID.html(response);
+                if(tagStyle == 'horizontal'){
+                    jQuery(".horizantal-slide").flickity(options)
+                }
+            },
+            complete: function() {
+                var maxHeight = 0;
+                jQuery(".LF-address").each(function() {
+                    if (jQuery(this).height() > maxHeight) { maxHeight = jQuery(this).height(); }
+                });
+                jQuery(".LF-address").height(maxHeight);
+                $dataID.css('opacity', '1');
             }
-        },
-        complete: function() {
-            var maxHeight = 0;
-            jQuery(".LF-address").each(function() {
-                if (jQuery(this).height() > maxHeight) { maxHeight = jQuery(this).height(); }
-            });
-            jQuery(".LF-address").height(maxHeight);
-            $dataID.css('opacity', '1');
-        }
-    });
+        });
+    }
 });
+
 jQuery(document).on('submit', '#formInquiry', function() {
     var flag=0;
     var form = jQuery('#formInquiry').serialize();
@@ -683,22 +739,35 @@ jQuery(document).on('submit', '#formInquiry', function() {
     
     if (captcha != '' && typeof captcha !== 'undefined') {
         if(jQuery.trim(txtName)==''){
-            jQuery('#txtName_error').text('This field is required.');
+            jQuery('#txtName_error').text('Name field is required.');
             flag++;
+        }
+        else if(txtName.length<2 || txtName.length>20){
+            jQuery('#txtName_error').text('Name should be 2 to 20 characters long.');
+            flag++;            
         }
         else{
             jQuery('#txtName_error').text('');        
         }
+        regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         if(jQuery.trim(txtemail)==''){
-            jQuery('#txtemail_error').text('This field is required.');
+            jQuery('#txtemail_error').text('Email field is required.');
+            flag++;
+        }
+        else if(!regex.test(txtemail)){
+            jQuery('#txtemail_error').text('This email is invalid.');
             flag++;
         }
         else{
             jQuery('#txtemail_error').text('');    
         }
         if(jQuery.trim(txtMessage)==''){
-            jQuery('#txtMessage_error').text('This field is required.');
+            jQuery('#txtMessage_error').text('Message field is required.');
             flag++;
+        }
+        else if(txtMessage.length<2 || txtMessage.length>140){
+            jQuery('#txtMessage_error').text('Message should be 2 to 140 characters long.');
+            flag++;            
         }
         else{
             jQuery('#txtMessage_error').text('');
@@ -712,19 +781,27 @@ jQuery(document).on('submit', '#formInquiry', function() {
             jQuery('#recaptcha_error').text('');            
         }
     }
-
+    
     if(flag==0){
         jQuery('.mailmessage').html('');
         jQuery.ajax({
             method: 'POST',
             url: LF_custom.ajaxurl,
             data: 'action=LF_send_inquiryMail&token=' + LF_custom.security + '&' + form,
-            success: function(data) {
-                if (jQuery.trim(data) == '1') {
+            dataType: "json",
+            success: function(result) {
+                // console.log(result);
+
+                if (result.response == '1') {
                     jQuery('#txtName').val('');
                     jQuery('#txtemail').val('');
                     jQuery('#txtMessage').val('');
                     jQuery('.mailmessage').html('<div class="alert-success">Mail sent successfully.</div>');
+                }
+                else if(result.response==2){
+                    jQuery('#txtName_error').text(result.message.name);
+                    jQuery('#txtemail_error').text(result.message.email);
+                    jQuery('#txtMessage_error').text(result.message.message);
                 }
                 else{
                     jQuery('.mailmessage').html('<div class="alert-error">Failed to mail sent.</div>');
@@ -741,6 +818,7 @@ jQuery(document).on('submit', '#formInquiry', function() {
         return false;
     }
 });
+
 function onSubmit(token) {
     jQuery("#formInquiry").submit();
 }

@@ -52,3 +52,7 @@
     padding: 20px;
     margin-bottom: 10px;
 }
+.options{
+    list-style-type: disc;
+    padding-left: 15px;
+}

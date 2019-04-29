@@ -12,9 +12,36 @@ $attr = shortcode_atts( array(
 	'ids'=>'',
 	'pagination'=>'',
 	'priceorder'=>'',
-	'per-row'=>'',
-	'waterfront'=>''
+	'columns'=>'',
+	'waterfront'=>'',
+	'popup'=>'',
+	'list-per-page'=>''
 ), $atts );
+
+if($attr['popup']=='yes' || $attr['popup']==''){
+	if(!isset($_SESSION['acceptTerms']) || $_SESSION['acceptTerms']!=$_SERVER['REMOTE_ADDR']){
+		if(!empty(LF_get_settings('termsandcondition'))){
+			?>
+			<!-- The Modal -->
+			<div id="Modal" class="modal" style="display: block;">
+				<!-- Modal content -->
+				<div class="modal-content">
+					<div class="modal-header">
+						<h1>Terms of Use for CREA® DDF®</h1>
+					</div>
+					<div class="modal-body">
+						<?php echo stripslashes_deep(LF_get_settings('termsandcondition'))?>
+					</div>
+					<div class="modal-footer">
+						<button name="acceptTermsofUse" class="btn btn_close_model">Accept Terms of Use</button>
+						<button type="button" class="LF-btn LF-btn-close" data-dismiss="modal">Decline</button>
+					</div>
+				</div>
+			</div>
+			<?php
+		}
+	}
+}
 
 $listkey = get_query_var('listkey');
 
@@ -64,7 +91,7 @@ if ($listkey) {
 						<?php
 						if(!empty($propertyDetail->Latitude) and !empty($propertyDetail->Longitude)){
 							?>
-							<button class="LF-btn LF-btn-map" id="myBtn">View in map</button>
+							<button class="LF-btn LF-btn-map" id="myBtn">View on Map</button>
 						<?php }?>
 						<!-- The Modal -->
 						<div id="myModal" class="modal">
@@ -110,7 +137,7 @@ if ($listkey) {
 								<input type="text" name="txtSubject" id="txtSubject" class="LF-form-control" placeholder="" value="ID#<?php echo $propertyDetail->ListingId;?>" readonly>
 							</div>
 							<div class="LF-form-group">
-								<input type="text" name="txtName" id="txtName" class="LF-form-control" placeholder="Name">
+								<input type="text" name="txtName" id="txtName" class="LF-form-control" placeholder="Name" minlength="2" maxlength="20">
 								<label for="" class="alert-error" id="txtName_error"></label>
 							</div>
 							<div class="LF-form-group">
@@ -118,11 +145,11 @@ if ($listkey) {
 								<label for="" class="alert-error" id="txtemail_error"></label>
 							</div>
 							<div class="LF-form-group">
-								<textarea name="txtMessage" id="txtMessage" rows="3" class="LF-form-control" placeholder="Message"></textarea>
+								<textarea name="txtMessage" id="txtMessage" rows="3" class="LF-form-control" placeholder="Message" minlength="2" maxlength="140"></textarea>
 								<label for="" class="alert-error" id="txtMessage_error"></label>
 							</div>
 							<?php
-							if(!empty(LF_get_settings('LF_reCaptcha'))){
+							if(!empty(LF_get_settings('LF_reCaptcha')) and LF_get_settings('LF_reCaptchastate')!='no-captch'){
 								if(LF_get_settings('LF_reCaptchastate')=='yes'){
 								?>
 								<div class="LF-form-group">
@@ -138,7 +165,7 @@ if ($listkey) {
 								?>
 								<div class="LF-form-group">
 									<input type="hidden" name="mailsent" id="mailsent" value="">
-									<button class=" g-recaptcha" data-sitekey="<?php echo LF_get_settings('LF_reCaptcha');?>" data-callback='onSubmit'>Send</button>
+									<button class="LF-btn send_inquiry_mail g-recaptcha" data-sitekey="<?php echo LF_get_settings('LF_reCaptcha');?>" data-callback='onSubmit'>Send</button>
 								</div>
 								<?php 
 								}
@@ -410,9 +437,12 @@ if ($listkey) {
 					?>
 					<div class="LF-row">
 						<form method="post" name="search">
+							<div class="LF-col-md-12">
+								<div class="formmessage"></div>
+							</div>
 							<div class="LF-col-md-6">
 								<div class="LF-form-group">
-									<input type="text" name="LF_main_search" id="LF_main_search" class="LF-form-control" placeholder="Search by Location, City, Postal Code or ID#" value="">
+									<input type="text" name="LF_main_search" id="LF_main_search" class="LF-form-control" placeholder="Search by Location, City, Postal Code or ID#" value="" maxlength="20">
 								</div>
 							</div>
 							<div class="LF-col-md-6">
@@ -578,18 +608,34 @@ if ($listkey) {
 			if($attr['style']=='horizontal'){
 				$paginate = '50';
 			}
+			elseif(!empty($attr['list-per-page'])){
+				if($attr['list-per-page']>48){
+					$paginate = 48;	
+				}
+				else{
+					$paginate = $attr['list-per-page'];
+				}
+			}
 			else{
 				$paginate = LF_get_settings('LF_page');
 			}
 
 			$sort = LF_get_settings('LF_priceOrder');
-
-			if(isset($sort)){
+			if(!empty($attr['priceorder'])){
+				if($attr['priceorder']=='up'){
+					$sort = 'DESC';
+				}
+				elseif($attr['priceorder']=='down'){
+					$sort = 'ASC';
+				}
+			}
+			elseif(isset($sort)){
 				$sort = $sort;
 			}
 			else{
 				$sort = 'ASC';
 			}
+			
 			if(!empty($attr['sale'])){
 				$sale = '&sale='.$attr['sale'];
 			}
@@ -628,21 +674,26 @@ if ($listkey) {
 				$page_id = get_the_ID();
 				$pageSlug = get_post_field( 'post_name', $post_id );
 
-				if(is_home() || is_front_page()){
-					$option_name = 'LF-Listings';
-					$postContent = LF_find_shortcode_occurencesName($option_name);
-					$pageSlug = $postContent['slug'];
+				if(is_home() || is_front_page()){					
+					if(!empty(LF_get_settings('LF_homepageSlug')))					{
+						$pageSlug = LF_get_settings('LF_homepageSlug');
+					}
+					else{
+						$option_name = 'LF-Listings';
+						$postContent = LF_find_shortcode_occurencesName($option_name);
+						$pageSlug = $postContent['slug'];
+					}
 				}
 
 				$result = json_decode($response);
 				if(empty($result)){
 					return true;
 				}
-				if(empty($attr['per-row'])){
+				if(empty($attr['columns'])){
 					$column = LF_get_settings('LF_column');
 				}
 				else{
-					$column = $attr['per-row'];
+					$column = $attr['columns'];
 				}
 				?>
 				<div class="LF-row">
@@ -674,7 +725,9 @@ if ($listkey) {
 
 					<input type="hidden" name="priceorder" id="priceorder" value="<?php echo $attr['priceorder'];?>">
 
-					<input type="hidden" name="per_row" id="per_row" value="<?php echo $attr['per-row'];?>">
+					<input type="hidden" name="per_row" id="per_row" value="<?php echo $attr['columns'];?>">
+					
+					<input type="hidden" name="list_per_page" id="list_per_page" value="<?php echo $attr['list-per-page'];?>">
 
 					<?php
 
@@ -717,19 +770,51 @@ if ($listkey) {
 							}
 							$html       .= '</ul><div class="LF-clear"></div>';
 
-							if(LF_get_settings('LF_priceOrder') == 'ASC'){
-								$ascchecked = 'checked';
+							$sort = LF_get_settings('LF_priceOrder');
+							if(!empty($attr['priceorder'])){
+								if($attr['priceorder']=='up'){
+									$descchecked = 'checked';
+								}
+								else{
+									$descchecked = '';
+								}
+
+								if($attr['priceorder']=='down'){
+									$ascchecked = 'checked';
+								}
+								else{
+									$ascchecked = '';
+								}
 							}
-							else{
-								$ascchecked = '';
+							else if(isset($sort)){
+								if($sort == 'ASC'){
+									$ascchecked = 'checked';
+								}
+								else{
+									$ascchecked = '';
+								}
+								
+								if($sort=='DESC'){
+										$descchecked = 'checked';
+								}
+								else{
+									$descchecked = '';
+								}
 							}
 
-							if(LF_get_settings('LF_priceOrder') == 'DESC'){
-								$descchecked = 'checked';
-							}
-							else{
-								$descchecked = '';
-							}
+							// if(LF_get_settings('LF_priceOrder') == 'ASC'){
+							// 	$ascchecked = 'checked';
+							// }
+							// else{
+							// 	$ascchecked = '';
+							// }
+
+							// if(LF_get_settings('LF_priceOrder') == 'DESC'){
+							// 	$descchecked = 'checked';
+							// }
+							// else{
+							// 	$descchecked = '';
+							// }
 
 							echo '<div class="LF-col-md-7">';
 							if((empty($attr['pagination']) || $attr['pagination'] == 'yes') and $attr['style'] != 'horizontal'){
@@ -737,8 +822,8 @@ if ($listkey) {
 							}
 							echo '</div>';
 
-							if(empty($attr['priceorder']) OR $attr['priceorder']=='yes'){
-								if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($attr['priceorder']=='yes' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
+							if(empty($attr['priceorder']) OR $attr['priceorder']!='no'){
+								if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($attr['priceorder']!='no' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
 								
 									echo '<div class="LF-col-md-5">
 									<div class="LF-sortblock">
@@ -751,11 +836,11 @@ if ($listkey) {
 							}
 							echo '<div class="clear"></div>';
 							//get column from admin setting
-							/*if(empty($attr['per-row'])){
+							/*if(empty($attr['columns'])){
 								$column = LF_get_settings('LF_column');
 							}
 							else{
-								$column = $attr['per-row'];
+								$column = $attr['columns'];
 							}*/
 							switch($column){
 								case 0:
@@ -789,7 +874,7 @@ if ($listkey) {
 											<div class="LF-row">
 												<div class="LF-col-md-4">
 													<div class="LF-image">
-														<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.$propertyList->FriendlyUrl;?>">
+														<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower($propertyList->FriendlyUrl);?>">
 															<img src="<?php echo getLFImageProxy($propertyList->ListingThumb);?>" alt="">
 														</a>
 													</div>
@@ -804,7 +889,7 @@ if ($listkey) {
 															<?php echo $propertyList->FullAddress;?>
 															<p><?php echo $propertyList->BuildingAreaTotal.' '.$propertyList->BuildingAreaUnits?></p>
 														</div>
-														<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.$propertyList->FriendlyUrl;?>" class="LF-btn LF-btn-link">View Details</a>
+														<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower($propertyList->FriendlyUrl);?>" class="LF-btn LF-btn-link">View Details</a>
 													</div>
 												</div>
 											</div>
@@ -820,12 +905,12 @@ if ($listkey) {
 												<span class="LF-heading-link"><?php echo '#'.$propertyList->OriginatingSystemKey?></span>
 											</div>
 											<div class="LF-image">
-												<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.$propertyList->FriendlyUrl;?>">
+												<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower(str_replace(' ','-',$propertyList->City)).'/'.strtolower($propertyList->FriendlyUrl);?>">
 													<img src="<?php echo getLFImageProxy($propertyList->ListingThumb);?>" alt="">
 												</a>
 											</div>
 											<div class="LF-details">
-												<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.$propertyList->FriendlyUrl;?>" class="LF-btn LF-btn-link">View Details</a>
+												<a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower(str_replace(' ','-',$propertyList->City)).'/'.strtolower($propertyList->FriendlyUrl);?>" class="LF-btn LF-btn-link">View Details</a>
 												<div class="LF-price"><?php echo '$'.$propertyList->ListPriceFormatted;?></div>
 												<div class="LF-address">
 													<?php echo $propertyList->FullAddress;?>
@@ -846,8 +931,8 @@ if ($listkey) {
 								echo $html;
 							}
 							echo '</div>';
-							if(empty($attr['priceorder']) OR $attr['priceorder']=='yes'){
-								if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($attr['priceorder']=='yes' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
+							if(empty($attr['priceorder']) OR $attr['priceorder']!='no'){
+								if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($attr['priceorder']!='no' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
 								
 									echo '<div class="LF-col-md-5">
 									<div class="LF-sortblock">
