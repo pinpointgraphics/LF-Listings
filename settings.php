@@ -316,7 +316,6 @@ function LF_admin_js()
 				}
 				else {
 					var labels = [];
-					console.log(options);
 					options.each(function() {
 						labels.push(jQuery(this).val());
 					});
@@ -597,9 +596,9 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 			wp_enqueue_style('slick.css',plugins_url('assets/css/slick.css',__FILE__));
 			wp_enqueue_style('slick-theme.css',plugins_url('assets/css/slick-theme.css',__FILE__));
 			wp_enqueue_style('jquery.fancybox.css',plugins_url('assets/css/jquery.fancybox.css',__FILE__));
+			wp_enqueue_style('flickity.min.css',plugins_url('assets/css/flickity.min.css',__FILE__));
 
 			?>
-			<link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
 
 			<style type="text/css">
 				select[name="LF_bedroom"]{
@@ -611,28 +610,6 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 					background-image: url('<?php echo plugins_url('assets/images/bath.png',__FILE__)?>');
 					background-repeat: no-repeat;
 					background-position: 90% center;
-				}
-				.flickity-button {
-					background: transparent;
-				}
-				.flickity-button:hover {
-					background: transparent;
-				}	
-				.flickity-prev-next-button {
-					width: 30px;
-					height: 30px;
-					border-radius: 5px;
-				}
-				/* icon color */
-				.flickity-button-icon {
-					fill: black;
-				}
-				/* position outside */
-				.flickity-prev-next-button.previous {
-					left: -40px;
-				}
-				.flickity-prev-next-button.next {
-					right: -40px;
 				}
 			</style>
 			<?php
@@ -664,9 +641,9 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 			wp_enqueue_script( 'jquery.fancybox.pack.js', plugins_url('assets/js/jquery.fancybox.pack.js',__FILE__), array('jquery'), '1.0.0', true );
 			wp_enqueue_script( 'jquery.fancybox.thumbs.js', plugins_url('assets/js/jquery.fancybox-thumbs.js',__FILE__), array('jquery'), '1.0.0', true );
 			wp_enqueue_script( 'slick.min.js', plugins_url('assets/js/slick.min.js',__FILE__), array('jquery'), '1.0.0', true );
+			wp_enqueue_script( 'flickity.pkgd.min.js', plugins_url('assets/js/flickity.pkgd.min.js',__FILE__), array('jquery'), '1.0.0', true );
 			
 			?>
-			<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
 			<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 			<script type="text/javascript">
 				var noofcol = jQuery('#noofcol').val();

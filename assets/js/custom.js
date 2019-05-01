@@ -840,7 +840,8 @@ jQuery(document).on('click','.btn_close_model',function(){
 });
 jQuery(document).on('click','.LF-btn-close',function(){
     // jQuery('#Modal').hide();
-    window.location.href="";
+    // window.location.href="";
+    parent.history.back();
 
 });
 jQuery(document).ready(function(){
