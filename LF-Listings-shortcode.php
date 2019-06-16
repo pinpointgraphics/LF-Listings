@@ -60,10 +60,42 @@ if ($listkey) {
 		$propertyImages = $propertyDetail->Images;
 		?>
 		<h1 class="main_title LF-page-title"><?php echo $propertyDetail->UnparsedAddress;?></h1>
+		<?php if(empty(LF_get_settings('LF_turn_off_map'))):?>
+				<div class="LF-row">
+					<div class="LF-col-md-12">
+						<!-- Trigger/Open The Modal -->
+						<?php if(!empty(LF_get_settings('LF_mapApiKey'))):?>
+							<?php
+							if(!empty($propertyDetail->Latitude) and !empty($propertyDetail->Longitude)){
+								?>
+								<a href="<?php echo isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';?>" class="prevPage">Back</a>&nbsp;
+								<button class="LF-btn LF-btn-map" id="myBtn">View on Map</button>
+							<?php }?>
+							<!-- The Modal -->
+							<div id="myModal" class="modal">
+								<!-- Modal content -->
+								<div class="modal-content">
+									<div class="modal-header">
+										<button class="close">&times;</button>
+									</div>
+									<div class="modal-body">
+										<div id="map"></div>
+									</div>
+								</div>
+							</div>
+						<?php endif?>
+					</div><!-- .LF-col-md-12 -->
+				</div><!-- .LF-row -->
+			<?php else: ?>
+				<div class="LF-row">
+					<div class="LF-col-md-12">
+						<a href="<?php echo isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';?>" class="prevPage">Back</a>
+					</div>
+				</div>
+			<?php endif; ?>
 		<div class="LF-description">
 			<div class="LF-row">
 				<div class="LF-col-md-12">
-					<a href="javascript:void(0)" onclick="window.history.back();">Back</a>
 					<p class="image-count"><?php echo $propertyDetail->ImageCount.' Images Found';?></p>
 					<div class="slider slider-nav">
 						<?php
@@ -84,30 +116,7 @@ if ($listkey) {
 					</div><!-- .LF-address -->
 				</div><!-- .LF-col-md-12 -->
 			</div><!-- .LF-row -->
-			<div class="LF-row">
-				<div class="LF-col-md-12">
-					<!-- Trigger/Open The Modal -->
-					<?php if(!empty(LF_get_settings('LF_mapApiKey'))):?>
-						<?php
-						if(!empty($propertyDetail->Latitude) and !empty($propertyDetail->Longitude)){
-							?>
-							<button class="LF-btn LF-btn-map" id="myBtn">View on Map</button>
-						<?php }?>
-						<!-- The Modal -->
-						<div id="myModal" class="modal">
-							<!-- Modal content -->
-							<div class="modal-content">
-								<div class="modal-header">
-									<button class="close">&times;</button>
-								</div>
-								<div class="modal-body">
-									<div id="map"></div>
-								</div>
-							</div>
-						</div>
-					<?php endif?>
-				</div><!-- .LF-col-md-12 -->
-			</div><!-- .LF-row -->
+			&nbsp;			
 			<div class="LF-row">
 				<div class="LF-col-md-6" style="text-align: center;">
 					<div class="slider slider-single">
@@ -516,19 +525,37 @@ if ($listkey) {
 								<div class="LF-form-group">
 									<select id="LF_pricefrom_search" name="LF_pricefrom_search" class="LF-form-control">
 										<option value="">Price From</option>
-										<option value="0" <?php if($priceFrom=='0'){ echo 'selected';}?>>0</option>
-										<option value="25000" <?php if($priceFrom=='25000'){ echo 'selected';}?>>25,000</option>
-										<option value="50000" <?php if($priceFrom=='50000'){ echo 'selected';}?>>50,000</option>
-										<option value="75000" <?php if($priceFrom=='75000'){ echo 'selected';}?>>75,000</option>
-										<option value="100000" <?php if($priceFrom=='100000'){ echo 'selected';}?>>100,000</option>
-										<option value="150000" <?php if($priceFrom=='150000'){ echo 'selected';}?>>150,000</option>
-										<option value="200000" <?php if($priceFrom=='200000'){ echo 'selected';}?>>200,000</option>
-										<option value="250000" <?php if($priceFrom=='250000'){ echo 'selected';}?>>250,000</option>
-										<option value="350000" <?php if($priceFrom=='350000'){ echo 'selected';}?>>350,000</option>
-										<option value="500000" <?php if($priceFrom=='500000'){ echo 'selected';}?>>500,000</option>
-										<option value="1000000" <?php if($priceFrom=='1000000'){ echo 'selected';}?>>1,000,000</option>
-										<option value="5000000" <?php if($priceFrom=='5000000'){ echo 'selected';}?>>5,000,000</option>
-										<option value="10000000" <?php if($priceFrom=='10000000'){ echo 'selected';}?>>10,000,000</option>
+										
+								<option value="0" <?php if($priceFrom=='0'){ echo 'selected';}?>>0</option>
+							     <?php 
+								    
+							       for($i=25000;$i <=500000;$i+=25000){
+							         ?>
+							       <option value="<?php echo $i;?>" <?php if($priceFrom==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								  <?php } ?>
+								 <?php 
+								    $value = 500000;
+							       for($i=550000;$i <=1000000;$i+=50000){
+							       ?>
+							     <option value="<?php echo $i;?>" <?php if($priceFrom==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								 <?php } ?>
+								 
+								 <?php 
+								  
+							       for($i=1100000;$i <=2000000;$i+=100000){
+							         ?>
+							     <option value="<?php echo $i;?>" <?php if($priceFrom==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								 <?php } ?>
+								 <?php 
+								    
+							       for($i=2500000;$i <=7500000;$i+=500000){
+							        ?>
+							     <option value="<?php echo $i;?>" <?php if($priceFrom==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								 <?php } ?>
+								 
+								<option value="10000000 " <?php if($priceFrom=='10000000'){ echo 'selected';}?>>10,000,000 </option>
+								<option value="15000000" <?php if($priceFrom=='15000000'){ echo 'selected';}?>>15,000,000</option>
+								<option value="20000000" <?php if($priceFrom=='20000000'){ echo 'selected';}?>>20,000,000</option>
 									</select>
 								</div>
 							</div>
@@ -537,18 +564,35 @@ if ($listkey) {
 									<select id="LF_priceto_search" name="LF_priceto_search" class="LF-form-control">
 										<option value="">Price To</option>
 										<option value="0" <?php if($priceTo=='0'){ echo 'selected';}?>>0</option>
-										<option value="25000" <?php if($priceTo=='25000'){ echo 'selected';}?>>25,000</option>
-										<option value="50000" <?php if($priceTo=='50000'){ echo 'selected';}?>>50,000</option>
-										<option value="75000" <?php if($priceTo=='75000'){ echo 'selected';}?>>75,000</option>
-										<option value="100000" <?php if($priceTo=='100000'){ echo 'selected';}?>>100,000</option>
-										<option value="150000" <?php if($priceTo=='150000'){ echo 'selected';}?>>150,000</option>
-										<option value="200000" <?php if($priceTo=='200000'){ echo 'selected';}?>>200,000</option>
-										<option value="250000" <?php if($priceTo=='250000'){ echo 'selected';}?>>250,000</option>
-										<option value="350000" <?php if($priceTo=='350000'){ echo 'selected';}?>>350,000</option>
-										<option value="500000" <?php if($priceTo=='500000'){ echo 'selected';}?>>500,000</option>
-										<option value="1000000" <?php if($priceTo=='1000000'){ echo 'selected';}?>>1,000,000</option>
-										<option value="5000000" <?php if($priceTo=='5000000'){ echo 'selected';}?>>5,000,000</option>
-										<option value="10000000" <?php if($priceTo=='10000000'){ echo 'selected';}?>>10,000,000</option>
+							     <?php 
+								    
+							       for($i=25000;$i <=500000;$i+=25000){
+							         ?>
+							       <option value="<?php echo $i;?>" <?php if($priceTo==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								  <?php } ?>
+								 <?php 
+								    $value = 500000;
+							       for($i=550000;$i <=1000000;$i+=50000){
+							       ?>
+							     <option value="<?php echo $i;?>" <?php if($priceTo==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								 <?php } ?>
+								 
+								 <?php 
+								  
+							       for($i=1100000;$i <=2000000;$i+=100000){
+							         ?>
+							     <option value="<?php echo $i;?>" <?php if($priceTo==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								 <?php } ?>
+								 <?php 
+								    
+							       for($i=2500000;$i <=7500000;$i+=500000){
+							        ?>
+							     <option value="<?php echo $i;?>" <?php if($priceTo==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								 <?php } ?>
+								 
+								 <option value="10000000 " <?php if($priceTo=='10000000'){ echo 'selected';}?>>10,000,000 </option>
+								<option value="15000000" <?php if($priceTo=='15000000'){ echo 'selected';}?>>15,000,000</option>
+								<option value="20000000" <?php if($priceTo=='20000000'){ echo 'selected';}?>>20,000,000</option>
 									</select>
 								</div>
 							</div>
@@ -629,6 +673,7 @@ if ($listkey) {
 					$sort = 'ASC';
 				}
 			}
+			
 			elseif(isset($sort)){
 				$sort = $sort;
 			}
@@ -822,9 +867,7 @@ if ($listkey) {
 							}
 							echo '</div>';
 
-							if(empty($attr['priceorder']) OR $attr['priceorder']!='no'){
-								if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($attr['priceorder']!='no' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
-								
+							if((empty($attr['priceorder']) && LF_get_settings('LF_show_priceOrder')=='yes') || ( !empty($attr['priceorder']) && $attr['priceorder']!='no')){	
 									echo '<div class="LF-col-md-5">
 									<div class="LF-sortblock">
 									<label>Order by price: </lable>
@@ -832,7 +875,6 @@ if ($listkey) {
 									High <input type="radio" class="LF-sort" name="LF-sort" id="desc" value="DESC" '.$descchecked.'>
 									</div>
 									</div>';
-								}
 							}
 							echo '<div class="clear"></div>';
 							//get column from admin setting
@@ -931,9 +973,7 @@ if ($listkey) {
 								echo $html;
 							}
 							echo '</div>';
-							if(empty($attr['priceorder']) OR $attr['priceorder']!='no'){
-								if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($attr['priceorder']!='no' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
-								
+							if((empty($attr['priceorder']) && LF_get_settings('LF_show_priceOrder')=='yes') || ( !empty($attr['priceorder']) && $attr['priceorder']!='no')){	
 									echo '<div class="LF-col-md-5">
 									<div class="LF-sortblock">
 									<label>Order by price: </lable>
@@ -941,7 +981,6 @@ if ($listkey) {
 									High <input type="radio" class="LF-sort" name="LF-Bsort" id="Bdesc" value="DESC" '.$descchecked.'>
 									</div>
 									</div>';
-								}
 							}
 						}
 						else{

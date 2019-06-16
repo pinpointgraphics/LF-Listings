@@ -192,18 +192,35 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 							<select id="LF_pricefrom_search-<?php echo $index;?>" name="LF_pricefrom_search" class="LF-form-control">
 								<option value="">Price From</option>
 								<option value="0" <?php if($priceFrom=='0'){ echo 'selected';}?>>0</option>
-								<option value="25000" <?php if($priceFrom=='25000'){ echo 'selected';}?>>25,000</option>
-								<option value="50000" <?php if($priceFrom=='50000'){ echo 'selected';}?>>50,000</option>
-								<option value="75000" <?php if($priceFrom=='75000'){ echo 'selected';}?>>75,000</option>
-								<option value="100000" <?php if($priceFrom=='100000'){ echo 'selected';}?>>100,000</option>
-								<option value="150000" <?php if($priceFrom=='150000'){ echo 'selected';}?>>150,000</option>
-								<option value="200000" <?php if($priceFrom=='200000'){ echo 'selected';}?>>200,000</option>
-								<option value="250000" <?php if($priceFrom=='250000'){ echo 'selected';}?>>250,000</option>
-								<option value="350000" <?php if($priceFrom=='350000'){ echo 'selected';}?>>350,000</option>
-								<option value="500000" <?php if($priceFrom=='500000'){ echo 'selected';}?>>500,000</option>
-								<option value="1000000" <?php if($priceFrom=='1000000'){ echo 'selected';}?>>1,000,000</option>
-								<option value="5000000" <?php if($priceFrom=='5000000'){ echo 'selected';}?>>5,000,000</option>
-								<option value="10000000" <?php if($priceFrom=='10000000'){ echo 'selected';}?>>10,000,000</option>
+							     <?php 
+								    
+							       for($i=25000;$i <=500000;$i+=25000){
+							         ?>
+							       <option value="<?php echo $i;?>" <?php if($priceFrom==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								  <?php } ?>
+								 <?php 
+								    $value = 500000;
+							       for($i=550000;$i <=1000000;$i+=50000){
+							       ?>
+							     <option value="<?php echo $i;?>" <?php if($priceFrom==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								 <?php } ?>
+								 
+								 <?php 
+								  
+							       for($i=1100000;$i <=2000000;$i+=100000){
+							         ?>
+							     <option value="<?php echo $i;?>" <?php if($priceFrom==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								 <?php } ?>
+								 <?php 
+								    
+							       for($i=2500000;$i <=7500000;$i+=500000){
+							        ?>
+							     <option value="<?php echo $i;?>" <?php if($priceFrom==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								 <?php } ?>
+								 
+								<option value="10000000 " <?php if($priceFrom=='10000000'){ echo 'selected';}?>>10,000,000 </option>
+								<option value="15000000" <?php if($priceFrom=='15000000'){ echo 'selected';}?>>15,000,000</option>
+								<option value="20000000" <?php if($priceFrom=='20000000'){ echo 'selected';}?>>20,000,000</option>
 							</select>
 						</div>
 					</div>
@@ -212,18 +229,36 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 							<select id="LF_priceto_search-<?php echo $index;?>" name="LF_priceto_search" class="LF-form-control">
 								<option value="">Price To</option>
 								<option value="0" <?php if($priceTo=='0'){ echo 'selected';}?>>0</option>
-								<option value="25000" <?php if($priceTo=='25000'){ echo 'selected';}?>>25,000</option>
-								<option value="50000" <?php if($priceTo=='50000'){ echo 'selected';}?>>50,000</option>
-								<option value="75000" <?php if($priceTo=='75000'){ echo 'selected';}?>>75,000</option>
-								<option value="100000" <?php if($priceTo=='100000'){ echo 'selected';}?>>100,000</option>
-								<option value="150000" <?php if($priceTo=='150000'){ echo 'selected';}?>>150,000</option>
-								<option value="200000" <?php if($priceTo=='200000'){ echo 'selected';}?>>200,000</option>
-								<option value="250000" <?php if($priceTo=='250000'){ echo 'selected';}?>>250,000</option>
-								<option value="350000" <?php if($priceTo=='350000'){ echo 'selected';}?>>350,000</option>
-								<option value="500000" <?php if($priceTo=='500000'){ echo 'selected';}?>>500,000</option>
-								<option value="1000000" <?php if($priceTo=='1000000'){ echo 'selected';}?>>1,000,000</option>
-								<option value="5000000" <?php if($priceTo=='5000000'){ echo 'selected';}?>>5,000,000</option>
-								<option value="10000000" <?php if($priceTo=='10000000'){ echo 'selected';}?>>10,000,000</option>
+							     <?php 
+								    
+							       for($i=25000;$i <=500000;$i+=25000){
+							         ?>
+							       <option value="<?php echo $i;?>" <?php if($priceTo==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								  <?php } ?>
+								 <?php 
+								    $value = 500000;
+							       for($i=550000;$i <=1000000;$i+=50000){
+							       ?>
+							     <option value="<?php echo $i;?>" <?php if($priceTo==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								 <?php } ?>
+								 
+								 <?php 
+								  
+							       for($i=1100000;$i <=2000000;$i+=100000){
+							         ?>
+							     <option value="<?php echo $i;?>" <?php if($priceTo==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								 <?php } ?>
+								 <?php 
+								    
+							       for($i=2500000;$i <=7500000;$i+=500000){
+							        ?>
+							     <option value="<?php echo $i;?>" <?php if($priceTo==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
+								 <?php } ?>
+								 
+								 <option value="10000000 " <?php if($priceTo=='10000000'){ echo 'selected';}?>>10,000,000 </option>
+								<option value="15000000" <?php if($priceTo=='15000000'){ echo 'selected';}?>>15,000,000</option>
+								<option value="20000000" <?php if($priceTo=='20000000'){ echo 'selected';}?>>20,000,000</option>
+								
 							</select>
 						</div>
 					</div>
@@ -336,6 +371,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 	{
 		$id = '';
 	}
+
 
 	$token = getToken();
 	$agent_id = LF_get_settings('agent_id');
@@ -458,6 +494,10 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 				}
 				$html       .= '</ul><div class="LF-clear"></div>';
 				
+				if(!empty($current_page)){
+				 $_SEESION['current_page'] = $current_page;
+				}else { $_SEESION['current_page'] = 1;}
+				
 				if($sort == 'ASC'){
 					$ascchecked = 'checked';
 				}
@@ -477,9 +517,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					echo $html;
 				}
 				echo '</div>';
-				if(empty($priceorder) OR $priceorder!='no'){
-					if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($priceorder!='no' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
-
+				if((empty($priceorder) && LF_get_settings('LF_show_priceOrder')=='yes') || ( !empty($priceorder) && $priceorder!='no')){
 						echo '<div class="LF-col-md-5">
 						<div class="LF-sortblock" data-index="'.$index.'">
 						<label>Order by price: </lable>
@@ -487,7 +525,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 						High <input type="radio" class="LF-sort" name="LF-sort" value="DESC" id="desc-'.$index.'" '.$descchecked.'>
 						</div>
 						</div>';
-					}
+					
 				}
 				echo '<div class="clear"></div>';
 
@@ -587,16 +625,15 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					echo $html;
 				}
 				echo '</div>';
-				if(empty($priceorder) OR $priceorder!='no'){
-					if(LF_get_settings('LF_show_priceOrder')=='yes'  || (($priceorder!='no' AND LF_get_settings('LF_show_priceOrder')!='yes'))){
-						echo '<div class="LF-col-md-5">
+				if((empty($priceorder) && LF_get_settings('LF_show_priceOrder')=='yes') || ( !empty($priceorder) && $priceorder!='no')){
+					echo '<div class="LF-col-md-5">
 						<div class="LF-sortblock" data-index="'.$index.'">
 						<label>Order by price: </lable>
-						Low <input type="radio" class="LF-sort" name="LF-Bsort" value="ASC" '.$ascchecked.'>
-						High <input type="radio" class="LF-sort" name="LF-Bsort" value="DESC" '.$descchecked.'>
+						Low <input type="radio" class="LF-sort" name="LF-Bsort" value="ASC" id="Basc-'.$index.'" '.$ascchecked.'>
+						High <input type="radio" class="LF-sort" name="LF-Bsort" value="DESC" id="Bdesc-'.$index.'" '.$descchecked.'>
 						</div>
 						</div>';
-					}
+                               	
 				}
 			}
 			else{

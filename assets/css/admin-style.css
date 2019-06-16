@@ -56,3 +56,8 @@
     list-style-type: disc;
     padding-left: 15px;
 }
+.open>.dropdown-menu{
+	max-height: 250px !important;
+	overflow-y: scroll !important;
+}
+#new_label{margin-top:7px;margin-left:6px;}

@@ -117,6 +117,7 @@ function LF_settings_view_creator()
 							?>
 							<label for="LF_Municipalities">Municipalities:</label>
 							<select name="LF_Municipalities[]" multiple="multiple" id="LF_Municipalities" class="LF-form-control">
+							
 								<?php
 								foreach($LF_cities->results->cities as $LF_city){
 									if(in_array($LF_city,$DBLF_Municipalities)){
@@ -154,7 +155,7 @@ function LF_settings_view_creator()
 						</div>
 						<div class="LF-form-group">
 							<label for="LF_page">List per page: </label>
-							<input type="number" name="LF_page" id="LF_page" class="LF-form-control" value="<?= empty(LF_get_settings('LF_page'))?12:LF_get_settings('LF_page');?>">
+							<input type="number" name="LF_page" id="LF_page" min=0 max=48 class="LF-form-control" value="<?= empty(LF_get_settings('LF_page'))?12:LF_get_settings('LF_page');?>">
 						</div>
 						<div class="LF-form-group">
 							<label for="LF_show_priceOrder">Show Price Order:</label>
@@ -174,11 +175,11 @@ function LF_settings_view_creator()
 						</div>
 						<div class="LF-form-group">
 							<label for="LF_mapApi">Image Width (in pixel): </label>
-							<input type="number" name="LF_imageWidth" id="LF_imageWidth" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_imageWidth'))? LF_get_settings('LF_imageWidth'):'';?>">
+							<input type="number" min=0 name="LF_imageWidth" id="LF_imageWidth" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_imageWidth'))? LF_get_settings('LF_imageWidth'):'';?>">
 						</div>
 						<div class="LF-form-group">
 							<label for="LF_mapApi">Image Height (in pixel): </label>
-							<input type="number" name="LF_imageHeight" id="LF_imageHeight" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_imageHeight'))? LF_get_settings('LF_imageHeight'):'';?>">
+							<input type="number" min=0 name="LF_imageHeight" id="LF_imageHeight" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_imageHeight'))? LF_get_settings('LF_imageHeight'):'';?>">
 						</div>
 						<div class="LF-form-group">
 							<label for="LF_detail_footer">Inquiry Mail text: </label>
@@ -217,6 +218,9 @@ function LF_settings_view_creator()
 						<div class="LF-form-group">
 							<label for="LF_mapApi">Google Map API Key: </label>
 							<input type="text" name="LF_mapApi" id="LF_mapApi" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_mapApiKey'))? LF_get_settings('LF_mapApiKey'):'';?>">
+						</div>
+						<div class="LF-form-group">
+							<input type="checkbox" name="LF_turn_off_map" value="1" id="LF_mapApi" <?php if(!empty(LF_get_settings('LF_turn_off_map')) && LF_get_settings('LF_turn_off_map') == 1 ){ echo "checked"; } ?>><label for="LF_mapApi" id="new_label">Turn off map display: </label>
 						</div>
 						<div class="LF-form-group">
 							<label for="LF_reCaptchastate">Google reCAPTCHA Type: </label><br>
@@ -292,6 +296,15 @@ function LF_admin_js()
 	$token = wp_create_nonce("savepluginData");
 	?>
 	<script>
+	//Write code to manage listing per page count
+	jQuery("#LF_page").on('mouseout mouseenter keyup',function(){ 
+		//alert("tet");
+		if(jQuery(this).val()>48){
+			jQuery(this).val("");
+			jQuery(this).val(48);
+			alert("Max Value should be 48");
+		}
+	});
 		jQuery(document).on('click','.LF-tablink',function(){
 			jQuery('.LF-tablink').removeClass('LF-active');
 			jQuery(this).addClass('LF-active');
@@ -337,7 +350,9 @@ function LF_admin_js()
 				codeEditor.save();
 			}
 			codeEditor.on('change', updateTextArea);
-			
+			$('button.LF-tablink').click(function(){
+				$('#custom_css').hide();
+			});
 			$('button[data-id="custom_css"]').click(function(){ 
 				$('#custom_css').show();
 				codeEditor.refresh();
@@ -555,6 +570,7 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 		$mapApi = sanitize_text_field($_POST['LF_mapApi']);
 		$LF_reCaptcha = sanitize_text_field($_POST['LF_reCaptcha']);
 		$LF_reCaptchastate = sanitize_text_field($_POST['LF_reCaptchastate']);
+		$LF_turn_off_map = sanitize_text_field($_POST['LF_turn_off_map']);
 		if(isset($mapApi)){
 			LF_add_settings('LF_mapApiKey',$mapApi);
 		}
@@ -563,6 +579,9 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 		}
 		if(isset($LF_reCaptcha)){
 			LF_add_settings('LF_reCaptcha',$LF_reCaptcha);
+		}
+		if(isset($LF_turn_off_map)){
+			LF_add_settings('LF_turn_off_map',$LF_turn_off_map);
 		}
 		echo 1;
 		die();
@@ -597,6 +616,7 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 			wp_enqueue_style('slick-theme.css',plugins_url('assets/css/slick-theme.css',__FILE__));
 			wp_enqueue_style('jquery.fancybox.css',plugins_url('assets/css/jquery.fancybox.css',__FILE__));
 			wp_enqueue_style('flickity.min.css',plugins_url('assets/css/flickity.min.css',__FILE__));
+			wp_enqueue_style('select2.min.css',plugins_url('assets/css/select2.min.css',__FILE__));
 
 			?>
 
@@ -642,6 +662,7 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 			wp_enqueue_script( 'jquery.fancybox.thumbs.js', plugins_url('assets/js/jquery.fancybox-thumbs.js',__FILE__), array('jquery'), '1.0.0', true );
 			wp_enqueue_script( 'slick.min.js', plugins_url('assets/js/slick.min.js',__FILE__), array('jquery'), '1.0.0', true );
 			wp_enqueue_script( 'flickity.pkgd.min.js', plugins_url('assets/js/flickity.pkgd.min.js',__FILE__), array('jquery'), '1.0.0', true );
+			wp_enqueue_script( 'select2.min.js', plugins_url('assets/js/select2.min.js',__FILE__), array('jquery'), '1.0.0', true );
 			
 			?>
 			<script src="https://www.google.com/recaptcha/api.js" async defer></script>
@@ -761,8 +782,10 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 
 					jQuery('.slider-single').slick('slickGoTo', goToSingleSlide);
 				});
+				
+			 
 			});
-
+            
 		</script>
 		<?php if(!empty(LF_get_settings('LF_mapApiKey'))):?>
 			<script async defer src="https://maps.googleapis.com/maps/api/js?key=<?php echo LF_get_settings('LF_mapApiKey');?>&callback&callback=initMap"></script>

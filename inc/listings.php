@@ -165,7 +165,7 @@ function LF_pagination(){
 	else{
 		$waterFront='';
 	}
-	
+
 	getLFListings($page, $mainSearch, $municipality, $sale, $bedroom, $bathroom, $property_Type, $priceFrom, $priceTo, $waterFront, $sort, $offices, $agents, $openhouse, $slug, $search, $style, $ids, $pagination, $priceorder, $per_row,$index, $list_per_page);
 
 	wp_die();

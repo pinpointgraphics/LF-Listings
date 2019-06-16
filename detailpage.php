@@ -129,7 +129,7 @@ function LF_main_menu_view_creator()
                             <li>horizontal</li>
                         </ul>
                     </td>
-                    <td>It displays listings gallery style or carousel sytle.</td>
+                    <td>It displays listings gallery style or carousel style.</td>
                     <td>[LF-Listings style="horizontal"]</td>
                 </tr>
                 <!-- ids -->
@@ -199,7 +199,7 @@ function LF_main_menu_view_creator()
                     <td>list-per-page</td>
                     <td>
                         <ul class="options">
-                            <li>Numeric Value</li>
+                            <li>Numeric Value (max limit="48")</li>
                         </ul>
                     </td>
                     <td>It determines the number of listings that are displayed per page. The value is limited to "48". If the parameter is not set, the default setting as defined on the settings page is used.</td>
