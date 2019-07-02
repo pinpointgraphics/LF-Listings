@@ -354,6 +354,7 @@ function LF_send_inquiryMail()
 	$email = sanitize_text_field($_POST['txtemail']);
 	$subject = "Inquiry for ".$property;
 	$txtMessage = sanitize_text_field($_POST['txtMessage']);
+	$listingURL = sanitize_text_field($_POST['listingURL']);
 
 	$msg = [];
 	$flag = 0;
@@ -402,6 +403,10 @@ function LF_send_inquiryMail()
 			<td>Property: </td>
 			<td>'.$property.'</td>
 		</tr>
+		<tr>
+                        <td>Property URL: </td>
+                        <td>'.$listingURL.'</td>
+                </tr>
 		<tr>
 			<td>Name: </td>
 			<td>'.stripslashes_deep($name).'</td>

@@ -66,9 +66,29 @@ jQuery(document).ready(function() {
 			}
 			
 			if(sessionStorage.getItem("LF_municipalities")!="" && sessionStorage.getItem("LF_municipalities") != null){
-			 jQuery("#LF_municipalities-0").val(sessionStorage.getItem("LF_municipalities"));
+			 var prevMuni = sessionStorage.getItem("LF_municipalities");
+			 if(jQuery('#LF_municipalities-0 option[value='+sessionStorage.getItem("LF_municipalities")+']').length > 0)
+                         {
+                                jQuery("#LF_municipalities-0").val(sessionStorage.getItem("LF_municipalities"));
+                         }
+                         else
+                         {
+                                jQuery("#LF_municipalities-0").append(new Option(prevMuni,prevMuni ,false,false));
+                         }
 			 sessionStorage.setItem("LF_municipalities", '');
 			}
+
+			if(sessionStorage.getItem("LF_waterfront")!="" && sessionStorage.getItem("LF_waterfront") != null) {
+				if(sessionStorage.getItem("LF_waterfront") == "yes"){
+                         		jQuery("#waterfront-0").attr("checked",true);
+		                         sessionStorage.setItem("LF_waterfront", 'no');
+				}
+				else
+				{
+					jQuery("#waterfront-0").attr("checked",false);
+                                         sessionStorage.setItem("LF_waterfront", 'yes');
+				}
+                        }
 			
 			
 			
@@ -230,6 +250,15 @@ jQuery(document).on('click', '.LF-pagination>li>a', function() {
 	sessionStorage.setItem("LF_property_search", LF_property_search);
     sessionStorage.setItem("LF_pricefrom_search", LF_pricefrom_search);
 	sessionStorage.setItem("LF_priceto_search", LF_priceto_search);
+
+	if(waterfront == 'y' && typeof waterfront !== 'undefined')
+	{
+		sessionStorage.setItem("LF_waterfront", "yes");
+	}
+	else
+	{
+		sessionStorage.setItem("LF_waterfront", "no");
+	}
 
 	
     var search, sale, municipalities, bedroom, bathroom, property_Type, priceFrom, priceTo, waterFront, page, LF_sort, defaultoffice, defaultagents, defaultopenhouse,srch,style,ids,pagi,priord,per_row,list_per_page;
@@ -454,6 +483,10 @@ jQuery(document).on('click', '.LF-pagination>li>a', function() {
         });
     }
 };
+
+jQuery(document).on('click', '.LF-Bsort', function() {
+	jQuery("input[name='LF-sort'][value=" + jQuery(this).val() + "]").attr('checked', 'checked').trigger("click");
+});
 
 jQuery(document).on('click', '.LF-sort', function() {
     var indexData = jQuery(this).closest('.LF-sortblock').data('index');
@@ -743,7 +776,15 @@ jQuery(document).on('click', '.LF-btn-search', function() {
 	sessionStorage.setItem("LF_property_search", LF_property_search);
 	sessionStorage.setItem("LF_pricefrom_search", LF_pricefrom_search);
 	sessionStorage.setItem("LF_priceto_search", LF_priceto_search);
-	
+
+	if(waterfront == 'y' && typeof waterfront !== 'undefined')
+        {
+                sessionStorage.setItem("LF_waterfront", "yes");
+        }
+        else
+        {
+                sessionStorage.setItem("LF_waterfront", "no");
+        }	
 
     if(jQuery.trim(LF_per_row) !='' && typeof LF_per_row !== 'undefined'){
         per_row = '&per_row='+LF_per_row;
@@ -1035,7 +1076,6 @@ jQuery(document).on('submit', '#formInquiry', function() {
             data: 'action=LF_send_inquiryMail&token=' + LF_custom.security + '&' + form,
             dataType: "json",
             success: function(result) {
-                console.log(result);
 
                 if (result.response == '1') {
                     jQuery('#txtName').val('');
@@ -1081,11 +1121,21 @@ function resetSearch(){
 			
 			 jQuery("#LF_priceto_search-0").val('');
 			 sessionStorage.setItem("LF_priceto_search", ''); 
-			 
+
+			sessionStorage.setItem("LF_waterfront", sessionStorage.getItem("LF_waterfront_default"));		
+			if(sessionStorage.getItem("LF_waterfront") == "yes")
+			{
+				jQuery("#waterfront-0").attr("checked",true);
+			}
+			else
+			{
+				jQuery("#waterfront-0").attr("checked",false);
+			}
+ 
 			 jQuery("#LF_pricefrom_search-0").val('');
 			 sessionStorage.setItem("LF_pricefrom_search", '');
 			 
-			 jQuery("#LF_sale-0").val(0);
+			 jQuery("#LF_sale-0").val(sessionStorage.getItem("LF_sale_default"));
 			 sessionStorage.setItem("LF_sale", '');
 			
 			 jQuery("#LF_bedroom-0").val(0);
@@ -1094,13 +1144,13 @@ function resetSearch(){
 			 jQuery("#LF_bathroom-0").val(0);
 			 sessionStorage.setItem("LF_bathroom", '');
 			
-             jQuery("#LF_property_search-0").val('any');
+             jQuery("#LF_property_search-0").val(sessionStorage.getItem("LF_property_search_default"));
 			 sessionStorage.setItem("LF_property_search", '');
 			
 			 jQuery("#LF_main_search-0").val('');
 			 sessionStorage.setItem("main_search", '');
 			
-			 jQuery("#LF_municipalities-0").val(0);
+			 jQuery("#LF_municipalities-0").val(sessionStorage.getItem("LF_municipalities_default"));
 			 sessionStorage.setItem("LF_municipalities", '');
 			 
 			 setTimeout(function(){

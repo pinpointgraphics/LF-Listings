@@ -43,6 +43,12 @@ if($attr['popup']=='yes' || $attr['popup']==''){
 	}
 }
 
+if(isset($_SESSION['pageUpdated']) && $_SESSION['pageUpdated'] == "yes")
+{ ?>
+	<script>sessionStorage.clear();</script> <?php
+	unset($_SESSION['pageUpdated']);	
+}
+
 $listkey = get_query_var('listkey');
 
 if ($listkey) {
@@ -63,12 +69,12 @@ if ($listkey) {
 		<?php if(empty(LF_get_settings('LF_turn_off_map'))):?>
 				<div class="LF-row">
 					<div class="LF-col-md-12">
+						<a href="<?php echo isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';?>" class="prevPage">Back</a>&nbsp;
 						<!-- Trigger/Open The Modal -->
 						<?php if(!empty(LF_get_settings('LF_mapApiKey'))):?>
 							<?php
 							if(!empty($propertyDetail->Latitude) and !empty($propertyDetail->Longitude)){
 								?>
-								<a href="<?php echo isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';?>" class="prevPage">Back</a>&nbsp;
 								<button class="LF-btn LF-btn-map" id="myBtn">View on Map</button>
 							<?php }?>
 							<!-- The Modal -->
@@ -157,6 +163,7 @@ if ($listkey) {
 								<textarea name="txtMessage" id="txtMessage" rows="3" class="LF-form-control" placeholder="Message" minlength="2" maxlength="140"></textarea>
 								<label for="" class="alert-error" id="txtMessage_error"></label>
 							</div>
+							<input type="hidden" id="listingURL" name="listingURL" value='<?php echo (isset($_SERVER['HTTPS']) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']; ?>'>
 							<?php
 							if(!empty(LF_get_settings('LF_reCaptcha')) and LF_get_settings('LF_reCaptchastate')!='no-captch'){
 								if(LF_get_settings('LF_reCaptchastate')=='yes'){
@@ -462,9 +469,11 @@ if ($listkey) {
 									<select name="LF_municipalities" id="LF_municipalities" class="LF-form-control">
 										<option value="0">All Municipalities</option>
 										<?php
+										$hasValidLocation = false;
 										foreach($LF_Municipalities as $LF_Municipalitie):
 											if($attr['location'] == $LF_Municipalitie){
 												$select = "selected";
+												$hasValidLocation = true;
 											}
 											else{
 												$select='';
@@ -612,19 +621,30 @@ if ($listkey) {
 					<?php
 				endif; //end check search enable/disable from admin
 			endif; //end search tag in shortcode
-
+			if($hasValidLocation == false && !empty($attr['location']))
+                        {
+				?>
+				<script>
+					var popup = document.getElementById('Modal');
+					popup.style.display = 'none';
+				</script>
+				<?php
+                                die('Hey Admin!  '.$attr['location'].' is not a valid location. Please choose correct one. Its case sensitive.');
+                        }
 			$token = getToken();
 			$agent_id = LF_get_settings('agent_id');
 			$office_id = LF_get_settings('office_id');
 			if(!empty($attr['agent'])){
-				$agent = '&agents='.$attr['agent'];
+				$agents = str_replace(' ', '', $attr['agent']);
+				$agent = '&agents='.$agents;
 			}
 			else{
 				$agent = '';
 			}
 
 			if(!empty($attr['office'])){
-				$office = '&offices='.$attr['office'];
+				$offices = str_replace(' ', '', $attr['office']);
+				$office = '&offices='.$offices;
 			}
 			else{
 				$office = '';
@@ -644,7 +664,8 @@ if ($listkey) {
 			}
 
 			if(!empty($attr['ids'])){
-				$ids = '&ids='.$attr['ids'];
+				$lids = str_replace(' ', '', $attr['ids']);
+				$ids = '&ids='.$lids;
 			}
 			else{
 				$ids = '';
@@ -746,9 +767,9 @@ if ($listkey) {
 
 					<input type="hidden" name="defaultSearchType" id="defaultSearchType" value="<?php echo $attr['type'];?>">
 
-					<input type="hidden" name="defaultagents" id="defaultagents" value="<?php echo $attr['agent'];?>">
+					<input type="hidden" name="defaultagents" id="defaultagents" value="<?php echo str_replace(' ', '', $attr['agent']);?>">
 
-					<input type="hidden" name="defaultoffice" id="defaultoffice" value="<?php echo $attr['office'];?>">
+					<input type="hidden" name="defaultoffice" id="defaultoffice" value="<?php echo str_replace(' ', '', $attr['office']);?>">
 
 					<input type="hidden" name="defaultlocation" id="defaultlocation" value="<?php echo $attr['location'];?>">
 
@@ -757,6 +778,8 @@ if ($listkey) {
 					<input type="hidden" name="defaultopenhouse" id="defaultopenhouse" value="<?php echo $attr['openhouse'];?>">
 					
 					<input type="hidden" name="defaultwaterfront" id="defaultwaterfront" value="<?php echo $attr['waterfront'];?>">
+
+					<input type="hidden" name="defaulttype" id="defaulttype" value="<?php echo !empty($attr['type']) ?$attr['type']:'';?>">
 					
 					<input type="hidden" name="search" id="search" value="<?php echo $attr['search'];?>">
 
@@ -764,7 +787,7 @@ if ($listkey) {
 					
 					<input type="hidden" name="noofcol" id="noofcol" value="<?php echo !empty($column)?$column:'';?>">
 
-					<input type="hidden" name="ids" id="ids" value="<?php echo $attr['ids'];?>">
+					<input type="hidden" name="ids" id="ids" value="<?php echo !empty($attr['ids']) ?str_replace(' ', '', $attr['ids']):'';?>">
 					
 					<input type="hidden" name="pagination" id="pagination" value="<?php echo $attr['pagination'];?>">
 
@@ -977,8 +1000,8 @@ if ($listkey) {
 									echo '<div class="LF-col-md-5">
 									<div class="LF-sortblock">
 									<label>Order by price: </lable>
-									Low <input type="radio" class="LF-sort" name="LF-Bsort" id="Basc" value="ASC" '.$ascchecked.'>
-									High <input type="radio" class="LF-sort" name="LF-Bsort" id="Bdesc" value="DESC" '.$descchecked.'>
+									Low <input type="radio" class="LF-Bsort" name="LF-Bsort" id="Basc" value="ASC" '.$ascchecked.'>
+									High <input type="radio" class="LF-Bsort" name="LF-Bsort" id="Bdesc" value="DESC" '.$descchecked.'>
 									</div>
 									</div>';
 							}
@@ -990,6 +1013,38 @@ if ($listkey) {
 				}?>
 			</div>
 			<div class="LF-disclaimer"><?php echo LF_get_settings('LF_detail_footer');?></div>
+			<script><?php
+          				$initType='any';
+                                        $initLocation='0';
+                                        $initsale='0';
+                                        $initwaterfront='no';
+					$slug = trim(getCurrentPageSlug());
+                                        if(!empty($attr['type'])) $initType=$attr['type'];
+                                        if(!empty($attr['location'])) $initLocation=$attr['location'];
+                                        if(!empty($attr['sale'])) $initsale=$attr['sale'];
+                                        if(!empty($attr['waterfront']) && $attr['waterfront'] == 'yes') $initwaterfront='yes'; ?>
+                                         if(sessionStorage.getItem("LF_sale")=="" || sessionStorage.getItem("LF_sale") == null || sessionStorage.getItem("currentPage") != <?php echo '"'.$slug.'"';?>)
+					{
+                                        	sessionStorage.setItem("LF_sale", <?php echo '"'.$initsale.'"';?>); 
+					}
+					sessionStorage.setItem("LF_sale_default", <?php echo '"'.$initsale.'"';?>);
+                                         if(sessionStorage.getItem("LF_property_search")=="" || sessionStorage.getItem("LF_property_search") == null || sessionStorage.getItem("currentPage") != <?php echo '"'.$slug.'"';?>)
+					{
+                                        	sessionStorage.setItem("LF_property_search", <?php echo '"'.$initType.'"';?>);
+					}
+					sessionStorage.setItem("LF_property_search_default", <?php echo '"'.$initType.'"';?>);  
+                                         if(sessionStorage.getItem("LF_municipalities")=="" || sessionStorage.getItem("LF_municipalities") == null || sessionStorage.getItem("currentPage") != <?php echo '"'.$slug.'"';?>)
+					{
+                                        	sessionStorage.setItem("LF_municipalities", <?php echo '"'.$initLocation.'"';?>);
+					}
+					sessionStorage.setItem("LF_municipalities_default", <?php echo '"'.$initLocation.'"';?>);
+                                        if(sessionStorage.getItem("LF_waterfront")=="" || sessionStorage.getItem("LF_waterfront") == null || sessionStorage.getItem("currentPage") != <?php echo '"'.$slug.'"';?>)
+					{
+                                        	sessionStorage.setItem("LF_waterfront", <?php echo '"'.$initwaterfront.'"';?>);
+					}
+					sessionStorage.setItem("LF_waterfront_default", <?php echo '"'.$initwaterfront.'"';?>);
+					sessionStorage.setItem("currentPage", <?php echo '"'.$slug.'"';?>);
+			</script>
 		</div>
 			<?php
 		}

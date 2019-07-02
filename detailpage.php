@@ -51,10 +51,10 @@ function LF_main_menu_view_creator()
                         <ul class="options">
                             <li>residential</li>
                             <li>commercial</li>
-                            <li>condo/strata</li>
+                            <li>condo (For Condo/Strata)</li>
                             <li>recreational</li>
                             <li>agriculture</li>
-                            <li>vacant land</li>
+                            <li>land (For Vacant Land)</li>
                         </ul>
                     </td>
                     <td>It selects from the options of property types that are available in the feed.</td>

@@ -82,12 +82,12 @@ function LF_settings_view_creator()
 							);
 							$shortcode = 'LF-Listings';
 							$query_result = new WP_Query($args);
-							// print_r($query_result);
 							
 							?>
 							<select name="homepageSlug" id="homepageSlug" class="LF-form-control">
-								<option value="">Select</option>
 								<?php
+								if(count($query_result->posts) == 0)
+									echo '<option value="">No page with LF-Listings tag. Please create one for more options.</option>';
 								foreach ($query_result->posts as $post) {
 									if(LF_get_settings('LF_homepageSlug') == $post->post_name){
 										$selected = "selected";
@@ -105,7 +105,6 @@ function LF_settings_view_creator()
 						<div class="LF-form-group">
 							<label for="LF_show_search">Show Search Panel:</label>
 							<select name="LF_show_search" id="LF_show_search" class="LF-form-control">
-								<option value="">Select</option>
 								<option value="yes" <?php if(LF_get_settings('LF_show_search')=='yes'){ echo "selected";}?>>Yes</option>
 								<option value="no" <?php if(LF_get_settings('LF_show_search')=='no'){ echo "selected";}?>>No</option>
 							</select>
@@ -155,12 +154,11 @@ function LF_settings_view_creator()
 						</div>
 						<div class="LF-form-group">
 							<label for="LF_page">List per page: </label>
-							<input type="number" name="LF_page" id="LF_page" min=0 max=48 class="LF-form-control" value="<?= empty(LF_get_settings('LF_page'))?12:LF_get_settings('LF_page');?>">
+							<input type="number" name="LF_page" id="LF_page" onkeypress="return event.charCode != 45" min=0 max=48 class="LF-form-control" value="<?= empty(LF_get_settings('LF_page'))?12:LF_get_settings('LF_page');?>">
 						</div>
 						<div class="LF-form-group">
 							<label for="LF_show_priceOrder">Show Price Order:</label>
 							<select name="LF_show_priceOrder" id="LF_show_priceOrder" class="LF-form-control">
-								<option value="">Select</option>
 								<option value="yes" <?php if(LF_get_settings('LF_show_priceOrder')=='yes'){ echo "selected";}?>>Yes</option>
 								<option value="no" <?php if(LF_get_settings('LF_show_priceOrder')=='no'){ echo "selected";}?>>No</option>
 							</select>
@@ -168,18 +166,17 @@ function LF_settings_view_creator()
 						<div class="LF-form-group">
 							<label for="LF_show_search">Default Price order: </label>
 							<select name="LF_priceOrder" id="LF_priceOrder" class="LF-form-control">
-								<option value="">Select</option>
 								<option value="ASC" <?php if(LF_get_settings('LF_priceOrder')=='ASC'){ echo "selected";}?>>Low</option>
 								<option value="DESC" <?php if(LF_get_settings('LF_priceOrder')=='DESC'){ echo "selected";}?>>High</option>
 							</select>
 						</div>
 						<div class="LF-form-group">
 							<label for="LF_mapApi">Image Width (in pixel): </label>
-							<input type="number" min=0 name="LF_imageWidth" id="LF_imageWidth" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_imageWidth'))? LF_get_settings('LF_imageWidth'):'';?>">
+							<input type="number" min=0 onkeypress="return event.charCode != 45" name="LF_imageWidth" id="LF_imageWidth" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_imageWidth'))? LF_get_settings('LF_imageWidth'):'';?>">
 						</div>
 						<div class="LF-form-group">
 							<label for="LF_mapApi">Image Height (in pixel): </label>
-							<input type="number" min=0 name="LF_imageHeight" id="LF_imageHeight" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_imageHeight'))? LF_get_settings('LF_imageHeight'):'';?>">
+							<input type="number" min=0 onkeypress="return event.charCode != 45" name="LF_imageHeight" id="LF_imageHeight" class="LF-form-control" value="<?php echo !empty(LF_get_settings('LF_imageHeight'))? LF_get_settings('LF_imageHeight'):'';?>">
 						</div>
 						<div class="LF-form-group">
 							<label for="LF_detail_footer">Inquiry Mail text: </label>

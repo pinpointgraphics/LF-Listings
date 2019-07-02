@@ -79,6 +79,12 @@ function getToken()
 	curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 	$token = curl_exec($ch);
 	curl_close($ch);
+
+	if($token == "Invalid credentials.")
+	{
+		die($token.' Please check credentials in the LF-Listings Setting menu.');
+	}
+	
 	return $token;
 }
 
@@ -426,7 +432,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 
 			<input type="hidden" name="defaultSearchType" id="defaultSearchType-<?php echo $index;?>" value="<?php echo !empty($property_Type)?$property_Type:'';?>">
 
-			<input type="hidden" name="defaultagents" id="defaultagents-<?php echo $index;?>-<?php echo $index;?>" value="<?php echo !empty($agents)?$agents:'';?>">
+			<input type="hidden" name="defaultagents" id="defaultagents-<?php echo $index;?>" value="<?php echo !empty($agents)?$agents:'';?>">
 
 			<input type="hidden" name="defaultoffice" id="defaultoffice-<?php echo $index;?>" value="<?php echo !empty($offices)?$offices:'';?>">
 
@@ -434,8 +440,10 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 
 			<input type="hidden" name="defaultsale" id="defaultsale-<?php echo $index;?>" value="<?php echo !empty($sale)?$sale:'';?>">
 
+			<input type="hidden" name="ids" id="ids-<?php echo $index;?>" value="<?php echo !empty($ids)?$ids:'';?>">
+
 			<input type="hidden" name="defaultopenhouse" id="defaultopenhouse-<?php echo $index;?>" value="<?php echo !empty($openhouse)?$openhouse:'';?>">
-			
+
 			<input type="hidden" name="defaultwaterfront" id="defaultwaterfront-<?php echo $index;?>" value="<?php echo !empty($waterFront)?$waterFront:'';?>">
 
 			<input type="hidden" name="search" id="search-<?php echo $index;?>" value="<?php echo !empty($search)?$search:'';?>">
@@ -452,7 +460,6 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 
 			<input type="hidden" name="list_per_page" id="list_per_page-<?php echo $index;?>" value="<?php echo !empty($list_per_page)?$list_per_page:'';?>">
 
-			<!-- <input type="hidden" name="ids" id="ids" value="<?php echo !empty($ids)?$ids:'';?>"> -->
 
 			<?php
 			// if(empty($search) or $search!="only" or $search=="no" or $search == 'yes'){
@@ -629,8 +636,8 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					echo '<div class="LF-col-md-5">
 						<div class="LF-sortblock" data-index="'.$index.'">
 						<label>Order by price: </lable>
-						Low <input type="radio" class="LF-sort" name="LF-Bsort" value="ASC" id="Basc-'.$index.'" '.$ascchecked.'>
-						High <input type="radio" class="LF-sort" name="LF-Bsort" value="DESC" id="Bdesc-'.$index.'" '.$descchecked.'>
+						Low <input type="radio" class="LF-Bsort" name="LF-Bsort" value="ASC" id="Basc-'.$index.'" '.$ascchecked.'>
+						High <input type="radio" class="LF-Bsort" name="LF-Bsort" value="DESC" id="Bdesc-'.$index.'" '.$descchecked.'>
 						</div>
 						</div>';
                                	
