@@ -1,0 +1,19 @@
+.openHouseTextCon {
+	position: absolute;
+    top: 110px;
+    left: 50px;
+    width: 100px;
+    height: 43px;
+    text-align: center;
+}
+
+.openHouseNumber {
+	font-weight: bold;
+    font-size: 1.20rem;
+}
+
+.openHousePopupText {
+	font-weight: bold;
+    font-size: 1rem;
+}
+

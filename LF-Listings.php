@@ -3,7 +3,7 @@
 Plugin Name: Lightning Fast Listings
 Plugin URI: https://lightningfastlistings.ca
 Description: Lightning Fast Listings is a WordPress plugin exclusively designed for Canadian Real Estate Agents who are licensed by the Canadian Real Estate Association (CREA ®) to display listings via the Data Distribution Facility (DDF ®). All real estate listings are served "lightning fast", designed and hosted remotely to not take up any of the website's own resources.
-Version: 1.0.5
+Version: 1.0.6
 Author: Pinpoint Media Design
 Author URI: https://www.pinpointmediadesign.com
 License: GLP2
@@ -57,6 +57,7 @@ function LF_plugin_on_activation()
 	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 	dbDelta( $sql );
 
+	if(LF_get_settings('LF_column') == false)
 	$wpdb->insert(
 		$table_name,
 		array(
@@ -64,6 +65,8 @@ function LF_plugin_on_activation()
 			'meta_value' => 3
 		)
 	);
+
+	if(LF_get_settings('LF_page') == false)
 	$wpdb->insert(
 		$table_name,
 		array(
@@ -71,6 +74,8 @@ function LF_plugin_on_activation()
 			'meta_value' => 12
 		)
 	);
+
+	if(LF_get_settings('LF_show_priceOrder') == false)
 	$wpdb->insert(
 		$table_name,
 		array(
@@ -78,6 +83,8 @@ function LF_plugin_on_activation()
 			'meta_value' => 'yes'
 		)
 	);
+
+	if(LF_get_settings('termsandcondition') == false)
 	$wpdb->insert(
 		$table_name,
 		array(
@@ -85,15 +92,8 @@ function LF_plugin_on_activation()
 			'meta_value' => stripslashes_deep($termsandcondition)
 		)
 	);
-	$stylesheetUrl = plugin_dir_path( __FILE__ ).'assets/css/style.css';
-	$stylesheet = stripslashes_deep(file_get_contents($stylesheetUrl));
-	$wpdb->insert(
-		$table_name,
-		array(
-			'meta_key' => 'customCss',
-			'meta_value' => $stylesheet
-		)
-	);
+
+	if(LF_get_settings('LF_MailText') == false)
 	$wpdb->insert(
 		$table_name,
 		array(
@@ -101,6 +101,8 @@ function LF_plugin_on_activation()
 			'meta_value' => '<p>Hello,</p><p>Here are the details of the inquiry form:</p>'
 		)
 	);
+
+	if(LF_get_settings('LF_detail_footer') == false)
 	$wpdb->insert(
 		$table_name,
 		array(
@@ -108,6 +110,8 @@ function LF_plugin_on_activation()
 			'meta_value' => 'MLS&reg;, REALTOR&reg;, and the associated logos are trademarks of The Canadian Real Estate Association'
 		)
 	);
+
+	if(LF_get_settings('LF_reCaptchastate') == false)
 	$wpdb->insert(
 		$table_name,
 		array(
@@ -115,6 +119,8 @@ function LF_plugin_on_activation()
 			'meta_value' => 'no-captch'
 		)
 	);
+
+	if(LF_get_settings('LF_show_search') == false)
 	$wpdb->insert(
                 $table_name,
                 array(
@@ -122,6 +128,8 @@ function LF_plugin_on_activation()
                         'meta_value' => 'yes'
                 )
         );
+
+	if(LF_get_settings('LF_priceOrder') == false)
 	$wpdb->insert(
                 $table_name,
                 array(
@@ -129,6 +137,7 @@ function LF_plugin_on_activation()
                         'meta_value' => 'ASC'
                 )
         );
+	LFUpdateCSS();
 }
 
 function LF_settings_activation_link( $links ) {
@@ -204,8 +213,10 @@ function LF_plugin_init()
 	require_once( LF_PLUGIN_DIR.'/updater.php' );
 	if ( is_admin() )
 	{
-    	new LF_Listings_Plugin_Updater( __FILE__, 'pinpointgraphics', "LF-Listings" );
+	    	new LF_Listings_Plugin_Updater( __FILE__, 'pinpointgraphics', "LF-Listings" );
 	}
+
+	LFUpdateCSS();
 }
 
 // add default editor

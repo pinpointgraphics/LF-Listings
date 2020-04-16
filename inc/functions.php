@@ -84,7 +84,7 @@ function getToken()
 	{
 		die($token.' Please check credentials in the LF-Listings Setting menu.');
 	}
-	
+
 	return $token;
 }
 
@@ -198,32 +198,32 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 							<select id="LF_pricefrom_search-<?php echo $index;?>" name="LF_pricefrom_search" class="LF-form-control">
 								<option value="">Price From</option>
 								<option value="0" <?php if($priceFrom=='0'){ echo 'selected';}?>>0</option>
-							     <?php 
-								    
+							     <?php
+
 							       for($i=25000;$i <=500000;$i+=25000){
 							         ?>
 							       <option value="<?php echo $i;?>" <?php if($priceFrom==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
 								  <?php } ?>
-								 <?php 
+								 <?php
 								    $value = 500000;
 							       for($i=550000;$i <=1000000;$i+=50000){
 							       ?>
 							     <option value="<?php echo $i;?>" <?php if($priceFrom==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
 								 <?php } ?>
-								 
-								 <?php 
-								  
+
+								 <?php
+
 							       for($i=1100000;$i <=2000000;$i+=100000){
 							         ?>
 							     <option value="<?php echo $i;?>" <?php if($priceFrom==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
 								 <?php } ?>
-								 <?php 
-								    
+								 <?php
+
 							       for($i=2500000;$i <=7500000;$i+=500000){
 							        ?>
 							     <option value="<?php echo $i;?>" <?php if($priceFrom==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
 								 <?php } ?>
-								 
+
 								<option value="10000000 " <?php if($priceFrom=='10000000'){ echo 'selected';}?>>10,000,000 </option>
 								<option value="15000000" <?php if($priceFrom=='15000000'){ echo 'selected';}?>>15,000,000</option>
 								<option value="20000000" <?php if($priceFrom=='20000000'){ echo 'selected';}?>>20,000,000</option>
@@ -235,36 +235,36 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 							<select id="LF_priceto_search-<?php echo $index;?>" name="LF_priceto_search" class="LF-form-control">
 								<option value="">Price To</option>
 								<option value="0" <?php if($priceTo=='0'){ echo 'selected';}?>>0</option>
-							     <?php 
-								    
+							     <?php
+
 							       for($i=25000;$i <=500000;$i+=25000){
 							         ?>
 							       <option value="<?php echo $i;?>" <?php if($priceTo==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
 								  <?php } ?>
-								 <?php 
+								 <?php
 								    $value = 500000;
 							       for($i=550000;$i <=1000000;$i+=50000){
 							       ?>
 							     <option value="<?php echo $i;?>" <?php if($priceTo==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
 								 <?php } ?>
-								 
-								 <?php 
-								  
+
+								 <?php
+
 							       for($i=1100000;$i <=2000000;$i+=100000){
 							         ?>
 							     <option value="<?php echo $i;?>" <?php if($priceTo==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
 								 <?php } ?>
-								 <?php 
-								    
+								 <?php
+
 							       for($i=2500000;$i <=7500000;$i+=500000){
 							        ?>
 							     <option value="<?php echo $i;?>" <?php if($priceTo==$i){ echo 'selected';}?>><?php echo number_format($i);?></option>
 								 <?php } ?>
-								 
+
 								 <option value="10000000 " <?php if($priceTo=='10000000'){ echo 'selected';}?>>10,000,000 </option>
 								<option value="15000000" <?php if($priceTo=='15000000'){ echo 'selected';}?>>15,000,000</option>
 								<option value="20000000" <?php if($priceTo=='20000000'){ echo 'selected';}?>>20,000,000</option>
-								
+
 							</select>
 						</div>
 					</div>
@@ -393,14 +393,14 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 		else{
 			$paginate = $list_per_page;
 		}
-	}	
+	}
 	else{
 		$paginate = LF_get_settings('LF_page');
 	}
 
 	$curl = curl_init();
 	curl_setopt_array($curl, array(
-		CURLOPT_URL => API_URL."/properties?token=".$token."&agent_id=".$agent_id."&office_id=".$office_id."&paginate=".$paginate."&sort=".$sort.$page.$mainSearch.$LF_sale.$bedroom.$bathroom.$propertyType.$priceFrom.$LF_priceTo.$LF_waterFront.$municipality.$office.$agent.$id,
+		CURLOPT_URL => API_URL."/properties?token=".$token."&agent_id=".$agent_id."&office_id=".$office_id."&paginate=".$paginate."&sort=".$sort.$page.$mainSearch.$LF_sale.$bedroom.$bathroom.$propertyType.$priceFrom.$LF_priceTo.$LF_waterFront.$municipality.$office.$agent.$id.$LF_openhouse,
 		CURLOPT_RETURNTRANSFER => true,
 		CURLOPT_ENCODING => "",
 		CURLOPT_MAXREDIRS => 10,
@@ -453,7 +453,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 			<input type="hidden" name="noofcol" id="noofcol-<?php echo $index;?>" value="<?php echo !empty(LF_get_settings('LF_column'))?LF_get_settings('LF_column'):'';?>">
 
 			<input type="hidden" name="pagination" id="pagination-<?php echo $index;?>" value="<?php echo !empty($pagination)?$pagination:'';?>">
-			
+
 			<input type="hidden" name="priceorder" id="priceorder-<?php echo $index;?>" value="<?php echo !empty($priceorder)?$priceorder:'';?>">
 
 			<input type="hidden" name="per_row" id="per_row-<?php echo $index;?>" value="<?php echo !empty($per_row)?$per_row:'';?>">
@@ -500,11 +500,11 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					$html   .= '<li><a href="javascript:void(0);" data-page="'.$next.'">Next</a></li>';
 				}
 				$html       .= '</ul><div class="LF-clear"></div>';
-				
+
 				if(!empty($current_page)){
 				 $_SEESION['current_page'] = $current_page;
 				}else { $_SEESION['current_page'] = 1;}
-				
+
 				if($sort == 'ASC'){
 					$ascchecked = 'checked';
 				}
@@ -531,8 +531,8 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 						Low <input type="radio" class="LF-sort" name="LF-sort" value="ASC" id="asc-'.$index.'" '.$ascchecked.'>
 						High <input type="radio" class="LF-sort" name="LF-sort" value="DESC" id="desc-'.$index.'" '.$descchecked.'>
 						</div>
-						</div>';
-					
+						</div>&nbsp;';
+
 				}
 				echo '<div class="clear"></div>';
 
@@ -564,7 +564,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 					$col=3;
 					break;
 				}
-				
+
 				if(!empty($style) and $style == 'horizontal'){
 					echo '<div class="horizantal-slide">';
 				}
@@ -640,7 +640,7 @@ function getLFListings($page='',$mainSearch='', $municipalities='',$sale='',$bed
 						High <input type="radio" class="LF-Bsort" name="LF-Bsort" value="DESC" id="Bdesc-'.$index.'" '.$descchecked.'>
 						</div>
 						</div>';
-                               	
+
 				}
 			}
 			else{
@@ -698,6 +698,48 @@ function getLFImageProxy($url){
 	else{
 		return $url;
 	}
+}
+
+function LFUpdateCSS()
+{
+	$pluginData = get_plugin_data(LF_PLUGIN_DIR.'/LF-Listings.php');
+        $currentVersion = $pluginData['Version'];
+        $lastVersion= LF_get_settings('last_css_updated_version');
+                if(empty($lastVersion))
+                {
+                        $lastVersion = '1.0.5'; // since when we started the css upgrade.
+                        LF_add_settings('last_css_updated_version',$lastVersion);
+                        if(empty(LF_get_settings('customCss')))
+                        {
+                                LF_add_settings('customCss',file_get_contents(LF_PLUGIN_DIR.'/versioned_css/1.0.5.css'));
+                        }
+                }
+                file_put_contents(LF_PLUGIN_DIR.'/assets/css/style.css',stripslashes_deep(LF_get_settings('customCss')));
+                $digits = explode (".", $lastVersion);
+                $cssDir = LF_PLUGIN_DIR.'/versioned_css/';
+                $digits[2]++;
+                for ($digits[0]; $digits[0] <=1; $digits[0]++) {
+                        for ($digits[1]; $digits[1] <=1; $digits[1]++) {
+                                for ($digits[2]; $digits[2] <=25; $digits[2]++) {
+                                        $version = implode('.', $digits);
+                                        $cssFile = $cssDir.$version.".css";
+                                        if(file_exists ($cssFile))
+                                        {
+                                                file_put_contents(LF_PLUGIN_DIR.'/assets/css/style.css', "\n\n/*----- ".$version." append -----*/\n\n", FILE_APPEND | LOCK_EX);
+                                                file_put_contents(LF_PLUGIN_DIR.'/assets/css/style.css', file_get_contents($cssFile), FILE_APPEND | LOCK_EX);
+                                        }
+                                        if($currentVersion == $version)
+                                        {
+                                                break 3;
+                                        }
+                               }
+                               $digits[2] = 0;
+                        }
+                        $digits[1] = 0;
+                }
+                LF_add_settings('customCss',file_get_contents(LF_PLUGIN_DIR.'/assets/css/style.css'));
+                LF_add_settings('last_css_updated_version', $currentVersion);
+
 }
 
 ?>

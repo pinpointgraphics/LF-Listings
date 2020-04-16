@@ -62,6 +62,9 @@ if ($listkey) {
 	$propertyDetails = getLFListingsDetails($listkey);
 
 	if($propertyDetails->error==false){
+
+
+//var_dump($propertyDetails);
 		$propertyDetail = $propertyDetails->results;
 		$propertyImages = $propertyDetail->Images;
 		?>
@@ -90,6 +93,71 @@ if ($listkey) {
 								</div>
 							</div>
 						<?php endif?>
+						<?php  
+							if (isset($propertyDetail->OpenHouseStart) && isset($propertyDetail->OpenHouseEnd))
+							{
+								$ostart = str_replace('/', '-', $propertyDetail->OpenHouseStart);
+								$ostop = str_replace('/', '-', $propertyDetail->OpenHouseEnd);
+								$opening_date = new DateTime($ostart);
+								$ending_date=new DateTime($ostop);
+								$current_date = new DateTime();
+								if ($opening_date > $current_date)
+								{ 
+								?>	<button class="LF-btn LF-btn-map" id="openHouseBtn" style="float:right">Next Openhouse <?php echo $opening_date->format('M').' '.$opening_date->format('d'); ?></button> 
+
+								<!-- The Modal -->
+                                                        <div id="openHouseModal" class="modal">
+                                                                <!-- Modal content -->
+                                                                <div class="modal-content" style="height: 200px;width: 200px;background-color: transparent;border: none;box-shadow: none;margin-top:15%">
+                                                                        <div class="modal-header">
+                                                                                <button class="close" id="openHouseClose">&times;</button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+										<img src=<?php echo plugins_url('assets/images/calendar.svg',__FILE__); ?> style="height: 200px;" alt="">
+										<div class ="openHouseTextCon">
+										<div class="openHouseNumber"> <?php echo $opening_date->format('M').' '.$opening_date->format('d'); ?></div>
+										<div class="openHouseNumber"><?php echo $opening_date->format('g').' '.$opening_date->format('A').'-'.$ending_date->format('g').' '.$ending_date->format('A'); ?></div>
+										</div>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+<?php
+									
+								}
+							  }
+                                                         if(isset($propertyDetail->LiveStreamStartDateTime) && isset($propertyDetail->LiveStreamEndDateTime))
+							 {
+                                                                $ostart = str_replace('/', '-', $propertyDetail->LiveStreamStartDateTime);
+                                                                $ostop = str_replace('/', '-', $propertyDetail->LiveStreamEndDateTime);
+                                                                $opening_date = new DateTime($ostart);
+                                                                $ending_date=new DateTime($ostop);
+                                                                $current_date = new DateTime();
+                                                                if ($opening_date > $current_date)
+                                                                {
+                                                                ?>      <button class="LF-btn LF-btn-map" id="openHouseBtn" style="float:right">Next Live Stream <?php echo $opening_date->format('M').' '.$opening_date->format('d'); ?></button>
+
+                                                                <!-- The Modal -->
+                                                        <div id="openHouseModal" class="modal">
+                                                                <!-- Modal content -->
+                                                                <div class="modal-content" style="height: 200px;width: 200px;background-color: transparent;border: none;box-shadow: none;margin-top:15%">
+                                                                        <div class="modal-header">
+                                                                                <button class="close" id="openHouseClose">&times;</button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                                <img src=<?php echo plugins_url('assets/images/calendar.svg',__FILE__); ?> style="height: 200px;" alt="">
+                                                                                <div class ="openHouseTextCon">
+                                                                                <div class="openHouseNumber"> <?php echo $opening_date->format('M').' '.$opening_date->format('d'); ?></div>
+                                                                                <div class="openHouseNumber"><?php echo $opening_date->format('g').' '.$opening_date->format('A').'-'.$ending_date->format('g').' '.$ending_date->format('A'); ?></div>
+										<div class="openHousePopupText openHouseNumber"><a href=<?php echo $propertyDetail->LiveStreamURL.''; ?> target="_blank">Watch Live</a></div>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+<?php
+
+                                                                }
+                                                        }
+						?>
 					</div><!-- .LF-col-md-12 -->
 				</div><!-- .LF-row -->
 			<?php else: ?>
@@ -422,6 +490,7 @@ if ($listkey) {
 			<div class="LF-disclaimer"><?php echo LF_get_settings('LF_detail_footer');?></div>
 		</div><!-- .LF-description -->
 
+  		<?php if(!empty($propertyDetail->Latitude) and !empty($propertyDetail->Longitude)){ ?>
 		<script>
 		var Latitude = <?php echo "$propertyDetail->Latitude";?>;
 		var Longitude = <?php echo "$propertyDetail->Longitude";?>;
@@ -435,7 +504,7 @@ if ($listkey) {
 				// The marker, positioned at Uluru
 				var marker = new google.maps.Marker({position: uluru, map: map});
 			}
-			</script>
+			</script> <?php }  ?>
 			<?php
 		}
 		else{
@@ -718,7 +787,7 @@ if ($listkey) {
 
 			$curl = curl_init();
 			curl_setopt_array($curl, array(
-				CURLOPT_URL => API_URL."/properties?token=".$token."&agent_id=".$agent_id."&office_id=".$office_id."&paginate=".$paginate."&type=".$attr['type']."&sort=".$sort.$sale.$search.$agent.$office.$ids.$waterfront,
+				CURLOPT_URL => API_URL."/properties?token=".$token."&agent_id=".$agent_id."&office_id=".$office_id."&paginate=".$paginate."&type=".$attr['type']."&sort=".$sort.$sale.$search.$agent.$office.$ids.$waterfront.$openhouse,
 				CURLOPT_RETURNTRANSFER => true,
 				CURLOPT_ENCODING => "",
 				CURLOPT_MAXREDIRS => 10,
@@ -897,7 +966,7 @@ if ($listkey) {
 									Low <input type="radio" class="LF-sort" name="LF-sort" id="asc" value="ASC" '.$ascchecked.'>
 									High <input type="radio" class="LF-sort" name="LF-sort" id="desc" value="DESC" '.$descchecked.'>
 									</div>
-									</div>';
+									</div>&nbsp;';
 							}
 							echo '<div class="clear"></div>';
 							//get column from admin setting
@@ -1014,15 +1083,30 @@ if ($listkey) {
 			</div>
 			<div class="LF-disclaimer"><?php echo LF_get_settings('LF_detail_footer');?></div>
 			<script><?php
+
+					$sort = LF_get_settings('LF_priceOrder');
+	                        		if(!empty($attr['priceorder'])){
+			                                if($attr['priceorder']=='up'){
+                		                        $sort = 'DESC';
+                        	        	}
+                        	        	elseif($attr['priceorder']=='down'){
+                                	        	$sort = 'ASC';
+                                		}
+                        		}
           				$initType='any';
                                         $initLocation='0';
                                         $initsale='0';
                                         $initwaterfront='no';
+					$initpricesort=$sort;
 					$slug = trim(getCurrentPageSlug());
                                         if(!empty($attr['type'])) $initType=$attr['type'];
                                         if(!empty($attr['location'])) $initLocation=$attr['location'];
                                         if(!empty($attr['sale'])) $initsale=$attr['sale'];
-                                        if(!empty($attr['waterfront']) && $attr['waterfront'] == 'yes') $initwaterfront='yes'; ?>
+                                        if(!empty($attr['waterfront']) && $attr['waterfront'] == 'yes') $initwaterfront='yes';?> 
+					if(sessionStorage.getItem("currentPage") != <?php echo '"'.$slug.'"';?>)
+                                        {
+						sessionStorage.clear();
+                                        }
                                          if(sessionStorage.getItem("LF_sale")=="" || sessionStorage.getItem("LF_sale") == null || sessionStorage.getItem("currentPage") != <?php echo '"'.$slug.'"';?>)
 					{
                                         	sessionStorage.setItem("LF_sale", <?php echo '"'.$initsale.'"';?>); 
@@ -1040,9 +1124,13 @@ if ($listkey) {
 					sessionStorage.setItem("LF_municipalities_default", <?php echo '"'.$initLocation.'"';?>);
                                         if(sessionStorage.getItem("LF_waterfront")=="" || sessionStorage.getItem("LF_waterfront") == null || sessionStorage.getItem("currentPage") != <?php echo '"'.$slug.'"';?>)
 					{
-                                        	sessionStorage.setItem("LF_waterfront", <?php echo '"'.$initwaterfront.'"';?>);
+                                        	sessionStorage.setItem("LF_waterfront", <?php echo '"'.$initpricesort.'"';?>);
 					}
-					sessionStorage.setItem("LF_waterfront_default", <?php echo '"'.$initwaterfront.'"';?>);
+					if(sessionStorage.getItem("LF_pricesort")=="" || sessionStorage.getItem("LF_pricesort") == null || sessionStorage.getItem("currentPage") != <?php echo '"'.$slug.'"';?>)
+                                        {
+                                                sessionStorage.setItem("LF_pricesort", <?php echo '"'.$initpricesort.'"';?>);
+                                        }
+					sessionStorage.setItem("LF_pricesort_default", <?php echo '"'.$initpricesort.'"';?>);
 					sessionStorage.setItem("currentPage", <?php echo '"'.$slug.'"';?>);
 			</script>
 		</div>

@@ -238,6 +238,10 @@ class LF_Listings_Plugin_Updater {
 		$wp_filesystem->move( $result['destination'], $pluginFolder );
 		$result['destination'] = $pluginFolder;
 
+		// update the css
+		require_once LF_PLUGIN_DIR.'/inc/functions.php';
+		LFUpdateCSS();
+
 		// Re-activate plugin if needed
 		if ( $this->pluginActivated )
 		{

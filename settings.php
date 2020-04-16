@@ -592,8 +592,8 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 		check_ajax_referer( 'savepluginData', 'token' );
 		$customCss = $_POST['LF_customCss'];
 		LF_add_settings('customCss',$customCss);
-		// $stylesheet = plugin_dir_path( __FILE__ ).'assets/css/style.css';
-		file_put_contents($stylesheet, $customCss);
+		$stylesheet = plugin_dir_path( __FILE__ ).'assets/css/style.css';
+		file_put_contents($stylesheet, stripslashes_deep($customCss));
 		echo 1;
 		die();
 	}
@@ -798,21 +798,58 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 			var span = document.getElementsByClassName("close")[0];
 
 			// When the user clicks the button, open the modal
-			btn.onclick = function() {
-				modal.style.display = "block";
+			if (btn != null)
+			{
+				btn.onclick = function() {
+					modal.style.display = "block";
+				}
 			}
 
-			// When the user clicks on <span> (x), close the modal
-			span.onclick = function() {
-				modal.style.display = "none";
-			}
-
-			// When the user clicks anywhere outside of the modal, close it
-			window.onclick = function(event) {
-				if (event.target == modal) {
+                        if (span != null)
+			{
+				// When the user clicks on <span> (x), close the modal
+				span.onclick = function() {
 					modal.style.display = "none";
 				}
 			}
+
+
+			// Get the modal
+                        var openHousemodal = document.getElementById('openHouseModal');
+
+                        // Get the button that opens the modal
+                        var openHousebtn = document.getElementById("openHouseBtn");
+
+                        // Get the <span> element that closes the modal
+                        var openHousespan = document.getElementById("openHouseClose");
+
+			if (openHousebtn != null)
+			{
+			
+	                        // When the user clicks the button, open the modal
+        	                openHousebtn.onclick = function() {
+                	                openHousemodal.style.display = "block";
+				}
+                        }
+
+			if (openHousespan != null)
+			{
+	                        // When the user clicks on <span> (x), close the modal
+        	                openHousespan.onclick = function() {
+                	                openHousemodal.style.display = "none";
+				}
+                        }
+
+                        // When the user clicks anywhere outside of the modal, close it
+                        window.onclick = function(event) {
+                                if (event.target == openHousemodal) {
+                                        openHousemodal.style.display = "none";
+                                }
+
+				if (event.target == modal) {
+                                        modal.style.display = "none";
+                                }
+                        }
 		</script>
 		<?php
 	}
