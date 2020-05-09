@@ -714,7 +714,12 @@ function LFUpdateCSS()
                                 LF_add_settings('customCss',file_get_contents(LF_PLUGIN_DIR.'/versioned_css/1.0.5.css'));
                         }
                 }
-                file_put_contents(LF_PLUGIN_DIR.'/assets/css/style.css',stripslashes_deep(LF_get_settings('customCss')));
+                file_put_contents(LF_PLUGIN_DIR.'/assets/css/lf-style.css',stripslashes_deep(LF_get_settings('customCss')));
+                #we have moved to new filename for security purpose, since we have new file now, delete old
+                if (file_exists(LF_PLUGIN_DIR.'/assets/css/style.css'))
+                {
+                          unlink(LF_PLUGIN_DIR.'/assets/css/style.css');
+                }
                 $digits = explode (".", $lastVersion);
                 $cssDir = LF_PLUGIN_DIR.'/versioned_css/';
                 $digits[2]++;
@@ -725,8 +730,8 @@ function LFUpdateCSS()
                                         $cssFile = $cssDir.$version.".css";
                                         if(file_exists ($cssFile))
                                         {
-                                                file_put_contents(LF_PLUGIN_DIR.'/assets/css/style.css', "\n\n/*----- ".$version." append -----*/\n\n", FILE_APPEND | LOCK_EX);
-                                                file_put_contents(LF_PLUGIN_DIR.'/assets/css/style.css', file_get_contents($cssFile), FILE_APPEND | LOCK_EX);
+                                                file_put_contents(LF_PLUGIN_DIR.'/assets/css/lf-style.css', "\n\n/*----- ".$version." append -----*/\n\n", FILE_APPEND | LOCK_EX);
+                                                file_put_contents(LF_PLUGIN_DIR.'/assets/css/lf-style.css', file_get_contents($cssFile), FILE_APPEND | LOCK_EX);
                                         }
                                         if($currentVersion == $version)
                                         {
@@ -737,7 +742,7 @@ function LFUpdateCSS()
                         }
                         $digits[1] = 0;
                 }
-                LF_add_settings('customCss',file_get_contents(LF_PLUGIN_DIR.'/assets/css/style.css'));
+                LF_add_settings('customCss',file_get_contents(LF_PLUGIN_DIR.'/assets/css/lf-style.css'));
                 LF_add_settings('last_css_updated_version', $currentVersion);
 
 }

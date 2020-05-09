@@ -243,7 +243,7 @@ function LF_settings_view_creator()
 				<div class="LF-msg-custom"></div>
 				<form method="post" name="LF-listingDetails-form" id="LF-listingDetails-form">
 					<?php
-					$stylesheet = plugin_dir_path( __FILE__ ).'assets/css/style.css';
+					$stylesheet = plugin_dir_path( __FILE__ ).'assets/css/lf-style.css';
 					?>
 					<div class="LF-form-group">
 						<label for="LF_customCss">Custom CSS: </label>
@@ -266,7 +266,7 @@ add_action('admin_enqueue_scripts', 'LF_admin_css');
 function LF_admin_css()
 {
 	if(isset($_GET['page']) && ($_GET['page']=='LF-setting' || $_GET['page']=='LF-listings')){
-		wp_register_style('LF_stylesheet',plugins_url('assets/css/style.css',__FILE__));
+		wp_register_style('LF_stylesheet',plugins_url('assets/css/lf-style.css',__FILE__));
 		wp_enqueue_style('LF_stylesheet');
 		wp_register_style('LF_adminstyle',plugins_url('assets/css/admin-style.css',__FILE__));
 		wp_enqueue_style('LF_adminstyle');
@@ -592,7 +592,7 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 		check_ajax_referer( 'savepluginData', 'token' );
 		$customCss = $_POST['LF_customCss'];
 		LF_add_settings('customCss',$customCss);
-		$stylesheet = plugin_dir_path( __FILE__ ).'assets/css/style.css';
+		$stylesheet = plugin_dir_path( __FILE__ ).'assets/css/lf-style.css';
 		file_put_contents($stylesheet, stripslashes_deep($customCss));
 		echo 1;
 		die();
@@ -607,7 +607,7 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 
 		if (in_array($page_id, $option_id_array))
 		{
-			wp_register_style('LF_stylesheet',plugins_url('assets/css/style.css',__FILE__));
+			wp_register_style('LF_stylesheet',plugins_url('assets/css/lf-style.css',__FILE__));
 			wp_enqueue_style('LF_stylesheet');
 			wp_enqueue_style('slick.css',plugins_url('assets/css/slick.css',__FILE__));
 			wp_enqueue_style('slick-theme.css',plugins_url('assets/css/slick-theme.css',__FILE__));
@@ -825,7 +825,6 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 
 			if (openHousebtn != null)
 			{
-			
 	                        // When the user clicks the button, open the modal
         	                openHousebtn.onclick = function() {
                 	                openHousemodal.style.display = "block";
