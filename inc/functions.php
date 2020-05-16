@@ -711,7 +711,11 @@ function LFUpdateCSS()
                         LF_add_settings('last_css_updated_version',$lastVersion);
                         if(empty(LF_get_settings('customCss')))
                         {
-                                LF_add_settings('customCss',file_get_contents(LF_PLUGIN_DIR.'/versioned_css/1.0.5.css'));
+				$contentTobePut  = file_get_contents(LF_PLUGIN_DIR.'/versioned_css/1.0.5.css');
+				if (!empty($contentTobePut))
+				{
+                                	LF_add_settings('customCss',$contentTobePut);
+				}
                         }
                 }
                 file_put_contents(LF_PLUGIN_DIR.'/assets/css/lf-style.css',stripslashes_deep(LF_get_settings('customCss')));
@@ -742,7 +746,11 @@ function LFUpdateCSS()
                         }
                         $digits[1] = 0;
                 }
-                LF_add_settings('customCss',file_get_contents(LF_PLUGIN_DIR.'/assets/css/lf-style.css'));
+		$contentTobePut = file_get_contents(LF_PLUGIN_DIR.'/assets/css/lf-style.css');
+		if (!empty($contentTobePut))
+                {
+                    LF_add_settings('customCss',$contentTobePut);
+                }
                 LF_add_settings('last_css_updated_version', $currentVersion);
 
 }

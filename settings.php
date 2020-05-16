@@ -591,9 +591,12 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 	function LF_save_custom_css_data(){
 		check_ajax_referer( 'savepluginData', 'token' );
 		$customCss = $_POST['LF_customCss'];
-		LF_add_settings('customCss',$customCss);
-		$stylesheet = plugin_dir_path( __FILE__ ).'assets/css/lf-style.css';
-		file_put_contents($stylesheet, stripslashes_deep($customCss));
+                if (!empty($customCss))
+		{
+			LF_add_settings('customCss',$customCss);
+			$stylesheet = plugin_dir_path( __FILE__ ).'assets/css/lf-style.css';
+			file_put_contents($stylesheet, stripslashes_deep($customCss));
+		}
 		echo 1;
 		die();
 	}
