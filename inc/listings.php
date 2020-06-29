@@ -176,6 +176,7 @@ add_action( 'wp_ajax_nopriv_LF_search', 'LF_search' );
 function LF_search(){
 	check_ajax_referer( 'my-special-string', 'token' );
 
+	$page = sanitize_text_field($_POST['page']);
 	$mainSearch = sanitize_text_field($_POST['mainSearch']);
 	$municipality = sanitize_text_field($_POST['LF_municipalities']);
 	$sale = sanitize_text_field($_POST['sale']);

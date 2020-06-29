@@ -21,11 +21,11 @@ function LF_main_menu_view_creator()
         <br>
         <h4>How to Use Tag Parameters to Customize the Listings Display?</h4>
 	<p>The basic tag uses the settings that you have pre-configured on the <a href="<?php echo admin_url('admin.php?page=LF-setting');?>">Settings</a> page. To override or amend those settings for a specific tag, you can use one or combine multiple parameters.</p>
- 
+
         <strong>Example of a customized LF-Listings tag</strong>
         <p>[LF-Listings type="residential" sale="rent" location="Toronto" list-per-page="12"]</p>
         <p>This tag will show the output of the following query: Show only residential properties that are for rent in Toronto. Display 12 listings per page. If there are more than 12 listings in the query, the pagination will link to the additional listings. As you can see, the tags are a powerful way to customize the display of the listings in your data feed.</p>
-        
+
         <br>
         <h4>Can I use multiple tags on the same WordPress page?</h4>
         <p>Yes, you can use multiple LF-Listings tags on the same WordPress page to display different subsets of your data feed in different areas on the page. For instance, you could create a carousel that displays your own listings and below that, you display a grid of the listings available by all agents in your office.</p>
@@ -82,8 +82,8 @@ function LF_main_menu_view_creator()
                             <li>Community 3</li>
                         </ul>
                     </td>
-                    <td>It displays all listings available in the feed for the selected location (e.g. "Toronto"). For the location parameter to work, locations must be set up on the Settings page first.</td>
-                    <td>[LF-Listings location="Toronto"]</td>
+                    <td>It displays all listings available in the feed for the selected location (e.g. "Toronto"). It can be multiple comma separated locations or single.</td>
+                    <td>[LF-Listings location="Toronto"] or [LF-Listings location="Toronto,Wasaga Beach"]</td>
                 </tr>
                 <!-- agent -->
                 <tr>
@@ -215,6 +215,16 @@ function LF_main_menu_view_creator()
                     </td>
                     <td>Only listings that are marked "waterfront" will be displayed.</td>
                     <td>[LF-Listings waterfront="yes"]</td>
+                </tr>
+                <tr>
+                    <td>selectable-locations</td>
+                    <td>
+                        <ul class="options">
+                            <li>Comma separated locations</li>
+                        </ul>
+                    </td>
+                    <td>Defines all locations shown in the dropdown menu of the search mask. The locations have to be present in the data feed to be selectable.</td>
+                    <td>[LF-Listings selectable-locations="Acton,Alban"]</td>
                 </tr>
             </tbody>
         </table>

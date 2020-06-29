@@ -7,7 +7,7 @@ add_action('admin_menu','LF_create_admin_main_menu');
 function LF_create_admin_main_menu()
 {
 	add_menu_page(__('LF Listings'),__('LF Listings'),'manage_options','LF-setting','LF_settings_view_creator','dashicons-editor-ul',50);
-	
+
 	add_submenu_page( 'LF-setting', __('LF Settings'), __('LF Settings'), 'manage_options', 'LF-setting', 'LF_settings_view_creator');
 
 	add_submenu_page( 'LF-setting', __('LF Listings Tags'), __('LF Listings Tags'), 'manage_options', 'LF-listings', 'LF_main_menu_view_creator');
@@ -82,7 +82,7 @@ function LF_settings_view_creator()
 							);
 							$shortcode = 'LF-Listings';
 							$query_result = new WP_Query($args);
-							
+
 							?>
 							<select name="homepageSlug" id="homepageSlug" class="LF-form-control">
 								<?php
@@ -110,13 +110,15 @@ function LF_settings_view_creator()
 							</select>
 						</div>
 						<div class="LF-form-group">
-							<?php $LF_cities = getCities();?>
+							<?php $LF_cities = getCities();
+							LF_add_settings('allCities', implode(',', get_object_vars($LF_cities->results->cities)));
+							?>
 							<?php
 							$DBLF_Municipalities = explode(',',LF_get_settings('LF_Municipalities'));
 							?>
 							<label for="LF_Municipalities">Municipalities:</label>
 							<select name="LF_Municipalities[]" multiple="multiple" id="LF_Municipalities" class="LF-form-control">
-							
+
 								<?php
 								foreach($LF_cities->results->cities as $LF_city){
 									if(in_array($LF_city,$DBLF_Municipalities)){
@@ -207,7 +209,7 @@ function LF_settings_view_creator()
 					</form>
 				</div>
 			</div>
-			
+
 			<div id="Integrations" class="LF-tabcontent">
 				<div class="LF-msg-integration"></div>
 				<div class="LF-form-width">
@@ -294,7 +296,7 @@ function LF_admin_js()
 	?>
 	<script>
 	//Write code to manage listing per page count
-	jQuery("#LF_page").on('mouseout mouseenter keyup',function(){ 
+	jQuery("#LF_page").on('mouseout mouseenter keyup',function(){
 		//alert("tet");
 		if(jQuery(this).val()>48){
 			jQuery(this).val("");
@@ -334,7 +336,7 @@ function LF_admin_js()
 			}
 
 		});
-	
+
 		<?php if(isset($_GET['page']) and $_GET['page'] == 'LF-setting'){?>
 			var codeEditor = CodeMirror.fromTextArea(document.getElementById("LF_customCss"), {
 				lineNumbers: true,
@@ -350,7 +352,7 @@ function LF_admin_js()
 			$('button.LF-tablink').click(function(){
 				$('#custom_css').hide();
 			});
-			$('button[data-id="custom_css"]').click(function(){ 
+			$('button[data-id="custom_css"]').click(function(){
 				$('#custom_css').show();
 				codeEditor.refresh();
 			});
@@ -572,7 +574,7 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 			LF_add_settings('LF_mapApiKey',$mapApi);
 		}
 		if(isset($LF_reCaptchastate)){
-			LF_add_settings('LF_reCaptchastate',$LF_reCaptchastate);			
+			LF_add_settings('LF_reCaptchastate',$LF_reCaptchastate);
 		}
 		if(isset($LF_reCaptcha)){
 			LF_add_settings('LF_reCaptcha',$LF_reCaptcha);
@@ -653,7 +655,7 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 		if (in_array($page_id, $option_id_array)) {
 			?>
 			<?php
-			wp_enqueue_script( 'LF_customJs', plugins_url('assets/js/custom.js',__FILE__), array('jquery'), '1.0.0', true );
+			wp_enqueue_script( 'LF_customJs', plugins_url('assets/js/custom.js',__FILE__), array('jquery'), '1.0.1', true );
 			wp_localize_script( 'LF_customJs', 'LF_custom', array(
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
 				'security' => wp_create_nonce( 'my-special-string' )
@@ -663,197 +665,6 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 			wp_enqueue_script( 'slick.min.js', plugins_url('assets/js/slick.min.js',__FILE__), array('jquery'), '1.0.0', true );
 			wp_enqueue_script( 'flickity.pkgd.min.js', plugins_url('assets/js/flickity.pkgd.min.js',__FILE__), array('jquery'), '1.0.0', true );
 			wp_enqueue_script( 'select2.min.js', plugins_url('assets/js/select2.min.js',__FILE__), array('jquery'), '1.0.0', true );
-			
-			?>
-			<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-			<script type="text/javascript">
-				var noofcol = jQuery('#noofcol').val();
-				if(noofcol>4){
-					noofcol = 4;
-				}
-				jQuery(document).ready(function() {
-					jQuery('.fancybox-thumbs').fancybox({
-						prevEffect : 'none',
-						nextEffect : 'none',
-
-						closeBtn  : true,
-						arrows    : true,
-						nextClick : true,
-
-						helpers : {
-							thumbs : {
-								width  : 50,
-								height : 50
-							}
-						}
-					});
-
-					jQuery('.slider-single').slick({
-						slidesToShow: 1,
-						slidesToScroll: 1,
-						arrows: false,
-						fade: false,
-						adaptiveHeight: true,
-						infinite: false,
-						useTransform: true,
-						speed: 400,
-						focusOnSelect: true,
-						cssEase: 'cubic-bezier(0.77, 0, 0.18, 1)',
-					});
-
-					jQuery('.slider-nav').on('init', function(event, slick) {
-						jQuery('.slider-nav .slick-slide.slick-current').addClass('is-active');
-					})
-					.slick({
-						slidesToShow: 5,
-						slidesToScroll: 3,
-						dots: false,
-						focusOnSelect: true,
-						infinite: true,
-						responsive: [{
-							breakpoint: 1024,
-							settings: {
-								slidesToShow: 4,
-								slidesToScroll: 4,
-							}
-						}, {
-							breakpoint: 640,
-							settings: {
-								slidesToShow: 3,
-								slidesToScroll: 3,
-							}
-						}, {
-							breakpoint: 420,
-							settings: {
-								slidesToShow: 2,
-								slidesToScroll: 2,
-							}
-						}]
-					});
-
-					jQuery('.horizantal-slide').flickity({
-				  // options
-				  cellAlign: 'left',
-				  contain: true,
-				  pageDots: false
-				});
-				/*jQuery('.horizantal-slide').slick({
-					dots: false,
-					infinite: true,
-					speed: 300,
-					slidesToShow: noofcol,
-					slidesToScroll: noofcol,
-					swipeToSlide: true,
-					responsive: [
-						{
-							breakpoint: 1024,
-							settings: {
-								slidesToShow: 3,
-								slidesToScroll: 3
-							}
-						},
-						{
-							breakpoint: 600,
-							settings: {
-								slidesToShow: 2,
-								slidesToScroll: 2
-							}
-						},
-						{
-							breakpoint: 480,
-							settings: {
-								slidesToShow: 1,
-								slidesToScroll: 1
-							}
-						}
-					]
-				});*/
-
-				jQuery('.slider-single').on('afterChange', function(event, slick, currentSlide) {
-					jQuery('.slider-nav').slick('slickGoTo', currentSlide);
-					var currrentNavSlideElem = '.slider-nav .slick-slide[data-slick-index="' + currentSlide + '"]';
-					jQuery('.slider-nav .slick-slide.is-active').removeClass('is-active');
-					jQuery(currrentNavSlideElem).addClass('is-active');
-				});
-
-				jQuery('.slider-nav').on('click', '.slick-slide', function(event) {
-					event.preventDefault();
-					var goToSingleSlide = jQuery(this).data('slick-index');
-
-					jQuery('.slider-single').slick('slickGoTo', goToSingleSlide);
-				});
-				
-			 
-			});
-            
-		</script>
-		<?php if(!empty(LF_get_settings('LF_mapApiKey'))):?>
-			<script async defer src="https://maps.googleapis.com/maps/api/js?key=<?php echo LF_get_settings('LF_mapApiKey');?>&callback&callback=initMap"></script>
-		<?php endif;?>
-		<script type="text/javascript">
-			// Get the modal
-			var modal = document.getElementById('myModal');
-
-			// Get the button that opens the modal
-			var btn = document.getElementById("myBtn");
-
-			// Get the <span> element that closes the modal
-			var span = document.getElementsByClassName("close")[0];
-
-			// When the user clicks the button, open the modal
-			if (btn != null)
-			{
-				btn.onclick = function() {
-					modal.style.display = "block";
-				}
-			}
-
-                        if (span != null)
-			{
-				// When the user clicks on <span> (x), close the modal
-				span.onclick = function() {
-					modal.style.display = "none";
-				}
-			}
-
-
-			// Get the modal
-                        var openHousemodal = document.getElementById('openHouseModal');
-
-                        // Get the button that opens the modal
-                        var openHousebtn = document.getElementById("openHouseBtn");
-
-                        // Get the <span> element that closes the modal
-                        var openHousespan = document.getElementById("openHouseClose");
-
-			if (openHousebtn != null)
-			{
-	                        // When the user clicks the button, open the modal
-        	                openHousebtn.onclick = function() {
-                	                openHousemodal.style.display = "block";
-				}
-                        }
-
-			if (openHousespan != null)
-			{
-	                        // When the user clicks on <span> (x), close the modal
-        	                openHousespan.onclick = function() {
-                	                openHousemodal.style.display = "none";
-				}
-                        }
-
-                        // When the user clicks anywhere outside of the modal, close it
-                        window.onclick = function(event) {
-                                if (event.target == openHousemodal) {
-                                        openHousemodal.style.display = "none";
-                                }
-
-				if (event.target == modal) {
-                                        modal.style.display = "none";
-                                }
-                        }
-		</script>
-		<?php
 	}
 }
 
@@ -881,7 +692,7 @@ function LF_find_shortcode_occurencesName($shortcode, $post_type = 'page')
 		'post_type'   => $post_type,
 		'post_status' => 'publish',
 		'posts_per_page' => -1,
-		'order'=>'ASC'
+		'order'=>'up'
 	);
 	$query_result = new WP_Query($args);
 	// print_r($query_result);
