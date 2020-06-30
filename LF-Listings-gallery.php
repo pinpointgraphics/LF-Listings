@@ -1,4 +1,6 @@
-<div class="LF-listigs" id="listing">
+<?php $output = explode("-",$slugVariable);
+$tagCounter = $output[count($output)-1]; ?>
+<div class="LF-listigs" id="listing-<?php echo $tagCounter;?>">
     <?php
     $hasValidLocation = true;
     if(empty($_SESSION[$slugVariable]['search']) OR $_SESSION[$slugVariable]['search']=='yes' OR $_SESSION[$slugVariable]['search']=="only"):
@@ -219,7 +221,7 @@
                         </div>
                         <div class="LF-form-group">
                             <button class="LF-btn LF-btn-search" type="button">Search</button>
-                            <button class="LF-btn LF-btn-reset" type="button" onclick="resetSearch()">Reset</button>
+                            <button class="LF-btn LF-btn-reset" type="button" onclick="resetSearch(this)">Reset</button>
                         </div>
                     </div>
                 </form>
@@ -391,7 +393,7 @@
     } else {
 
         $page_id = get_the_ID();
-        $pageSlug = $slugVariable;
+        $pageSlug = substr($slugVariable, 0, strrpos( $slugVariable, '-'));
 
         if(is_home() || is_front_page()){
             if(!empty(LF_get_settings('LF_homepageSlug')))					{

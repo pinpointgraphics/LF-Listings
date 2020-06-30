@@ -9,9 +9,16 @@ jQuery(document).ready(function() {
 
 	setTimeout(function()
 	{
-		loadProperties('');
+		jQuery(".LF-listigs").each(function(index) {
+			loadProperties('',index);
+			
+		});
 	}, 1000);
 
+	setTimeout(function()
+        {
+			jQuery('#LF-loading-img').hide();
+        }, 10000);
 
 	var maxHeight = 0;
 
@@ -43,7 +50,9 @@ var options = {
 //listing pagination and sort ajax
 jQuery(document).on('click', '.LF-pagination>li>a', function() {
 	var pageNo = jQuery(this).attr('data-page');
-	loadProperties(pageNo);
+	 var id = jQuery(this).closest('.LF-listigs').attr('id');
+        var index = id.split("-").pop();
+	loadProperties(pageNo, index);
 });
 
 jQuery(document).on('click', '#waterfront',function(){
@@ -53,7 +62,9 @@ jQuery(document).on('click', '#waterfront',function(){
 	} else {
 		waterfront='no';
 	}
-	loadProperties('');
+	 var id = jQuery(this).closest('.LF-listigs').attr('id');
+        var index = id.split("-").pop();
+	loadProperties('',index);
 });
 
 
@@ -75,41 +86,49 @@ function setRecentPriceOrder(LF_sort)
 jQuery(document).on('click', '.LF-Bsort', function() {
 	var LF_sort = jQuery("#Basc");
 	setRecentPriceOrder(LF_sort);
-	loadProperties('');
+	 var id = jQuery(this).closest('.LF-listigs').attr('id');
+        var index = id.split("-").pop();
+	loadProperties('',index);
 });
 
 jQuery(document).on('click', '.LF-sort', function() {
 	var LF_sort = jQuery("#asc");
 	setRecentPriceOrder(LF_sort);
-	loadProperties('');
+	 var id = jQuery(this).closest('.LF-listigs').attr('id');
+        var index = id.split("-").pop();
+	loadProperties('',index);
 });
 
 jQuery(document).on('click', '.LF-btn-search', function() {
-	loadProperties('-2');
+	var id = jQuery(this).closest('.LF-listigs').attr('id');
+	var index = id.split("-").pop();
+	loadProperties('-2',index);
 });
 
-function loadProperties(pageNo)
+function loadProperties(pageNo,index)
 {
-	var main_search = jQuery('#LF_main_search').val();
-	var LF_municipalities = jQuery('#LF_municipalities').val();
-	var LF_sale = jQuery('#LF_sale').val();
-	var LF_bedroom = jQuery('#LF_bedroom').val();
-	var LF_bathroom = jQuery('#LF_bathroom').val();
+	var parentDefaultId='#listing-default-'+index;
+	var parentId = '#listing-'+index;
+	var main_search = jQuery(parentId+' #LF_main_search').val();
+	var LF_municipalities = jQuery(parentId+' #LF_municipalities').val();
+	var LF_sale = jQuery(parentId+' #LF_sale').val();
+	var LF_bedroom = jQuery(parentId+' #LF_bedroom').val();
+	var LF_bathroom = jQuery(parentId+' #LF_bathroom').val();
 
-	var LF_property_search = jQuery('#LF_property_search').val();
-	var LF_pricefrom_search = jQuery('#LF_pricefrom_search').val();
-	var LF_priceto_search = jQuery('#LF_priceto_search').val();
-	var LF_defaultagents = jQuery('#defaultagents').val();
-	var LF_defaultoffice = jQuery('#defaultoffice').val();
-	var LF_defaultopenhouse = jQuery('#defaultopenhouse').val();
-	var slug = jQuery('#pageSlug').val();
-	var tagSearch = jQuery('#search').val();
-	var tagStyle = jQuery('#style').val();
-	var tagids = jQuery('#ids').val();
-	var pagination = jQuery('#pagination').val();
-	var priceorder = jQuery('#priceorder').val();
-	var LF_per_row = jQuery('#per_row').val();
-	var LF_list_per_page = jQuery('#list_per_page').val();
+	var LF_property_search = jQuery(parentId+' #LF_property_search').val();
+	var LF_pricefrom_search = jQuery(parentId+' #LF_pricefrom_search').val();
+	var LF_priceto_search = jQuery( parentId+' #LF_priceto_search').val();
+	var LF_defaultagents = jQuery(parentDefaultId+' #defaultagents').val();
+	var LF_defaultoffice = jQuery(parentDefaultId+' #defaultoffice').val();
+	var LF_defaultopenhouse = jQuery(parentDefaultId+' #defaultopenhouse').val();
+	var slug = jQuery(parentDefaultId+ ' #pageSlug').val();
+	var tagSearch = jQuery(parentDefaultId+' #search').val();
+	var tagStyle = jQuery(parentDefaultId+' #style').val();
+	var tagids = jQuery(parentDefaultId+' #ids').val();
+	var pagination = jQuery(parentDefaultId+' #pagination').val();
+	var priceorder = jQuery(parentDefaultId+' #priceorder').val();
+	var LF_per_row = jQuery(parentDefaultId+' #per_row').val();
+	var LF_list_per_page = jQuery(parentDefaultId+ ' #list_per_page').val();
 	var flag = 0;
 
 
@@ -146,7 +165,7 @@ function loadProperties(pageNo)
 	}
 
 	if(jQuery.trim(tagSearch) != '' && typeof tagSearch !== 'undefined') {
-		srch = '&search='+tagSearch;
+		srch = '&seearch='+tagSearch;
 	}
 	else{
 		srch = '';
@@ -187,7 +206,7 @@ function loadProperties(pageNo)
 	if (jQuery.trim(LF_municipalities) != '' && typeof LF_municipalities !== 'undefined') {
 		municipalities = '&LF_municipalities=' + LF_municipalities;
 	} else {
-		var defaultlocation = jQuery('#defaultlocation').val();
+		var defaultlocation = jQuery(parentDefaultId+' #defaultlocation').val();
 		if(defaultlocation!='' && tagSearch=='no'){
 			municipalities = '&LF_municipalities=' + defaultlocation;
 		}
@@ -212,7 +231,7 @@ function loadProperties(pageNo)
 	if (jQuery.trim(LF_sale) != '' && typeof LF_sale !== 'undefined') {
 		sale = '&sale=' + LF_sale;
 	} else {
-		var defaultSale = jQuery('#defaultsale').val();
+		var defaultSale = jQuery(parentDefaultId+' #defaultsale').val();
 		if(defaultSale!='' && tagSearch=='no'){
 			sale =  '&sale=' +defaultSale;
 		}
@@ -266,7 +285,7 @@ function loadProperties(pageNo)
 			return false;
 		}
 	}
-	$dataID = jQuery('#listing');
+	$dataID = jQuery('#listing-'+index);
 
 	if(flag==0){
 		jQuery.ajax({
@@ -277,14 +296,14 @@ function loadProperties(pageNo)
 				$dataID.css('opacity', '0.5');
 			},
 			success: function(response) {
-				$dataID.html(response);
+				jQuery('#listing-'+index).html(response);
 				if((LF_priceto_search != '' && typeof LF_priceto_search !== 'undefined') && (jQuery('#LF_priceto_search option[value='+LF_priceto_search+']').length == 0 ))
 				{
-					jQuery("#LF_priceto_search").append(new Option(LF_priceto_search,LF_priceto_search ,true, true));
+					jQuery(parentId+" #LF_priceto_search").append(new Option(LF_priceto_search,LF_priceto_search ,true, true));
 				}
 				if((LF_pricefrom_search != '' && typeof LF_pricefrom_search !== 'undefined') && (jQuery('#LF_pricefrom_search option[value='+LF_pricefrom_search+']').length == 0 ))
 				{
-					jQuery("#LF_pricefrom_search").append(new Option(LF_pricefrom_search,LF_pricefrom_search ,true, true));
+					jQuery(parentId+" #LF_pricefrom_search").append(new Option(LF_pricefrom_search,LF_pricefrom_search ,true, true));
 				}
 
 				if(tagStyle == 'horizontal'){
@@ -377,9 +396,9 @@ function loadProperties(pageNo)
 					if (jQuery(this).height() > maxHeight) { maxHeight = jQuery(this).height(); }
 				});
 				jQuery(".LF-address").height(maxHeight);
-				$dataID.css('opacity', '1');
+				jQuery('#listing-'+index).css('opacity', '1');
 
-				jQuery("#LF_pricefrom_search").select2( {
+				jQuery(parentId+" #LF_pricefrom_search").select2( {
 					placeholder: "Price From",
 					allowClear: true,
 					tags: true
@@ -392,7 +411,7 @@ function loadProperties(pageNo)
 				}).on('select2:open', function(e){
 					jQuery('.select2-search__field').attr('placeholder', 'Numbers only...');
 				});
-				jQuery("#LF_priceto_search").select2( {
+				jQuery(parentId +" #LF_priceto_search").select2( {
 					placeholder: "Price To",
 					allowClear: true,
 					tags: true
@@ -512,40 +531,44 @@ function onSubmit(token) {
 	jQuery("#formInquiry").submit();
 }
 
-function resetSearch(){
+function resetSearch(elem){
 
-	jQuery("#LF_priceto_search").val('');
-	if(jQuery("#defaultwaterfront").val() == "yes")
+	var id = jQuery(elem).closest('.LF-listigs').attr('id');
+        var index = id.split("-").pop();
+	var parentId = '#listing-'+index;
+	var parentDefaultId = '#listing-default-'+index;
+	jQuery(parentId+" #LF_priceto_search").val('');
+	if(jQuery(parentDefaultId +" #defaultwaterfront").val() == "yes")
 	{
-		jQuery("#waterfront").attr("checked",true);
+		jQuery(parentId+" #waterfront").attr("checked",true);
 	}
 	else
 	{
-		jQuery("#waterfront").attr("checked",false);
+		jQuery(parentId+" #waterfront").attr("checked",false);
 	}
 
-	jQuery("#LF_pricefrom_search").val('');
-	jQuery("#LF_sale").val(jQuery("#defaultsale").val());
-	jQuery("#LF_bedroom").val(0);
+	jQuery(parentId+" #LF_pricefrom_search").val('');
+	jQuery(parentId+" #LF_sale").val(jQuery("#defaultsale").val());
+	jQuery(parentId+" #LF_bedroom").val(0);
 
-	jQuery("#LF_bathroom").val(0);
-	jQuery("#LF_property_search").val(jQuery("#search").val());
-	jQuery("#LF_main_search").val('');
+	jQuery(parentId+" #LF_bathroom").val(0);
+	jQuery(parentId+" #LF_property_search").val(jQuery("#search").val());
+	jQuery(parentId+" #LF_main_search").val('');
 
-	jQuery("#LF_municipalities").val(jQuery("#defaultlocation").val());
+	jQuery(parentId+" #LF_municipalities").val(jQuery("#defaultlocation").val());
 
-	if(jQuery("#priceorder").val() === "DESC")
+	if(jQuery(parentId+" #priceorder").val() === "DESC")
 	{
-		jQuery('#desc').prop('checked', true);
-		jQuery('#Bdesc').prop('checked', true);
+		jQuery(parentId+' #desc').prop('checked', true);
+		jQuery(parentId+' #Bdesc').prop('checked', true);
 	}
 	else
 	{
-		jQuery('#asc').prop('checked', true);
-		jQuery('#Basc').prop('checked', true);
+		jQuery(parentId+' #asc').prop('checked', true);
+		jQuery(parentId+' #Basc').prop('checked', true);
 	}
 
-	loadProperties(-1);
+	loadProperties(-1,index);
 }
 
 jQuery(document).on('click','.btn_close_model',function(){

@@ -30,8 +30,8 @@ if ($listkey)
 	}
 	</style>
 
-	<div  id="listing">
-			<img width="30" height="30" style="margin-left:15px;position: fixed;left: 40%;top: 50%;" src="<?php echo plugins_url('assets/images/loading.gif',__FILE__)?>">
+	<div  class="LF-listigs" id="listing-0">
+			<img width="30" height="30" style="margin-left:15px;position: fixed;left: 40%;top: 50%;" src="<?php echo plugins_url('assets/images/loading.gif',__FILE__)?>" id="LF-loading-img">
 	</div>
 	<?php
 	return;
@@ -44,7 +44,7 @@ if(isset($_SESSION['pageUpdated']) && $_SESSION['pageUpdated'] == "yes")
 }
 
 
-$slugVariable = getCurrentPageSlug();
+$slugVariable = getCurrentPageSlug().'-'.$tagCount;
 
 if (empty($slugVariable))
 	$slugVariable = LF_get_settings('LF_homepageSlug');
@@ -79,10 +79,10 @@ if (empty($_SESSION[$slugVariable]['LF_Municipalities'])) $_SESSION[$slugVariabl
 ?>
 
 <div class="LF-listigs">
-	<div class="LF-row" id="listing">
-		<img width="30" height="30" style="margin-left:15px;position: fixed;left: 40%;top: 50%;" src="<?php echo plugins_url('assets/images/loading.gif',__FILE__)?>">
+	<div class="LF-row" id="listing-<?php echo $tagCount;?>">
+		<img width="30" height="30" style="margin-left:15px;position: fixed;left: 40%;top: 50%;" src="<?php echo plugins_url('assets/images/loading.gif',__FILE__)?>" id="LF-loading-img">
 	</div>
-	<div class="LF-row">
+	<div class="LF-row" id="listing-default-<?php echo $tagCount;?>">
 
 		<input type="hidden" name="pageSlug" id="pageSlug" value="<?php echo $slugVariable;?>">
 

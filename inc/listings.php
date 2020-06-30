@@ -29,6 +29,7 @@ function LF_pagination(){
 	$per_row = sanitize_text_field($_POST['per_row']);
 	$index = sanitize_text_field($_POST['index']);
 	$list_per_page = sanitize_text_field($_POST['list_per_page']);
+	$tagCount = sanitize_text_field($_POST['tagCount']);
 
 	if(isset($list_per_page)){
 		$list_per_page = $list_per_page;
@@ -166,7 +167,8 @@ function LF_pagination(){
 		$waterFront='';
 	}
 
-	getLFListings($page, $mainSearch, $municipality, $sale, $bedroom, $bathroom, $property_Type, $priceFrom, $priceTo, $waterFront, $sort, $offices, $agents, $openhouse, $slug, $search, $style, $ids, $pagination, $priceorder, $per_row,$index, $list_per_page);
+
+	getLFListings($page, $mainSearch, $municipality, $sale, $bedroom, $bathroom, $property_Type, $priceFrom, $priceTo, $waterFront, $sort, $offices, $agents, $openhouse, $slug, $search, $style, $ids, $pagination, $priceorder, $per_row,$index, $list_per_page, $tagCount);
 
 	wp_die();
 }
