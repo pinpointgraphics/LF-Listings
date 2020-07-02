@@ -1,6 +1,6 @@
 <?php
 
-if($_SESSION[$slugVariable]['popup']=='yes' || $_SESSION[$slugVariable]['popup']==''){
+if(($_SESSION[$slugVariable]['popup']=='yes' || $_SESSION[$slugVariable]['popup']=='') && substr($slugVariable,-1) == '0'){
 	if(!isset($_SESSION['acceptTerms']) || $_SESSION['acceptTerms']!=$_SERVER['REMOTE_ADDR']){
 		if(!empty(LF_get_settings('termsandcondition'))){
 			function add_terms_modal(){

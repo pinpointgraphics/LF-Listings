@@ -44,6 +44,16 @@ function LF_main_menu_view_creator()
                     <th scope="col"><b>Description</b></th>
                     <th scope="col"><b>Example</b></th>
                 </tr>
+		 <tr>
+                    <td>tag-index</td>
+                    <td>
+                        <ul class="options">
+				<li>2,3,4,5,...</li>
+                        </ul>
+                    </td>
+                    <td>When LF-Listings shortcode is used more than once on a single page, it is <strong>MUST</strong> to use tag-index to mention the index of the tag. It is not mandatory to use when it is used only once. Default 1 is already included. <strong>MUST</strong> to write in order.</td>
+                    <td>[LF-Listings], [LF-Listings tag-index="2"], [LF-Listings tag-index="3"] likewise</td>
+                </tr>
                 <!-- type -->
                 <tr>
                     <td>type</td>

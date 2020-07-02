@@ -655,7 +655,7 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 		if (in_array($page_id, $option_id_array)) {
 			?>
 			<?php
-			wp_enqueue_script( 'LF_customJs', plugins_url('assets/js/custom.js',__FILE__), array('jquery'), '1.0.1', true );
+			wp_enqueue_script( 'LF_customJs', plugins_url('assets/js/custom.js',__FILE__), array('jquery'), '1.0.2', true );
 			wp_localize_script( 'LF_customJs', 'LF_custom', array(
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
 				'security' => wp_create_nonce( 'my-special-string' )

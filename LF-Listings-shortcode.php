@@ -16,7 +16,8 @@ $attr = shortcode_atts( array(
 	'waterfront'=>'',
 	'popup'=>'',
 	'list-per-page'=>'',
-	'selectable-locations'=>''
+	'selectable-locations'=>'',
+	'tag-index'=>'1',
 ), $atts );
 
 $listkey = get_query_var('listkey');
@@ -30,7 +31,7 @@ if ($listkey)
 	}
 	</style>
 
-	<div  class="LF-listigs" id="listing-0">
+	<div  class="LF-listigs" id="listing-1">
 			<img width="30" height="30" style="margin-left:15px;position: fixed;left: 40%;top: 50%;" src="<?php echo plugins_url('assets/images/loading.gif',__FILE__)?>" id="LF-loading-img">
 	</div>
 	<?php
@@ -43,11 +44,13 @@ if(isset($_SESSION['pageUpdated']) && $_SESSION['pageUpdated'] == "yes")
         session_unset();
 }
 
-
-$slugVariable = getCurrentPageSlug().'-'.$tagCount;
+$tagCount = (int)$attr['tag-index'];
+$slugVariable = getCurrentPageSlug();
 
 if (empty($slugVariable))
 	$slugVariable = LF_get_settings('LF_homepageSlug');
+
+$slugVariable = $slugVariable.'-'.$tagCount;
 
 if (empty($_SESSION[$slugVariable]))
 	$_SESSION[$slugVariable] = [];

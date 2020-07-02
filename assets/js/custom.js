@@ -10,7 +10,7 @@ jQuery(document).ready(function() {
 	setTimeout(function()
 	{
 		jQuery(".LF-listigs").each(function(index) {
-			loadProperties('',index);
+			loadProperties('',++index);
 			
 		});
 	}, 1000);
