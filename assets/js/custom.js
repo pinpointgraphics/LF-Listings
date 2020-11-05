@@ -11,7 +11,7 @@ jQuery(document).ready(function() {
 	{
 		jQuery(".LF-listigs").each(function(index) {
 			loadProperties('',++index);
-			
+
 		});
 	}, 1000);
 
@@ -286,7 +286,6 @@ function loadProperties(pageNo,index)
 		}
 	}
 	$dataID = jQuery('#listing-'+index);
-
 	if(flag==0){
 		jQuery.ajax({
 			method: 'POST',
@@ -310,35 +309,41 @@ function loadProperties(pageNo,index)
 					jQuery(".horizantal-slide").flickity(options)
 				}
 
-				jQuery('.fancybox-thumbs').fancybox({
-					prevEffect : 'none',
-					nextEffect : 'none',
+				 if( jQuery('.fancybox-thumbs').length ) {
+							jQuery('.fancybox-thumbs').fancybox({
+								prevEffect : 'none',
+								nextEffect : 'none',
 
-					closeBtn  : true,
-					arrows    : true,
-					nextClick : true,
+								closeBtn  : true,
+								arrows    : true,
+								nextClick : true,
 
-					helpers : {
-						thumbs : {
-							width  : 50,
-							height : 50
-						}
-					}
-				});
+								helpers : {
+									thumbs : {
+										width  : 50,
+										height : 50
+									}
+								}
+							});
+				}
 
-				jQuery('.slider-single').slick({
-					slidesToShow: 1,
-					slidesToScroll: 1,
-					arrows: false,
-					fade: false,
-					adaptiveHeight: true,
-					infinite: false,
-					useTransform: true,
-					speed: 400,
-					focusOnSelect: true,
-					cssEase: 'cubic-bezier(0.77, 0, 0.18, 1)',
-				});
+				if( jQuery('.slider-single').length ) {
 
+						jQuery('.slider-single').slick({
+							slidesToShow: 1,
+							slidesToScroll: 1,
+							arrows: false,
+							fade: false,
+							adaptiveHeight: true,
+							infinite: false,
+							useTransform: true,
+							speed: 400,
+							focusOnSelect: true,
+							cssEase: 'cubic-bezier(0.77, 0, 0.18, 1)',
+						});
+			}
+
+			if( jQuery('.slider-nav').length ) {
 				jQuery('.slider-nav').on('init', function(event, slick) {
 					jQuery('.slider-nav .slick-slide.slick-current').addClass('is-active');
 				})
@@ -368,13 +373,17 @@ function loadProperties(pageNo,index)
 						}
 					}]
 				});
+			}
+
+			if( jQuery('.horizantal-slide').length ) {
 				jQuery('.horizantal-slide').flickity({
 					// options
 					cellAlign: 'left',
 					contain: true,
 					pageDots: false
 				});
-
+			}
+			if( jQuery('.slider-single').length ) {
 				jQuery('.slider-single').on('afterChange', function(event, slick, currentSlide) {
 					jQuery('.slider-nav').slick('slickGoTo', currentSlide);
 					var currrentNavSlideElem = '.slider-nav .slick-slide[data-slick-index="' + currentSlide + '"]';
@@ -382,12 +391,15 @@ function loadProperties(pageNo,index)
 					jQuery(currrentNavSlideElem).addClass('is-active');
 				});
 
+			}
+			if( jQuery('.slider-nav').length ) {
 				jQuery('.slider-nav').on('click', '.slick-slide', function(event) {
 					event.preventDefault();
 					var goToSingleSlide = jQuery(this).data('slick-index');
 
 					jQuery('.slider-single').slick('slickGoTo', goToSingleSlide);
 				});
+			}
 			},
 			complete: function() {
 
@@ -600,18 +612,21 @@ jQuery(document).ready(function(){
 		}
 	});
 
-	jQuery("#LF_pricefrom_search").select2( {
-		placeholder: "Price From",
-		allowClear: true,
-		tags: true,
-	});
+	 if( jQuery('#LF_pricefrom_search').length ) {
+		jQuery("#LF_pricefrom_search").select2( {
+			placeholder: "Price From",
+			allowClear: true,
+			tags: true,
+		});
+	}
 
-	jQuery("#LF_priceto_search-0").select2( {
-		placeholder: "Price To",
-		allowClear: true,
-		tags: true,
-		searchInputPlaceholder: "Numbers Only"
-	});
+	 if( jQuery('#LF_priceto_search-0').length ) {
 
-
+			jQuery("#LF_priceto_search-0").select2( {
+				placeholder: "Price To",
+				allowClear: true,
+				tags: true,
+				searchInputPlaceholder: "Numbers Only"
+			});
+		}
 });

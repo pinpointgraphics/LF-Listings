@@ -3,7 +3,7 @@
 Plugin Name: Lightning Fast Listings
 Plugin URI: https://lightningfastlistings.ca
 Description: Lightning Fast Listings is a WordPress plugin exclusively designed for Canadian Real Estate Agents who are licensed by the Canadian Real Estate Association (CREA ®) to display listings via the Data Distribution Facility (DDF ®). All real estate listings are served "lightning fast", designed and hosted remotely to not take up any of the website's own resources.
-Version: 1.0.11
+Version: 1.0.12
 Author: Pinpoint Media Design
 Author URI: https://www.pinpointmediadesign.com
 License: GLP2
@@ -17,12 +17,13 @@ define( 'LF_PLUGIN', __FILE__ );
 define( 'LF_PLUGIN_BASENAME', plugin_basename( LF_PLUGIN ) );
 define( 'LF_PLUGIN_NAME', trim( dirname( LF_PLUGIN_BASENAME ), '/' ) );
 define( 'LF_PLUGIN_DIR', untrailingslashit( dirname( LF_PLUGIN ) ) );
-define('API_URL','https://ddf.dfiner.net/v1');
-
+define( 'API_URL','https://ddf.dfiner.net/v1');
+define( 'LF_PLUGIN_BASENAME_SIMPLE', 'LF-Listings');
+define( 'LF_NEW_LISTING_WEBHOOK', 'newListingWebhook');
 // required getpages
+require_once LF_PLUGIN_DIR. '/inc/functions.php';
 require_once LF_PLUGIN_DIR. '/settings.php';
 require_once LF_PLUGIN_DIR. '/detailpage.php';
-require_once LF_PLUGIN_DIR. '/inc/functions.php';
 require_once LF_PLUGIN_DIR. '/inc/listings.php';
 
 /**
@@ -229,4 +230,12 @@ add_action( 'save_post', 'LF_save_post_function', 10, 3 );
 function LF_save_post_function( $post_ID, $post, $update ) {
 	$_SESSION['pageUpdated'] = "yes";
 }
+
+add_action( 'rest_api_init', function () {
+  register_rest_route( LF_PLUGIN_BASENAME_SIMPLE.'/v1', '/'.LF_NEW_LISTING_WEBHOOK, array(
+    'methods'  => 'POST',
+    'callback' => 'newListingWebhookCallback',
+  	));
+} );
+
 ?>

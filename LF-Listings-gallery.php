@@ -372,6 +372,7 @@ $tagCounter = $output[count($output)-1]; ?>
 
     $url = API_URL."/properties?token=".$token."&agent_id=".$agent_id."&office_id=".$office_id."&paginate=".$paginate."&type=".$_SESSION[$slugVariable]['type']."&sort=".$sort.$sale.$search.$agent.$office.$ids.$waterfront.$openhouse.$page.$mainSearch.$bedroom.$bathroom.$priceFrom.$priceTo;
     $url = str_replace(" ", '%20', $url);
+
     $curl = curl_init();
     curl_setopt_array($curl, array(
         CURLOPT_URL => $url,
@@ -395,7 +396,7 @@ $tagCounter = $output[count($output)-1]; ?>
         $page_id = get_the_ID();
         $pageSlug = substr($slugVariable, 0, strrpos( $slugVariable, '-'));
 
-        if(is_home() || is_front_page()){
+        if(is_admin() || is_home() || is_front_page()){
             if(!empty(LF_get_settings('LF_homepageSlug')))					{
                 $pageSlug = LF_get_settings('LF_homepageSlug');
             }

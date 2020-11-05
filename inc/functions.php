@@ -77,12 +77,19 @@ function getToken()
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
 	curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array('X-DOMAIN-NAME: ' . get_site_url()));
 	$token = curl_exec($ch);
 	curl_close($ch);
 
 	if($token == "Invalid credentials.")
 	{
-		die($token.' Please check credentials in the LF-Listings Setting menu.');
+		//die($token.' Please check credentials in the LF-Listings Setting menu.');
+		?>
+		<script>
+			alert('Invalid credentials: Please check credentials in the LF-Listings Setting menu.');
+		</script>
+		<?php
+	  		
 	}
 
 	return $token;
@@ -290,6 +297,139 @@ function LFUpdateCSS()
 	}
 	LF_add_settings('last_css_updated_version', $currentVersion);
 
+}
+
+function isWebhookEnabled($agent_id)
+{
+	$token = getToken();
+
+	$curl = curl_init();
+	curl_setopt_array($curl, array(
+		CURLOPT_URL => API_URL."/webhook/check/".$agent_id."?token=".$token,
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_ENCODING => "",
+		CURLOPT_MAXREDIRS => 10,
+		CURLOPT_TIMEOUT => 30,
+		CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		CURLOPT_CUSTOMREQUEST => "GET",
+	));
+
+	$response = curl_exec($curl);
+	$err = curl_error($curl);
+
+	curl_close($curl);
+
+	$result = false;
+	if (empty($err))
+	{
+		$responseDecoded = json_decode($response, true);
+		if ($responseDecoded['error'] == 0)
+		{
+
+				$result = $responseDecoded['enabled'] != 0 ? true : false;
+		}
+	}
+	return $result;
+}
+
+/** actions and its handlers **/
+function emailActionHandler($params, $data) {
+	$fromemail = LF_get_settings('fromEmail');
+	$toEmailsString = $params['to'];
+
+	$toEmailsArray = explode(",", $toEmailsString);
+
+	if (!empty($fromemail))
+	{
+		$name = "Listing Notifier";
+		$headers[] = "From: $name <$fromemail>";
+		$headers[] = "Content-type: text/html" ;
+		$friendlyUrl = strtolower(preg_replace("/[^a-zA-Z0-9 ]/"," ",$data['UnparsedAddress']));
+		$friendlyUrl = preg_replace("/(\s+)/","-",ucwords(trim($friendlyUrl)));
+		$message = '
+			<div>We just added following listing in our database :</div>
+			<br>
+			<table border="0">
+				<tr>
+					<td>Listing Id : </td>
+					<td>'.$data['ListingId'].'</td>
+				</tr>
+				<tr>
+					<td>Listing Key : </td>
+					<td>'.$data['ListingKey'].'</td>
+				</tr>
+				<tr>
+					<td>Address : </td>
+					<td>'.$data['UnparsedAddress'].'</td>
+				</tr>
+				<tr>
+					<td>City : </td>
+					<td>'.$data['City'].'</td>
+				</tr>
+				<tr>
+					<td>Postal Code : </td>
+					<td>'.$data['PostalCode'].'</td>
+				</tr>
+				<tr>
+					<td>Link : </td>
+					<td>'.home_url(LF_get_settings('LF_homepageSlug')).'/'.$data['ListingKey'].'/'.strtolower($friendlyUrl).'</td>
+				</tr>
+			</table>
+		';
+
+		foreach ($toEmailsArray as $to) {
+			wp_mail( $to, 'New Listing has been added', $message, $headers );
+		}
+	}
+}
+
+function externalLinkCallActionHandler($params, $data)
+{
+	if (empty($params['url']) || empty($data))
+		 {
+						 return;
+		 }
+
+		 $data = $data->get_params();
+		 $ch = curl_init();
+
+			 curl_setopt($ch, CURLOPT_URL, $params['url']);
+			 curl_setopt($ch, CURLOPT_POST, 1);
+			 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			 curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+			 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+			 curl_exec ($ch);
+}
+
+function newListingWebhookCallback($request)
+{
+	// JSON for actions
+	// {
+	//   "emailAction" : {
+	//     "emailActionHandler" : {
+	//       "to" : "xyz@gmail.com",
+	//       "enabled" : true
+	//     }
+	//   },
+	//   "externalLinkCallAction" : {
+	//     "externalLinkCallActionHandler" : {
+	//       "url" : "http://abcd.com",
+	//       "enabled" : false
+	//     }
+	//   }
+	// }
+
+	$webhookJSON = LF_get_settings('webhookActions');
+	$jsonDecoded = json_decode($webhookJSON, true);
+	foreach ($jsonDecoded as $actionName => $actionDetails) {
+			foreach ($actionDetails as $functionName => $functionParamsArray) {
+					if ($functionParamsArray['enabled'] == true)
+					{
+								$functionName($functionParamsArray, $request);
+					}
+			}
+	}
+	return 'ok';
 }
 
 ?>

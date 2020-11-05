@@ -31,6 +31,7 @@ function LF_settings_view_creator()
 			<button class="LF-tablink" data-id="listings">Listings Config.</button>
 			<button class="LF-tablink" data-id="Integrations">Integrations</button>
 			<button class="LF-tablink" data-id="custom_css">Custom CSS</button>
+			<button class="LF-tablink" data-id="ownListings">Your Own Listings</button>
 		</div>
 		<div class="LF-clear"></div>
 		<div class="LF-tab-content">
@@ -66,7 +67,6 @@ function LF_settings_view_creator()
 					<input type="button" name="submit" id="LF-save-general-setting" class="button button-primary" value="Save">
 				</form>
 			</div>
-
 			<div id="listings" class="LF-tabcontent">
 				<div class="LF-msg-listing"></div>
 				<div class="LF-form-width">
@@ -254,6 +254,110 @@ function LF_settings_view_creator()
 					<input type="button" name="submit" id="LF-save-listingDetails-setting" class="button button-primary" value="Save">
 				</form>
 			</div>
+
+			<div id="ownListings" class="LF-tabcontent">
+				<div class="LF-msg-custom"></div>
+
+				<?php
+				if (!empty(LF_get_settings('user_name')) && !empty(LF_get_settings('password')) && !empty(LF_get_settings('agent_id')) && !empty(LF_get_settings('LF_homepageSlug')) && !empty(LF_get_settings('fromEmail')))
+				{
+					 $actionJson = LF_get_settings('webhookActions');
+					 $actionJsonDecoded = json_decode($actionJson, true);
+					?>
+						<style>
+								.tab1 { padding-left: 4em; }
+								.tab2 { padding-left: 8em; }
+								.tab3 { padding-left: 12em; }
+						</style>
+						<form method="post" name="LF-ownListings-form" id="LF-ownListings-form">
+						 	<div class="LF-form-width">
+								<div class="LF-form-group">
+									<input type="checkbox" name="LF_notifyOnNewListings" id="LF_notifyOnNewListings" <?php if(isWebhookEnabled(LF_get_settings('agent_id'))){ echo "checked"; } ?>><label for="LF_notifyOnNewListings" id="new_label">Get notified on new listing</label>
+								</div>
+								</br>
+								<input hidden name='agent_id' value="<?=LF_get_settings('agent_id')?>">
+									<div class="tab1" >
+										<?php
+										$emailActionHandler = $actionJsonDecoded['emailAction']['emailActionHandler'];
+										$emailAddress = $emailActionHandler['to'];
+										$isEmailActionEnabled = !empty($emailActionHandler['enabled']) && $emailActionHandler['enabled'] == true;
+										?>
+										<input type="checkbox" id="emailAction" name="emailAction" <?php if ($isEmailActionEnabled) {echo "checked";}?>>
+										<label for="emailAction">Send Email on New Listing</label>
+									</div>
+									</br>
+											<div class="tab2">
+													<label class="col-md-4" for="emailActionTo">To email address:</label>
+													<input class="col-md-8" type="text" id="emailActionTo" name="emailActionTo" <?php if(!empty($emailAddress)) {echo "value='".$emailAddress."'";} ?>>
+											</div>
+											<div class="tab2">
+													<label class="col-md-4" for="emailActionTo"></label>
+													<label class="col-md-8" for="emailActionTo" style="font-weight:normal;">(Comma separated email addresses)</label>
+											</div>
+										</br>
+										</br>
+									<div class="tab1" >
+												<?php
+												$externalLinkHandler = $actionJsonDecoded['externalLinkCallAction']['externalLinkCallActionHandler'];
+												$externalURL = $externalLinkHandler['url'];
+												$externalLinkEnabled = !empty($externalLinkHandler['enabled']) && $externalLinkHandler['enabled'] == true;
+												?>
+												<input type="checkbox" id="externalLinkCallAction" name="externalLinkCallAction" <?php if ($externalLinkEnabled) {echo "checked";}?>>
+												<label for="externalLinkCallAction">Forward to external URL</label>
+									</div>
+									</br>
+											<div class="tab2">
+															<label class="col-md-4" for="externalLinkCallActionURL">URL:</label>
+															<input class="col-md-8" type="text" id="externalLinkCallActionURL" name="externalLinkCallActionURL" <?php if(!empty($externalURL)) {echo "value='".$externalURL."'";} ?>>
+											</div>
+								<div class="LF-form-group">
+									<input type="button" name="submit" id="LF-save-own-listings" class="button button-primary" value="Save">
+							</div>
+							</div>
+						</form>
+						<div class="col-sm-10 center">
+					<?php
+
+					echo "<h4>Your Listings:</h4>";
+					ob_start();
+					if (session_status() == PHP_SESSION_NONE) {
+					    session_start();
+					}
+					$slugVariable = getCurrentPageSlug();
+					$slugVariable = $slugVariable.'-1';
+					$_SESSION[$slugVariable] = [];
+					$_SESSION[$slugVariable]['search'] = 'no';
+					$_SESSION[$slugVariable]['popup'] = "no";
+					$_SESSION[$slugVariable]['columns'] = 4;
+					$_SESSION[$slugVariable]['agent'] = LF_get_settings('agent_id');
+					$_SESSION[$slugVariable]['priceorder'] = 'no';
+					include('LF-Listings-shortcode.php');
+					$returned = ob_get_contents();
+					ob_end_clean();
+					echo $returned;
+					echo "</div>";
+			 }
+			else {
+
+				if (empty(LF_get_settings('user_name')) || empty(LF_get_settings('password')))
+				{
+					echo "Please enter username and password in the 'Account Info' tab.";
+				}
+				else if (empty(LF_get_settings('agent_id')))
+				{
+					 echo "Please enter agent id in the 'Account Info' tab.";
+				}
+				else if (empty(LF_get_settings('LF_homepageSlug')))
+				{
+					 echo "Please select valid 'Homepage Listings category' in the 'Listings Config' tab.";
+				}
+				else if (empty(LF_get_settings('fromEmail')))
+				{
+					 echo "Please enter valid 'From Email' in the 'Account Info' tab.";
+				}
+			} ?>
+			</div>
+
 		</div>
 	</div>
 	<?php
@@ -292,6 +396,11 @@ function LF_admin_js()
 	wp_enqueue_script( 'bootstrap-multiselect.js', plugins_url('assets/js/bootstrap-multiselect.js',__FILE__), array('jquery'), '1.0.0', true );
 	wp_enqueue_script( 'codemirror.js', plugins_url('assets/js/codemirror.js',__FILE__), array('jquery'), '1.0.0', true );
 	wp_enqueue_script( 'xml.js', plugins_url('assets/js/xml.js',__FILE__), array('jquery'), '1.0.0', true );
+	wp_enqueue_script( 'LF_customJs', plugins_url('assets/js/custom.js',__FILE__), array('jquery'), '1.0.2', true );
+	wp_localize_script( 'LF_customJs', 'LF_custom', array(
+		'ajaxurl' => admin_url( 'admin-ajax.php' ),
+		'security' => wp_create_nonce( 'my-special-string' )
+	));
 	$token = wp_create_nonce("savepluginData");
 	?>
 	<script>
@@ -392,8 +501,8 @@ function LF_admin_js()
 						scrollTop: $('body').offset().top - 20
 					}, 'slow');
 					if($.trim(data)=='1'){
-
-						$('.LF-msg-account').html('<div class="notice notice-success is-dismissible"><p>Data saved successfully.</p></div>');
+						$('.LF-msg-account').html('<div class="notice notice-success is-dismissible"><p>Data saved successfully...Reloading...</p></div>');
+						location.reload();
 					}
 					else{
 						$('.LF-msg-account').html('<div class="notice notice-error is-dismissible"><p>Please try again...</p></div>');
@@ -444,9 +553,114 @@ function LF_admin_js()
 			});
 		});
 
+		function validateEmail(email) {
+	    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	    return re.test(String(email).toLowerCase());
+		}
+
+		function validateURL(url) {
+	    const re = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+	    return re.test(String(url).toLowerCase());
+		}
+
+		$(document).on('click','#LF-save-own-listings',function(){
+			var form = $('#LF-ownListings-form').serialize();
+			var isEmailActionEnabled = $('#emailAction:checkbox:checked').length > 0;
+			var emailToList = $('#emailActionTo')
+
+			if (isEmailActionEnabled && (emailToList.length <=0 || emailToList.val() == ''))
+			{
+				$('.LF-msg-custom').html('<div class="notice notice-success is-dismissible"><p>Please enter email address.</p></div>');
+				return false;
+			}
+
+			var emails = emailToList.val().replace(/\s/g,'').split(",");
+			for (var i = 0; i < emails.length; i++) {
+		     if( isEmailActionEnabled && !validateEmail(emails[i])){
+		         $('.LF-msg-custom').html('<div class="notice notice-success is-dismissible"><p>Please enter valid email address.</p></div>');
+						 return false;
+		     }
+	 	  }
+
+			var isExternalLinkCallEnabled = $('#externalLinkCallAction:checkbox:checked').length > 0;
+			var externalurl = $('#externalLinkCallActionURL')
+
+			if (isExternalLinkCallEnabled && (externalurl.length <=0 || externalurl.val() == '' || !validateURL(externalurl.val())))
+			{
+				$('.LF-msg-custom').html('<div class="notice notice-success is-dismissible"><p>Please enter valid url.</p></div>');
+				return false;
+			}
+
+			$('.LF-msg-custom').html('<div class="notice notice-success is-dismissible"><p>Saving...</p></div>');
+			var token = '<?php echo $token; ?>';
+			$.ajax({
+				method: 'POST',
+				url:ajaxurl,
+				data:'action=LF_save_own_listings&token='+token+'&'+form,
+				success: function(data){
+					$('html, body').animate({
+						scrollTop: $('body').offset().top - 20
+					}, 'slow');
+					if($.trim(data)=='1'){
+						$('.LF-msg-custom').html('<div class="notice notice-success is-dismissible"><p>Data saved successfully.. Reloading..</p></div>');
+						location.reload();
+					}
+					else{
+						$('.LF-msg-custom').html('<div class="notice notice-error is-dismissible"><p>Please try again...</p></div>');
+					}
+				}
+			});
+		});
+
 	});
 </script>
 <?php
+}
+
+add_action('wp_ajax_LF_save_own_listings','LF_save_own_listings');
+function LF_save_own_listings()
+{
+	check_ajax_referer( 'savepluginData', 'token' );
+
+	// save local things first.
+	$emailAction = sanitize_text_field($_POST['emailAction']);
+	$emailActionTo = sanitize_text_field($_POST['emailActionTo']);
+
+	$externalLinkCallAction = sanitize_text_field($_POST['externalLinkCallAction']);
+	$externalLinkCallActionURL = sanitize_text_field($_POST['externalLinkCallActionURL']);
+
+	$webhookJSON = [];
+	$webhookJSON['emailAction'] =[];
+	$webhookJSON['emailAction']['emailActionHandler'] = [];
+	$webhookJSON['emailAction']['emailActionHandler']['enabled'] = !empty($emailAction) ? true : false;
+	$webhookJSON['emailAction']['emailActionHandler']['to'] = $emailActionTo;
+
+	$webhookJSON['externalLinkCallAction'] =[];
+	$webhookJSON['externalLinkCallAction']['externalLinkCallActionHandler'] = [];
+	$webhookJSON['externalLinkCallAction']['externalLinkCallActionHandler']['enabled'] = !empty($externalLinkCallAction) ? true : false;
+	$webhookJSON['externalLinkCallAction']['externalLinkCallActionHandler']['url'] = $externalLinkCallActionURL;
+
+	LF_add_settings('webhookActions', json_encode($webhookJSON));
+
+	$enabled = sanitize_text_field($_POST['LF_notifyOnNewListings']);
+	$agent_id = sanitize_text_field($_POST['agent_id']);
+
+	$enabled  = !empty($enabled) ? '1' : '0';
+
+	$ch = curl_init();
+
+  $postData = array(
+		'webhookurl' => site_url().'/wp-json/'.LF_PLUGIN_BASENAME_SIMPLE.'/v1/'.LF_NEW_LISTING_WEBHOOK,
+		'enabled' => $enabled
+  );
+    curl_setopt($ch, CURLOPT_URL, API_URL.'/webhook/crud/'.$agent_id.'?token='.getToken());
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+    curl_exec ($ch);
+
+		echo '1';
+		wp_die();
 }
 
 add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
