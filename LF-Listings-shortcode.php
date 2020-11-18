@@ -55,7 +55,7 @@ $slugVariable = $slugVariable.'-'.$tagCount;
 if (empty($_SESSION[$slugVariable]))
 	$_SESSION[$slugVariable] = [];
 
-if (empty($_SESSION[$slugVariable]['type']))$_SESSION[$slugVariable]['type'] = $attr['type']; 
+if (empty($_SESSION[$slugVariable]['type']))$_SESSION[$slugVariable]['type'] = $attr['type'];
 if (!isset($_SESSION[$slugVariable]['sale']))$_SESSION[$slugVariable]['sale'] = $attr['sale'];
 if (empty($_SESSION[$slugVariable]['location']))$_SESSION[$slugVariable]['location'] = $attr['location'];
 if (empty($_SESSION[$slugVariable]['agent']))$_SESSION[$slugVariable]['agent'] = $attr['agent'];

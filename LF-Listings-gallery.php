@@ -3,7 +3,7 @@ $tagCounter = $output[count($output)-1]; ?>
 <div class="LF-listigs" id="listing-<?php echo $tagCounter;?>">
     <?php
     $hasValidLocation = true;
-    if(empty($_SESSION[$slugVariable]['search']) OR $_SESSION[$slugVariable]['search']=='yes' OR $_SESSION[$slugVariable]['search']=="only"):
+    if ($slugVariable != 'wp-admin-1' && (empty($_SESSION[$slugVariable]['search']) OR $_SESSION[$slugVariable]['search']=='yes' OR $_SESSION[$slugVariable]['search']=="only")):
         if(LF_get_settings('LF_show_search')=='yes'  || (($_SESSION[$slugVariable]['search']=='yes' OR $_SESSION[$slugVariable]['search']=='only') AND LF_get_settings('LF_show_search')!='yes')):
             $priceFrom = $_SESSION[$slugVariable]['priceFrom'];
             $priceTo = $_SESSION[$slugVariable]['priceTo'];
@@ -511,7 +511,17 @@ $tagCounter = $output[count($output)-1]; ?>
                                 <div class="LF-listing-details LF-listview">
                                     <div class="LF-row">
                                         <div class="LF-col-md-4">
-                                            <div class="LF-image">
+                                            <div
+                                            <?php
+                                            if ($slugVariable == 'wp-admin-1')
+                                            {
+                                                echo ' class="LF-image-admin"';
+                                            }
+                                            else
+                                            {
+                                                echo ' class="LF-image"';
+                                            }
+                                            ?>>
                                                 <a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower($propertyList->FriendlyUrl);?>">
                                                     <img src="<?php echo getLFImageProxy($propertyList->ListingThumb);?>" alt="">
                                                 </a>
@@ -544,7 +554,17 @@ $tagCounter = $output[count($output)-1]; ?>
                                     <div class="LF-header">
                                         <span class="LF-heading-link"><?php echo '#'.$propertyList->OriginatingSystemKey?></span>
                                     </div>
-                                    <div class="LF-image">
+                                    <div
+                                    <?php
+                                    if ($slugVariable == 'wp-admin-1')
+                                    {
+                                        echo ' class="LF-image-admin"';
+                                    }
+                                    else
+                                    {
+                                        echo ' class="LF-image"';
+                                    }
+                                    ?>>
                                         <a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower(str_replace(' ','-',$propertyList->City)).'/'.strtolower($propertyList->FriendlyUrl);?>">
                                             <img src="<?php echo getLFImageProxy($propertyList->ListingThumb);?>" alt="">
                                         </a>
@@ -589,5 +609,4 @@ $tagCounter = $output[count($output)-1]; ?>
             }
         }?>
     </div>
-    <div class="LF-disclaimer"><?php echo LF_get_settings('LF_detail_footer');?></div>
 </div>

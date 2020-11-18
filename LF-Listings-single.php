@@ -220,7 +220,7 @@ if($propertyDetails->error==false){
                 <?= $propertyDetail->PublicRemarks;?>
             </p>
             <p>
-                <img src="<?php echo plugins_url('assets/images/realtor_logos.png',__FILE__);?>">
+                <a href="<?=$propertyDetail->MoreInformationLink?>" alt="Powered by: REALTOR.ca" target="_blank"> <img width="125" src="https://www.realtor.ca/images/en-ca/powered_by_realtor.svg"/></a>
             </p>
             <h1>Building</h1>
             <ul id="LF-building-details">
@@ -331,7 +331,6 @@ if($propertyDetails->error==false){
             <p>Provided by: '.$propertyDetail->ListAOR.'</p>';
             ?>
         </div>
-        <div class="LF-disclaimer"><?php echo LF_get_settings('LF_detail_footer');?></div>
     </div><!-- .LF-description -->
 
     <?php if(!empty($propertyDetail->Latitude) && !empty($propertyDetail->Longitude) && !empty(LF_get_settings('LF_mapApiKey'))){ ?>

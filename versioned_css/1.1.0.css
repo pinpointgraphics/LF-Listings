@@ -1,0 +1,76 @@
+#agreementConsent {
+    background-color: rgba(20,20,20,0.8);
+    min-height: 26px;
+    font-size: 14px;
+    color: #ccc;
+    line-height: 26px;
+    padding: 8px 0 8px 30px;
+    font-family: "Trebuchet MS",Helvetica,sans-serif;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: none;
+    z-index: 9999;
+}
+#agreementConsent a {
+    color: #4B8EE7;
+    text-decoration: none;
+}
+#closeagreementConsent {
+    display: inline-block;
+    cursor: pointer;
+    height: 20px;
+    width: 30px;
+    margin-left:15px;
+    font-weight: bold;
+}
+
+#showagreementModal {
+	display: inline-block;
+    cursor: pointer;
+    height: 20px;
+    width: 100px;
+    font-weight: bold;
+}
+
+#closeagreementConsent:hover, #showagreementModal:hover {
+    color: #FFF;
+}
+#agreementConsent a.agreementConsentOK {
+    background-color: #F1D600;
+    color: #000;
+    display: inline-block;
+    border-radius: 5px;
+    padding: 0 20px;
+    cursor: pointer;
+    float: right;
+    margin: 0 60px 0 10px;
+}
+#agreementConsent a.agreementConsentOK:hover {
+    background-color: #E0C91F;
+}
+
+#LF-ownListings-form input[type="checkbox"] {
+	height:15px;
+	width:15px;
+	margin : unset !important;
+}
+
+#LF-ownListings-form input[type=checkbox]:checked::before, input[type=checkbox]:checked::after {
+   	height:15px;
+	width:15px;
+}
+
+.LF-image-admin {
+	height:150px !important;
+    overflow: hidden;
+    display: grid;
+    justify-content: center;
+    width: 100%;
+}
+
+.LF-image-admin img {
+	max-width:100%;
+	height:auto;
+}

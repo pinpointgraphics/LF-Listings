@@ -89,7 +89,7 @@ function getToken()
 			alert('Invalid credentials: Please check credentials in the LF-Listings Setting menu.');
 		</script>
 		<?php
-	  		
+
 	}
 
 	return $token;
@@ -151,27 +151,6 @@ $style='',$ids='',$pagination='',$priceorder='',$per_row='',$index='',$list_per_
 		if (!empty($priceorder))$_SESSION[$slug]['priceorder'] = $priceorder;
 		if(!empty($waterFront))$_SESSION[$slug]['waterfront'] = $waterFront;
 	}
-
-	/*if ($searchBtnPress || !empty($mainSearch))$_SESSION[$slug]['mainSearch'] = $mainSearch;
-	if ($municipalities != '')$_SESSION[$slug]['location'] = $municipalities;
-	if ($sale != '')$_SESSION[$slug]['sale'] = $sale;
-	if ($bedroom != '')$_SESSION[$slug]['bedroom'] = $bedroom;
-	if ($bathroom!='')$_SESSION[$slug]['bathroom'] = $bathroom;
-	if (!empty($property_Type))$_SESSION[$slug]['type'] = $property_Type;
-	$_SESSION[$slug]['priceTo'] = $priceTo;
-	$_SESSION[$slug]['priceFrom'] = $priceFrom;
-	if(!empty($waterFront))$_SESSION[$slug]['waterfront'] = $waterFront;
-	if (!empty($priceorder))$_SESSION[$slug]['priceorder'] = $priceorder;
-	if (!empty($offices))$_SESSION[$slug]['office'] = $offices;
-	if (!empty($agents))$_SESSION[$slug]['agent'] = $agents;
-	if (!empty($openhouse))$_SESSION[$slug]['openhouse'] = $openhouse;
-	if (!empty($search))$_SESSION[$slug]['search'] = $search;
-	if (!empty($style))$_SESSION[$slug]['style'] = $style;
-	if (!empty($ids))$_SESSION[$slug]['ids'] = $ids;
-	if (!empty($pagination))$_SESSION[$slug]['pagination'] = $pagination;
-	if (!empty($per_row))$_SESSION[$slug]['columns'] = $per_row;
-	if (!empty($list_per_page))$_SESSION[$slug]['list-per-page'] = $list_per_page;
-	*/
 
 	if ($searchBtnPress == true)
 	{
@@ -347,7 +326,7 @@ function emailActionHandler($params, $data) {
 		$friendlyUrl = strtolower(preg_replace("/[^a-zA-Z0-9 ]/"," ",$data['UnparsedAddress']));
 		$friendlyUrl = preg_replace("/(\s+)/","-",ucwords(trim($friendlyUrl)));
 		$message = '
-			<div>We just added following listing in our database :</div>
+			<div>We just added the following listing to your database :</div>
 			<br>
 			<table border="0">
 				<tr>
@@ -375,10 +354,14 @@ function emailActionHandler($params, $data) {
 					<td>'.home_url(LF_get_settings('LF_homepageSlug')).'/'.$data['ListingKey'].'/'.strtolower($friendlyUrl).'</td>
 				</tr>
 			</table>
+			<br>
+			<div>Powered by Lightning Fast Listings WordPress Plugin https://lightningfastlistings.ca</div>
 		';
 
+		$urlparts = parse_url(home_url());
+		$domain = $urlparts['host'];
 		foreach ($toEmailsArray as $to) {
-			wp_mail( $to, 'New Listing has been added', $message, $headers );
+			wp_mail( $to, '[ '.$domain.' ] : Your new listing has been added', $message, $headers );
 		}
 	}
 }

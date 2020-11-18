@@ -272,7 +272,7 @@ function LF_settings_view_creator()
 						<form method="post" name="LF-ownListings-form" id="LF-ownListings-form">
 						 	<div class="LF-form-width">
 								<div class="LF-form-group">
-									<input type="checkbox" name="LF_notifyOnNewListings" id="LF_notifyOnNewListings" <?php if(isWebhookEnabled(LF_get_settings('agent_id'))){ echo "checked"; } ?>><label for="LF_notifyOnNewListings" id="new_label">Get notified on new listing</label>
+									<input type="checkbox" name="LF_notifyOnNewListings" id="LF_notifyOnNewListings" <?php if(isWebhookEnabled(LF_get_settings('agent_id'))){ echo "checked"; } ?>><label for="LF_notifyOnNewListings" id="new_label">Get notified of new listing</label>
 								</div>
 								</br>
 								<input hidden name='agent_id' value="<?=LF_get_settings('agent_id')?>">
@@ -326,8 +326,6 @@ function LF_settings_view_creator()
 					$slugVariable = getCurrentPageSlug();
 					$slugVariable = $slugVariable.'-1';
 					$_SESSION[$slugVariable] = [];
-					$_SESSION[$slugVariable]['search'] = 'no';
-					$_SESSION[$slugVariable]['popup'] = "no";
 					$_SESSION[$slugVariable]['columns'] = 4;
 					$_SESSION[$slugVariable]['agent'] = LF_get_settings('agent_id');
 					$_SESSION[$slugVariable]['priceorder'] = 'no';
@@ -922,11 +920,13 @@ function LF_find_shortcode_occurencesName($shortcode, $post_type = 'page')
 
 function getCurrentPageSlug()
 {
-	$slugs = explode('/',$_SERVER['REQUEST_URI']);
+	$slugs = explode('/', $_SERVER['REQUEST_URI']);
 	$slugs = array_filter($slugs, function($value) { return $value !== ''; });
 	$slug = $slugs[1];
 	return $slug;
 }
+
+
 
 function LF_save_option_shortcode_post_id_array( $post_id )
 {

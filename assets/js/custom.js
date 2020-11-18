@@ -583,21 +583,8 @@ function resetSearch(elem){
 	loadProperties(-1,index);
 }
 
-jQuery(document).on('click','.btn_close_model',function(){
-	jQuery.ajax({
-		method: 'POST',
-		url: LF_custom.ajaxurl,
-		data:"action=LF_SessionStart&token=" + LF_custom.security,
-		success:function(data){
-			jQuery('#Modal').hide();
-
-		}
-	});
-});
 jQuery(document).on('click','.LF-btn-close',function(){
-	// jQuery('#Modal').hide();
-	// window.location.href="";
-	parent.history.back();
+	 jQuery('#Modal').hide();
 
 });
 jQuery(document).ready(function(){
