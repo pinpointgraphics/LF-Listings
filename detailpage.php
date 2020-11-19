@@ -178,18 +178,6 @@ function LF_main_menu_view_creator()
                     <td>It displays or suppresses the pagination bars above and below the listings.</td>
                     <td>[LF-Listings pagination="no"]</td>
                 </tr>
-                <!-- popup -->
-                <tr>
-                    <td>popup</td>
-                    <td>
-                        <ul class="options">
-                            <li>no</li>
-                            <li>yes</li>
-                        </ul>
-                    </td>
-                    <td>It suppresses or displays the "terms and condition" popup on the page.</td>
-                    <td>[LF-Listings popup="no"]</td>
-                </tr>
                 <!-- columns -->
                 <tr>
                     <td>columns</td>

@@ -14,7 +14,6 @@ $attr = shortcode_atts( array(
 	'priceorder'=>'',
 	'columns'=>'',
 	'waterfront'=>'',
-	'popup'=>'',
 	'list-per-page'=>'',
 	'selectable-locations'=>'',
 	'tag-index'=>'1',
@@ -71,7 +70,6 @@ if (empty($_SESSION[$slugVariable]['priceorder']) && !empty($attr['priceorder'])
 }
 if (empty($_SESSION[$slugVariable]['columns']))$_SESSION[$slugVariable]['columns'] = $attr['columns'];
 if (empty($_SESSION[$slugVariable]['waterfront']))$_SESSION[$slugVariable]['waterfront'] = $attr['waterfront'];
-if (empty($_SESSION[$slugVariable]['popup']))$_SESSION[$slugVariable]['popup'] = $attr['popup'];
 if (empty($_SESSION[$slugVariable]['list-per-page']))$_SESSION[$slugVariable]['list-per-page'] = $attr['list-per-page'];
 if (empty($_SESSION[$slugVariable]['selectable-locations']))$_SESSION[$slugVariable]['selectable-locations'] = $attr['selectable-locations'];
 

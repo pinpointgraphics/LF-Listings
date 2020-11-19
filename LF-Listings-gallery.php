@@ -19,7 +19,7 @@ $tagCounter = $output[count($output)-1]; ?>
             {
                 $DBLF_Municipalities = getCities();
                 $DBLF_Municipalities = implode(',', get_object_vars($DBLF_Municipalities->results->cities));
-		$_SESSION[$slugVariable]['allCities'] = $DBLF_Municipalities;
+		        $_SESSION[$slugVariable]['allCities'] = $DBLF_Municipalities;
                 LF_add_settings('allCities', $DBLF_Municipalities);
             }
             $DBLF_Municipalities = explode(',', $DBLF_Municipalities);
@@ -232,15 +232,15 @@ $tagCounter = $output[count($output)-1]; ?>
 
     if ($hasValidLocation == false)
     {
-                        ?>
-                        <script>
-                        var popup = document.getElementById('Modal');
-                        popup.style.display = 'none';
-                        </script>
-                        <?php
-                        echo 'Hey Admin!  '.$invalidLocation.' is not a valid location in the feed. Its case sensitive. Please correct from the admin menu or tag.';
-                        return;
-   }
+        ?>
+        <script>
+        var popup = document.getElementById('Modal');
+        popup.style.display = 'none';
+        </script>
+        <?php
+        echo 'Hey Admin!  '.$invalidLocation.' is not a valid location in the feed. Its case sensitive. Please correct from the admin menu or tag.';
+        return;
+    }
 
     $token = getToken();
     $agent_id = LF_get_settings('agent_id');
@@ -539,7 +539,7 @@ $tagCounter = $output[count($output)-1]; ?>
                                                     <p><?php echo $propertyList->BuildingAreaTotal.' '.$propertyList->BuildingAreaUnits?></p>
 								<?php } ?>
                                                 </div>
-                                                <a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower($propertyList->FriendlyUrl);?>" class="LF-btn LF-btn-link">View Details</a>
+                                                <a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower($propertyList->FriendlyUrl);?>" <?if ($slugVariable == 'wp-admin-1') echo "target=_blank";?> class="LF-btn LF-btn-link">View Details</a>
                                             </div>
                                         </div>
                                     </div>
@@ -570,7 +570,7 @@ $tagCounter = $output[count($output)-1]; ?>
                                         </a>
                                     </div>
                                     <div class="LF-details">
-                                        <a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower(str_replace(' ','-',$propertyList->City)).'/'.strtolower($propertyList->FriendlyUrl);?>" class="LF-btn LF-btn-link">View Details</a>
+                                        <a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower(str_replace(' ','-',$propertyList->City)).'/'.strtolower($propertyList->FriendlyUrl);?>" <?php if ($slugVariable == 'wp-admin-1') echo "target=_blank";?> class="LF-btn LF-btn-link">View Details</a>
                                         <div class="LF-price"><?php echo '$'.$propertyList->ListPriceFormatted;?></div>
                                         <div class="LF-address">
                                             <?php echo $propertyList->FullAddress;

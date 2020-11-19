@@ -1,8 +1,8 @@
 <?php
 
-if(($_SESSION[$slugVariable]['popup']=='yes' || $_SESSION[$slugVariable]['popup']=='') && substr($slugVariable,-1) == '1' && $slugVariable != 'wp-admin-1')
+if (!empty($_SESSION['listkey']))
 {
-	if(!isset($_SESSION['acceptTerms']) || $_SESSION['acceptTerms']!=$_SERVER['REMOTE_ADDR'])
+	if($slugVariable != 'wp-admin-1' && (!isset($_SESSION['acceptTerms']) || $_SESSION['acceptTerms']!=$_SERVER['REMOTE_ADDR']))
 	{
 		if(!empty(LF_get_settings('termsandcondition')))
 		{
@@ -24,25 +24,25 @@ if(($_SESSION[$slugVariable]['popup']=='yes' || $_SESSION[$slugVariable]['popup'
 					</div>
 				</div>
 				<div id="agreementConsent" style="display:block;">
-				    <center>By using our site, you agree to our <div id="showagreementModal">Terms of Use.</div><div id="closeagreementConsent">Dismiss</div></center>
+					<center>By using our site, you agree to our <div id="showagreementModal">Terms of Use.</div><div id="closeagreementConsent">Dismiss</div></center>
 				</div>
 				<script>
-					jQuery( "#closeagreementConsent" ).click(function() {
-						jQuery.ajax({
-				                method: 'POST',
-				                url: LF_custom.ajaxurl,
-				                data:"action=LF_SessionStart&token=" + LF_custom.security,
-				                success:function(data){
-				                        jQuery('#Modal').hide();
+				jQuery( "#closeagreementConsent" ).click(function() {
+					jQuery.ajax({
+						method: 'POST',
+						url: LF_custom.ajaxurl,
+						data:"action=LF_SessionStart&token=" + LF_custom.security,
+						success:function(data){
+							jQuery('#Modal').hide();
 
-				                }
-				        });
-						jQuery( "#agreementConsent").hide();
+						}
 					});
+					jQuery( "#agreementConsent").hide();
+				});
 
-					jQuery( "#showagreementModal" ).click(function() {
-						jQuery( "#Modal").show();
-					});
+				jQuery( "#showagreementModal" ).click(function() {
+					jQuery( "#Modal").show();
+				});
 				</script>
 				<?php
 			}
@@ -50,10 +50,7 @@ if(($_SESSION[$slugVariable]['popup']=='yes' || $_SESSION[$slugVariable]['popup'
 			add_action('wp_footer','add_terms_modal');
 		}
 	}
-}
 
-if (!empty($_SESSION['listkey']))
-{
 	include('LF-Listings-single.php');
 }
 else
