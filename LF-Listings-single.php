@@ -1,10 +1,15 @@
 
 <?php
 
-$listkey = $_SESSION['listkey'];
-$_SESSION['listkey'] = '';
-
-$propertyDetails = getLFListingsDetails($listkey);
+if(isset($_SESSION['propertyDetails']))
+{
+    $propertyDetails = $_SESSION['propertyDetails'];
+    unset($_SESSION['propertyDetails']);
+}
+else
+{
+    $propertyDetails = getLFListingsDetails($listkey);
+}
 
 if($propertyDetails->error==false){
 
@@ -155,7 +160,12 @@ if($propertyDetails->error==false){
                     if(empty($propertyDetail->Lease)){
                         echo '$ ',number_format_i18n($propertyDetail->ListPrice);
                     }else{
-                        echo '$ ',$propertyDetail->Lease,'/',$propertyDetail->LeaseTerm;
+                        $leaseTerm = empty($propertyDetail->LeaseTerm) ? $propertyDetail->LeasePerUnit : $propertyDetail->LeaseTerm;
+                        if (empty($leaseTerm))
+                        {
+                            $leaseTerm = "square feet";
+                        }
+                        echo '$ ',$propertyDetail->Lease,'/',$leaseTerm;
                     }
                     ?>
                 </p>

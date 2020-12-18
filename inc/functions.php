@@ -218,13 +218,18 @@ function getLFImageProxy($url){
 	if(!empty($imageWidth) and !empty($imageHeight)){
 		return $url."&w=".$imageWidth."&h=".$imageHeight;
 	}
-	else{
+	else
+	{
 		return $url;
 	}
 }
 
 function LFUpdateCSS()
 {
+	if( !function_exists('get_plugin_data') ){
+    		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+	}
+
 	$pluginData = get_plugin_data(LF_PLUGIN_DIR.'/LF-Listings.php');
 	$currentVersion = $pluginData['Version'];
 	$lastVersion= LF_get_settings('last_css_updated_version');
@@ -275,7 +280,6 @@ function LFUpdateCSS()
 		LF_add_settings('customCss',$contentTobePut);
 	}
 	LF_add_settings('last_css_updated_version', $currentVersion);
-
 }
 
 function isWebhookEnabled($agent_id)

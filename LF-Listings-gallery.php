@@ -1,5 +1,7 @@
 <?php $output = explode("-",$slugVariable);
-$tagCounter = $output[count($output)-1]; ?>
+$tagCounter = $output[count($output)-1];
+?>
+
 <div class="LF-listigs" id="listing-<?php echo $tagCounter;?>">
     <?php
     $hasValidLocation = true;
@@ -19,7 +21,7 @@ $tagCounter = $output[count($output)-1]; ?>
             {
                 $DBLF_Municipalities = getCities();
                 $DBLF_Municipalities = implode(',', get_object_vars($DBLF_Municipalities->results->cities));
-		        $_SESSION[$slugVariable]['allCities'] = $DBLF_Municipalities;
+                $_SESSION[$slugVariable]['allCities'] = $DBLF_Municipalities;
                 LF_add_settings('allCities', $DBLF_Municipalities);
             }
             $DBLF_Municipalities = explode(',', $DBLF_Municipalities);
@@ -36,16 +38,19 @@ $tagCounter = $output[count($output)-1]; ?>
                 $LF_Municipalities = $_SESSION[$slugVariable]['LF_Municipalities'];
             }
 
-            $LF_Municipalities = explode(',', $LF_Municipalities);
+            if (!is_array($LF_Municipalities))
+            {
+                $LF_Municipalities = explode(',', $LF_Municipalities);
+            }
 
             if (!empty($_SESSION[$slugVariable]['location']) && !in_array($_SESSION[$slugVariable]['location'], $LF_Municipalities))
             {
-		foreach (explode(',',$_SESSION[$slugVariable]['location']) as $location) {
+                foreach (explode(',',$_SESSION[$slugVariable]['location']) as $location) {
 
-			if (!in_array($location, $LF_Municipalities)) {
-				$LF_Municipalities[] = $location;
-			}
-		}
+                    if (!in_array($location, $LF_Municipalities)) {
+                        $LF_Municipalities[] = $location;
+                    }
+                }
                 $shouldValidate = true;
             }
 
@@ -55,8 +60,8 @@ $tagCounter = $output[count($output)-1]; ?>
                 {
                     if (!in_array($LF_Municipality, $DBLF_Municipalities))
                     {
-            			$hasValidLocation = false;
-            			$invalidLocation = $LF_Municipality;
+                        $hasValidLocation = false;
+                        $invalidLocation = $LF_Municipality;
                     }
                 }
             }
@@ -299,13 +304,13 @@ $tagCounter = $output[count($output)-1]; ?>
     $sort = LF_get_settings('LF_priceOrder');
     if(!empty($_SESSION[$slugVariable]['priceorder']))
     {
-        if($_SESSION[$slugVariable]['priceorder']=='up' || $_SESSION[$slugVariable]['priceorder']=='DESC')
-        {
-            $sort = 'DESC';
-        }
-        elseif($_SESSION[$slugVariable]['priceorder']=='down' || $_SESSION[$slugVariable]['priceorder']=='ASC')
+        if($_SESSION[$slugVariable]['priceorder']=='up' || $_SESSION[$slugVariable]['priceorder']=='ASC')
         {
             $sort = 'ASC';
+        }
+        elseif($_SESSION[$slugVariable]['priceorder']=='down' || $_SESSION[$slugVariable]['priceorder']=='DESC')
+        {
+            $sort = 'DESC';
         }
     }
 
@@ -522,91 +527,102 @@ $tagCounter = $output[count($output)-1]; ?>
                                                 echo ' class="LF-image"';
                                             }
                                             ?>>
-                                                <a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower($propertyList->FriendlyUrl);?>">
-                                                    <img src="<?php echo getLFImageProxy($propertyList->ListingThumb);?>" alt="">
-                                                </a>
-                                            </div>
+                                            <a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower($propertyList->FriendlyUrl);?>">
+                                                <img src="<?php echo getLFImageProxy($propertyList->ListingThumb);?>" alt="">
+                                            </a>
                                         </div>
-                                        <div class="LF-col-md-8">
-                                            <div class="LF-header">
-                                                <span class="LF-heading-link"><?php echo '#'.$propertyList->OriginatingSystemKey?></span>
-                                            </div>
-                                            <div class="LF-details">
-                                                <div class="LF-price"><?php echo '$'.$propertyList->ListPriceFormatted;?></div>
-                                                <div class="LF-address">
-                                                    <?php echo $propertyList->FullAddress;
-							if (!empty($propertyList->BuildingAreaTotal) && !empty($propertyList->BuildingAreaUnits)) {?>
+                                    </div>
+                                    <div class="LF-col-md-8">
+                                        <div class="LF-header">
+                                            <span class="LF-heading-link"><?php echo '#'.$propertyList->OriginatingSystemKey?></span>
+                                        </div>
+                                        <div class="LF-details">
+                                            <div class="LF-price"><?php echo '$'.$propertyList->ListPriceFormatted;?></div>
+                                            <div class="LF-address">
+                                                <?php echo $propertyList->FullAddress;
+                                                if (!empty($propertyList->BuildingAreaTotal) && !empty($propertyList->BuildingAreaUnits)) {?>
                                                     <p><?php echo $propertyList->BuildingAreaTotal.' '.$propertyList->BuildingAreaUnits?></p>
-								<?php } ?>
-                                                </div>
-                                                <a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower($propertyList->FriendlyUrl);?>" <?if ($slugVariable == 'wp-admin-1') echo "target=_blank";?> class="LF-btn LF-btn-link">View Details</a>
+                                                <?php } ?>
                                             </div>
+                                            <a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower($propertyList->FriendlyUrl);?>" <?if ($slugVariable == 'wp-admin-1') echo "target=_blank";?> class="LF-btn LF-btn-link">View Details</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <?php
-                        }
-                        else{
-                            ?>
-                            <div class="LF-col-md-<?= $col?> LF-col-sm-6 LF-col-xs-12">
-                                <div class="LF-listing-details LF-gridview">
-                                    <div class="LF-header">
-                                        <span class="LF-heading-link"><?php echo '#'.$propertyList->OriginatingSystemKey?></span>
-                                    </div>
-                                    <div
-                                    <?php
+                        </div>
+                        <?php
+                    }
+                    else{
+                        ?>
+                        <div class="LF-col-md-<?= $col?> LF-col-sm-6 LF-col-xs-12">
+                            <div class="LF-listing-details LF-gridview">
+                                <div class="LF-header">
+                                    <span class="LF-heading-link"><?php echo '#'.$propertyList->OriginatingSystemKey?></span>
+                                </div>
+                                <div
+                                <?php
+                                if ($slugVariable == 'wp-admin-1')
+                                {
+                                    echo ' class="LF-image-admin"';
+                                }
+                                else
+                                {
+                                    echo ' class="LF-image"';
+                                }
+                                $url = home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower(str_replace(' ','-',$propertyList->City)).'/'.strtolower($propertyList->FriendlyUrl);
+                                ?>>
+                                <a href="<?php echo $url;?>">
+                                    <img src="<?php echo getLFImageProxy($propertyList->ListingThumb);?>" alt="">
+                                </a>
+                            </div>
+                            <div class="LF-details">
+                                <a href="<?php echo $url;?>" <?php if ($slugVariable == 'wp-admin-1') echo "target=_blank";?> class="LF-btn LF-btn-link">View Details</a>
+                                <div class="LF-price"><?php echo '$'.$propertyList->ListPriceFormatted;?></div>
+                                <div class="LF-address">
+                                    <?php echo $propertyList->FullAddress;
+                                    if (!empty($propertyList->BuildingAreaTotal) && !empty($propertyList->BuildingAreaUnits)) {?>
+                                        <p><?php echo $propertyList->BuildingAreaTotal.' '.$propertyList->BuildingAreaUnits?></p>
+                                    <?php }
+
                                     if ($slugVariable == 'wp-admin-1')
                                     {
-                                        echo ' class="LF-image-admin"';
-                                    }
-                                    else
-                                    {
-                                        echo ' class="LF-image"';
-                                    }
-                                    ?>>
-                                        <a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower(str_replace(' ','-',$propertyList->City)).'/'.strtolower($propertyList->FriendlyUrl);?>">
-                                            <img src="<?php echo getLFImageProxy($propertyList->ListingThumb);?>" alt="">
+                                        ?>
+                                        <br>
+                                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+                                        Share on : <a class="facebook-share-button" href="https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode($url); ?>" target="_blank"><i class="fa fa-facebook-square"></i>
                                         </a>
-                                    </div>
-                                    <div class="LF-details">
-                                        <a href="<?php echo home_url($pageSlug).'/'.$propertyList->ListingKey.'/'.strtolower(str_replace(' ','-',$propertyList->City)).'/'.strtolower($propertyList->FriendlyUrl);?>" <?php if ($slugVariable == 'wp-admin-1') echo "target=_blank";?> class="LF-btn LF-btn-link">View Details</a>
-                                        <div class="LF-price"><?php echo '$'.$propertyList->ListPriceFormatted;?></div>
-                                        <div class="LF-address">
-                                            <?php echo $propertyList->FullAddress;
-						if (!empty($propertyList->BuildingAreaTotal) && !empty($propertyList->BuildingAreaUnits)) {?>
-                                            <p><?php echo $propertyList->BuildingAreaTotal.' '.$propertyList->BuildingAreaUnits?></p>
-					<?php } ?>
-                                        </div>
-                                    </div>
+
+                                    <?php } ?>
                                 </div>
                             </div>
-                            <?php
-                        }
-                    }
-                    if(!empty($_SESSION[$slugVariable]['style']) and $_SESSION[$slugVariable]['style'] == 'horizontal'){
-                        echo '</div>';
-                    }
-                    echo '<div class="clear"></div>';
-                    echo '<div class="LF-col-md-7">';
-                    if((empty($_SESSION[$slugVariable]['pagination']) || $_SESSION[$slugVariable]['pagination'] == 'yes') and $_SESSION[$slugVariable]['style'] != 'horizontal'){
-                        echo $html;
-                    }
-                    echo '</div>';
-                    if((empty($_SESSION[$slugVariable]['priceorder']) && LF_get_settings('LF_show_priceOrder')=='yes') || ( !empty($_SESSION[$slugVariable]['priceorder']) && $_SESSION[$slugVariable]['priceorder']!='no')){
-                        echo '<div class="LF-col-md-5">
-                        <div class="LF-sortblock">
-                        <label>Order by price: </lable>
-                        Low <input type="radio" class="LF-Bsort" name="LF-Bsort" id="Basc" value="ASC" '.$ascchecked.'>
-                        High <input type="radio" class="LF-Bsort" name="LF-Bsort" id="Bdesc" value="DESC" '.$descchecked.'>
                         </div>
-                        </div>';
-                    }
-                }
-                else{
-                    echo '<div class="LF-col-md-12"><p>Sorry, your search did not return any results. Please try again with different search parameters.</p></div>';
+                    </div>
+                    <?php
                 }
             }
-        }?>
-    </div>
+            if(!empty($_SESSION[$slugVariable]['style']) and $_SESSION[$slugVariable]['style'] == 'horizontal'){
+                echo '</div>';
+            }
+            echo '<div class="clear"></div>';
+            echo '<div class="LF-col-md-7">';
+            if((empty($_SESSION[$slugVariable]['pagination']) || $_SESSION[$slugVariable]['pagination'] == 'yes') and $_SESSION[$slugVariable]['style'] != 'horizontal'){
+                echo $html;
+            }
+            echo '</div>';
+            if((empty($_SESSION[$slugVariable]['priceorder']) && LF_get_settings('LF_show_priceOrder')=='yes') || ( !empty($_SESSION[$slugVariable]['priceorder']) && $_SESSION[$slugVariable]['priceorder']!='no')){
+                echo '<div class="LF-col-md-5">
+                <div class="LF-sortblock">
+                <label>Order by price: </lable>
+                Low <input type="radio" class="LF-Bsort" name="LF-Bsort" id="Basc" value="ASC" '.$ascchecked.'>
+                High <input type="radio" class="LF-Bsort" name="LF-Bsort" id="Bdesc" value="DESC" '.$descchecked.'>
+                </div>
+                </div>';
+            }
+        }
+        else{
+            echo '<div class="LF-col-md-12"><p>Sorry, your search did not return any results. Please try again with different search parameters.</p></div>';
+        }
+    }
+}?>
+</div>
 </div>

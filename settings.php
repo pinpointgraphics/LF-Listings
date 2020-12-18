@@ -111,6 +111,7 @@ function LF_settings_view_creator()
 						</div>
 						<div class="LF-form-group">
 							<?php $LF_cities = getCities();
+							if (!empty($LF_cities))
 							LF_add_settings('allCities', implode(',', get_object_vars($LF_cities->results->cities)));
 							?>
 							<?php
@@ -490,6 +491,7 @@ function LF_admin_js()
 		$(document).on('click','#LF-save-general-setting',function(){
 			var form = $('#LF-general-form').serialize();
 			var token = '<?php echo $token; ?>';
+
 			$.ajax({
 				method: 'POST',
 				url:ajaxurl,
@@ -721,7 +723,10 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 		$LF_priceOrder = sanitize_text_field($_POST['LF_priceOrder']);
 		$imageWidth = sanitize_text_field($_POST['LF_imageWidth']);
 		$imageHeight = sanitize_text_field($_POST['LF_imageHeight']);
-		$LF_Municipalities = implode(',',$_POST['LF_Municipalities']);
+
+		$LF_Municipalities = is_array($_POST['LF_Municipalities']) ? $_POST['LF_Municipalities'] : array();
+		$LF_Municipalities = implode(',',$LF_Municipalities);
+
 		$LF_detail_footer = $_POST['LF_detail_footer'];
 		$LF_MailText = $_POST['LF_MailText'];
 		$termsandcondition = $_POST['termsandcondition'];
@@ -821,7 +826,7 @@ add_action( 'wp_ajax_LF_save_account_info_data', 'LF_save_account_info_data' );
 	{
 		$page_id = get_the_ID();
 		$option_id_array = get_option('LF-Listings');
-
+		$option_id_array = is_array($option_id_array) ? $option_id_array : array();
 		if (in_array($page_id, $option_id_array))
 		{
 			wp_register_style('LF_stylesheet',plugins_url('assets/css/lf-style.css',__FILE__));
@@ -925,8 +930,6 @@ function getCurrentPageSlug()
 	$slug = $slugs[1];
 	return $slug;
 }
-
-
 
 function LF_save_option_shortcode_post_id_array( $post_id )
 {

@@ -19,10 +19,8 @@ $attr = shortcode_atts( array(
 	'tag-index'=>'1',
 ), $atts );
 
-$listkey = get_query_var('listkey');
-if ($listkey)
+if (isset($_SESSION['listkey']))
 {
-	$_SESSION['listkey']= $listkey;
 	?>
 	<style>
 	h1.entry-title{
