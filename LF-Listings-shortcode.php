@@ -45,7 +45,7 @@ $tagCount = (int)$attr['tag-index'];
 $slugVariable = getCurrentPageSlug();
 
 if (empty($slugVariable))
-	$slugVariable = LF_get_settings('LF_homepageSlug');
+	$slugVariable = LF_get_settings('LF_homepageSlug').'-home';
 
 $slugVariable = $slugVariable.'-'.$tagCount;
 
