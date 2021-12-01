@@ -185,7 +185,7 @@ function getLFListingsDetails($listkey){
 
 	$curl = curl_init();
 	curl_setopt_array($curl, array(
-		CURLOPT_URL => API_URL."/properties?token=".$token."&listkey=".$listkey,
+		CURLOPT_URL => API_URL."/properties?token=".$token."&listkey=".$listkey."&agent_id=".LF_get_settings('agent_id'),
 		CURLOPT_RETURNTRANSFER => true,
 		CURLOPT_ENCODING => "",
 		CURLOPT_MAXREDIRS => 10,
@@ -255,6 +255,7 @@ function LFUpdateCSS()
 	$digits = explode (".", $lastVersion);
 	$cssDir = LF_PLUGIN_DIR.'/versioned_css/';
 	$digits[2]++;
+	$newdata = false;
 	for ($digits[0]; $digits[0] <=1; $digits[0]++) {
 		for ($digits[1]; $digits[1] <=1; $digits[1]++) {
 			for ($digits[2]; $digits[2] <=25; $digits[2]++) {
@@ -264,6 +265,7 @@ function LFUpdateCSS()
 				{
 					file_put_contents(LF_PLUGIN_DIR.'/assets/css/lf-style.css', "\n\n/*----- ".$version." append -----*/\n\n", FILE_APPEND | LOCK_EX);
 					file_put_contents(LF_PLUGIN_DIR.'/assets/css/lf-style.css', file_get_contents($cssFile), FILE_APPEND | LOCK_EX);
+					$newdata = true;
 				}
 				if($currentVersion == $version)
 				{
@@ -275,7 +277,7 @@ function LFUpdateCSS()
 		$digits[1] = 0;
 	}
 	$contentTobePut = file_get_contents(LF_PLUGIN_DIR.'/assets/css/lf-style.css');
-	if (!empty($contentTobePut))
+	if (!empty($contentTobePut) && $newdata)
 	{
 		LF_add_settings('customCss',$contentTobePut);
 	}

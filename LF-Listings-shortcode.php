@@ -43,12 +43,10 @@ if(isset($_SESSION['pageUpdated']) && $_SESSION['pageUpdated'] == "yes")
 
 $tagCount = (int)$attr['tag-index'];
 $slugVariable = getCurrentPageSlug();
-
 if (empty($slugVariable))
 	$slugVariable = LF_get_settings('LF_homepageSlug').'-home';
-
+$_SESSION['currSlug'] = $slugVariable;
 $slugVariable = $slugVariable.'-'.$tagCount;
-
 if (empty($_SESSION[$slugVariable]))
 	$_SESSION[$slugVariable] = [];
 

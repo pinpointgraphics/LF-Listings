@@ -188,8 +188,8 @@ if($propertyDetails->error==false){
                         <div class="LF-form-group">
                             <textarea name="txtMessage" id="txtMessage" rows="3" class="LF-form-control" placeholder="Message" minlength="2" maxlength="140"></textarea>
                             <label for="" class="alert-error" id="txtMessage_error"></label>
-                        </div>
-                        <input type="hidden" id="listingURL" name="listingURL" value='<?php echo (isset($_SERVER['HTTPS']) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']; ?>'>
+			</div>
+                        <input type="hidden" id="listingURL" name="listingURL" value='<?php echo $_SERVER['HTTP_REFERER']; ?>'>
                         <?php
                         if(!empty(LF_get_settings('LF_reCaptcha')) and LF_get_settings('LF_reCaptchastate')!='no-captch'){
                             if(LF_get_settings('LF_reCaptchastate')=='yes'){
