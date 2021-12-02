@@ -172,7 +172,6 @@ if($propertyDetails->error==false){
             </div><!-- .LF-col-md-6 -->
             <div class="LF-col-md-6">
                 <div class="LF-inquiry-details">
-                    <div class="mailmessage"></div>
                     <form method="post" name="formInquiry" id="formInquiry">
                         <div class="LF-form-group">
                             <input type="text" name="txtSubject" id="txtSubject" class="LF-form-control" placeholder="" value="ID#<?php echo $propertyDetail->ListingId;?>" readonly>
@@ -199,7 +198,8 @@ if($propertyDetails->error==false){
                                     <input type="hidden" name="recaptcha" id="recaptcha" value="yes">
                                     <label for="" class="alert-error" id="recaptcha_error"></label>
 
-                                </div>
+				</div>
+				<div class="mailmessage"></div>
                                 <button class="LF-btn send_inquiry_mail" type="submit">Send</button>
                                 <?php
                             }
@@ -213,7 +213,8 @@ if($propertyDetails->error==false){
                             }
                         }
                         else{
-                            ?>
+?>
+				<div class="mailmessage"></div>
                             <button class="LF-btn send_inquiry_mail" type="submit">Send</button>
                             <?php
                         }

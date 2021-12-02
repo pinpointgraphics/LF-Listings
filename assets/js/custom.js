@@ -498,6 +498,8 @@ jQuery(document).on('submit', '#formInquiry', function() {
 	}
 
 	if(flag==0){
+		jQuery('.send_inquiry_mail').text('Sending...');
+                jQuery('.send_inquiry_mail').attr('disabled' , true);
 		jQuery('.mailmessage').html('');
 		jQuery.ajax({
 			method: 'POST',
@@ -527,6 +529,8 @@ jQuery(document).on('submit', '#formInquiry', function() {
 					jQuery('.mailmessage').html('<div class="alert-error">Ouch!! Failed to send mail.</div>');
 					jQuery('#mailsent').val('0');
 				}
+				jQuery('.send_inquiry_mail').text('Send');
+                                        jQuery('.send_inquiry_mail').attr('disabled' , false);
 			}
 		});
 		return false;
